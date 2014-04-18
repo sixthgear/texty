@@ -1,0 +1,143 @@
+<!-- DESCRIPTION -->
+<script id="description-template" type="text/x-handlebars-template">
+    <p class="description">
+        <span class="intro">{{!{ intro }}}</span>
+        {{!{ text }}}
+    </p>
+</script>
+
+<!-- COMMAND - RESPONSE -->
+<script id="command-template" type="text/x-handlebars-template">
+    {{!#if command }}
+        <p class="command"><i class="fa fa-angle-right"></i>{{!{ command }}}</p>
+    {{!/if}}
+    {{!#if response }}
+        <p class="response"><i class="fa fa-angle-double-right"></i>{{!{ response }}}</p>
+    {{!/if}}
+</script>
+
+<!-- COMMAND - RESPONSE -->
+<script id="broadcast-template" type="text/x-handlebars-template">
+    <p class="broadcast"><i class="fa fa-bolt"></i> {{!{ text }}}</p>
+</script>
+
+<!-- LIST -->
+<script id="list-template" type="text/x-handlebars-template">
+    <ul class="{{! type }}-list">
+        {{!#each items}}
+        <li><i class="fa {{! this.icon }}"></i> {{!{ this.text }}}</li>
+        {{!/each}}
+    </ul>
+</script>
+
+<!-- COMBAT -->
+<script id="combat-template" type="text/x-handlebars-template">
+    <p class="combat">
+        {{!{ text }}}
+    </p>
+</script>
+
+<!-- WINDOW -->
+<script id="window-template" type="text/x-handlebars-template">
+    <div class="window window-{{! type }}">
+
+        {{!#if title}}<h6>{{! title }}</h6>{{!/if}}
+
+        <p>{{!{ text }}}</p>
+
+        <div class="window-actions">
+            {{!#each buttons ~}}
+            <a href="" class="btn btn-{{! this.type }}">
+                <i class="fa {{! this.icon }}"></i>
+                {{! this.label }}
+            </a>
+            {{!~/each}}
+        </div>
+    </div>
+</script>
+
+<!-- SIDEBAR -->
+<script id="sidebar-template" type="text/x-handlebars-template">
+
+    <h6>{{! name }} <small>{{! occupation }}</small></h6>
+
+    <ul class="status-list status-messages">
+    {{!#each status}}
+        <li class="{{! this.level }}"><i class="fa {{! this.icon }}"></i> {{! this.text }}</li>
+    {{!/each}}
+    </ul>
+
+    {{!!--
+    <table class="status-table character-table">
+    <tr>
+    <th>Level</th><td>10</td>
+    <th class="right">XP</th><td>4500/10000</td>
+    </tr>
+    <tr>
+    <th>HP</th><td><span class="crit">10</span>/60</td>
+    <th class="right">MP</th><td>45/60</td>
+    </tr>
+    <tr>
+    <th>STR</th><td>14</td>
+    </tr>
+    <tr>
+    <th>DEX</th><td>10</td>
+    </tr>
+    <tr>
+    <th>INT</th><td>13</td>
+    </tr>
+    </table>
+    --}}
+
+    <h6>Equipment</h6>
+
+    <table class="status-table worn-table">
+    {{!#each equipment }}
+        <tr><th>{{! @key }}</th><td>{{! this }}</td></tr>
+    {{!/each}}
+        <tr>
+            <th>Pack</th>
+            <td>{{! pack.name }} <small>[{{! pack.amount }}/{{! pack.capacity }}kg]</small></td>
+        </tr>
+    </table>
+
+    <table class="status-table worn-table worn-table-hands">
+    {{!#each hands }}
+        <tr>
+        <th>{{! @key }}</th>
+        <td>{{! this.name }}
+        {{!#if this.amount }}
+        <small>{{! this.amount }}/{{! this.capacity }}</small>
+        {{!/if}}
+        </td>
+        </tr>
+    {{!/each}}
+    </table>
+
+    <h6>
+        <label for="inventory-select">
+            Inventory
+            <i class="fa fa-caret-down"></i>
+        </label>
+
+        <select name="inventory-select" id="inventory-select">
+            <option value="0">All Items</option>
+            <option value="0">Medical</option>
+            <option value="0">Weapons</option>
+            <option value="0">Armor</option>
+        </select>
+
+        {{!#if pack }}
+        <small>{{! pack.name }} [{{! pack.amount }}/{{! pack.capacity }}kg]</small>
+        {{!/if}}
+
+    </h6>
+
+    <ul class="status-list inventory">
+    {{!#each inventory }}
+        <li class="{{! this.type }}">      <i class="fa {{! this.icon }}"></i>   {{! this.name }} <small>{{! truncate this.description 30 }}</small></li>
+    {{!/each}}
+    </ul>
+
+</script>
+

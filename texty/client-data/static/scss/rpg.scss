@@ -1,0 +1,368 @@
+@import url(http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic);
+@import url(http://fonts.googleapis.com/css?family=Sniglet);
+
+// fonts
+$main-font:         12px/18px "Cousine", monospace;
+$sidebar-font:      12px/18px "Cousine", monospace;
+$window-font:       12px/18px "Cousine", monospace;
+
+// main colors
+$main-bg:           #191919;
+$main-fg:           #cccccc;
+$accent:            white;
+
+// main message colors
+$intro-fg:          #ffffb3;
+$command-fg:        #80ff00;
+$response-fg:       lighten($command-fg, 30%);
+$sound-fg:          #ffffff;
+$combat-fg:         #ae3b42;
+
+// main list colors
+$object-border:         lighten($main-bg, 10%);
+$action-border:         lighten($main-bg, 30%);
+$info-border:           #ffffb3;
+$conversation-border:   #0080ff;
+
+// windows
+$window-bg:         mix($main-bg, #66ccff, 80%);
+$window-fg:         lighten($main-fg, 5%);
+$window-border:     lighten($main-bg, 5%);
+
+// sidebar colors
+$sidebar-bg:        #2d000c;
+$sidebar-fg:        #aaaaaa;
+$sidebar-hi-bg:     lighten($sidebar-bg, 3%);
+$sidebar-hi-fg:     lighten($sidebar-fg, 50%);
+
+// sidebar margins
+$sidebar-margin:    1em;
+
+// status message colors
+$crit-fg:           #bf0005;
+$high-fg:           #FFF;
+$med-fg:            #BBB;
+$low-fg:            #777;
+
+@mixin fat-border($b, $c: change-color($b, $lightness: 80%), $i: false) {
+    padding-left: 1em;
+    border-left: 1em solid $b;
+    color: $c;
+    @if $i {
+        font-style: italic;
+    }
+}
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+
+
+html, body, .col-md-4 {
+    // sidebar height fix
+    height: 100%;
+}
+
+body {
+
+    font: $main-font;
+    background-color: $main-bg;
+    color: $main-fg;
+
+    h1,h2,h3,h4,h5,h6,b {
+        color: $accent;
+        font-weight: bold;
+    }
+
+    i.fa {
+        width: 1em;
+        text-align: center;
+    }
+
+    label {
+        margin: 0; padding: 0;
+    }
+
+    select {
+        @include border-radius(0px);
+        border: none;
+        outline: none;
+        background-color: transparent;
+        -webkit-appearance: caret;
+        padding: 0;
+        margin: 0;
+        margin-bottom: -1px;
+    }
+
+    .crit {
+        color: $crit-fg;
+        font-weight: bold;
+    }
+    .high {
+        color: $high-fg;
+        font-weight: bold;
+    }
+    .med {
+        color: $med-fg;
+    }
+    .low {
+        color: $low-fg;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+}
+
+// bottom command input fixed to the bottom
+.command-input {
+
+    position: fixed;
+    bottom: 0;
+    width: 750px;
+    padding: 0.5em 0;
+    border-top: 1px solid $accent;
+    background-color: $main-bg;
+    color: $command-fg;
+    z-index: 100;
+
+    input {
+        width: 720px;
+        margin: 0;
+        padding: 0;
+        border: none;
+        outline: none;
+        font-size: 2em;
+        font-weight: bold;
+        background-color: transparent;
+    }
+}
+
+.left-column {
+
+    // extra padding to clear the command bar
+    padding-top: 2em;
+    padding-bottom: 4em;
+
+    .description {
+        // leave space to provide new location visual separation
+        margin-top: 3em;
+
+        .intro      {
+            // intros are large and distinct
+            color: $intro-fg;
+            font-size: 14px;
+        }
+
+        .info {
+            // info text is distinguished
+            color: $sound-fg;
+            font-style: italic;
+        }
+    }
+
+    .command    {
+        color: $command-fg;
+        b {
+            text-decoration: underline;
+            color: inherit;
+        }
+    }
+
+    .broadcast    {
+        color: $command-fg;
+        font-size: 2em;
+        font-weight: bold;
+        font-style: italic;
+        line-height: 24px;
+    }
+
+    .response {
+        // collapse response margins to join the command above
+        margin-top: -1em;
+        font-style: italic;
+        color: $response-fg;
+    }
+
+    .combat     {
+        color: $combat-fg;
+
+        .sound {
+            // color: mix($combat-fg, $sound-fg, 25%);
+        }
+    }
+
+    .sound {
+        display: block;
+        font: lighter italic 14px/20px "Sniglet", sans-serif;
+        letter-spacing: 1px;
+        color: $sound-fg;
+    }
+
+    .sound-2x {
+        @extend .sound;
+        font-size: 2em;
+        font-weight: bold;
+        line-height: 24px;
+    }
+
+    .sound-3x {
+        @extend .sound;
+        font-size: 3em;
+        font-weight: bold;
+        line-height: 36px;
+    }
+
+    .sound-4x {
+        @extend .sound;
+        font-size: 4em;
+        font-weight: bold;
+        line-height: 48px;
+    }
+
+    .object-list {
+        @include fat-border($object-border);
+    }
+
+    .action-list {
+        @include fat-border($action-border, $i: true);
+    }
+
+    .info-list {
+        @include fat-border($info-border, $i: true);
+    }
+
+    .conversation-list {
+        @include fat-border($conversation-border);
+    }
+
+
+    .window {
+
+        margin: 1em 0;
+        padding: 1em;
+
+        background-color: $window-bg;
+        border: 1em solid $window-border;
+        color: $window-fg;
+        font: $window-font;
+
+        h6 {
+            margin: 0;
+        }
+
+        .window-actions {
+            text-align: right;
+            position: relative;
+            bottom: 0;
+        }
+
+        .btn {
+            @include border-radius(0px);
+            margin-left: 1em;
+            padding: 0.5em !important;
+            z-index: 0;
+
+            border-color: $window-border;
+            font: bold 12px "Cousine", monospace;
+            text-transform: uppercase;
+
+            i {
+                display: none;
+            }
+        }
+    }
+
+}
+
+.right-column {
+
+    position: fixed;
+    height: 100%;
+    min-width: 330px;
+
+    font: $sidebar-font;
+    background-color: $sidebar-bg;
+
+    small {
+        position: absolute;
+        bottom: 2px;
+        right: $sidebar-margin;
+        margin: 0;
+        padding: 0;
+        font-size: 10px;
+        line-height: 10px;
+    }
+
+    h6 {
+        position: relative;
+        padding: 0 $sidebar-margin;
+        margin: 18px 0 17px 0;
+        border-bottom: 1px solid $accent;
+    }
+
+    .status-table {
+
+        width: 100%;
+        // margin: 0 (-$sidebar-margin);
+
+        th {
+            width: 90px;
+            color: $sidebar-fg;
+            text-align: left;
+            white-space: nowrap;
+            padding-left: $sidebar-margin;
+        }
+
+        td {
+            position: relative;
+            min-width: 70px;
+            white-space: nowrap;
+            padding: 0;
+            padding-right: $sidebar-margin;
+        }
+
+        tr:hover {
+
+            th, td {
+                background-color: $sidebar-hi-bg;
+                color: $sidebar-hi-fg;
+            }
+        }
+    }
+
+    .status-list {
+
+        padding: 0;
+        list-style: none;
+        color: $sidebar-fg;
+
+        li {
+            position: relative;
+            padding: 0 $sidebar-margin;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        li:hover {
+            background-color: $sidebar-hi-bg;
+            color: $sidebar-hi-fg;
+        }
+    }
+
+    .character-table {
+        display: none;
+    }
+
+    .worn-table {}
+
+    .status-messages{}
+
+    .inventory {}
+}
+
+

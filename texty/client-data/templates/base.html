@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>{{ story }}</title>
+
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="static/css/rpg.css" media="screen, projection" rel="stylesheet">
+
+    <script data-main="static/js/main" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
+
+    {% include "_client-templates.html" %}
+
+</head>
+<body>
+
+<div class="container">
+<div class="row">
+
+    <div class="col-md-8">
+
+        <div class="command-input">
+            <i class="fa fa-angle-right fa-2x"></i><input type="text" maxlength="100">
+        </div>
+
+        <div class="left-column">
+            <!-- content goes here -->
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+        <div class="right-column">
+            <!-- sidebar goes here -->
+        </div>
+    </div>
+
+
+</div>
+</div>
+
+</body>
+</html>

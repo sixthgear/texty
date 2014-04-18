@@ -1,0 +1,384 @@
+Accountant
+Actor
+Actuary
+Acupuncturist
+Advertising Manager
+Advertising Specialist
+Aeronautical Engineer
+Aeroplane Pilot
+Agricultural Consultant
+Agricultural Engineer
+Agricultural Scientist
+Agricultural Technician
+Air Traffic Controller
+Ambulance Officer
+Amusement Centre Manager
+Anaesthetist
+Analyst Programmer
+Anatomist
+Antique Dealer
+Apiarist
+Apparel Cutter
+Arborist
+Archaeologist
+Architect
+Archivist
+Artistic Director
+Auctioneer
+Audiologist
+Authors
+Automotive Electrician
+Baker
+Barrister
+Beef Cattle Farmer
+Betting Agency Manager
+Binder and Finisher
+Biochemist
+Biomedical Engineer
+Biotechnologist
+Blacksmith
+Boat Builder and Repairer
+Book Editor
+Botanist
+Bricklayer
+Building Associate
+Building Inspector
+Business Analyst
+Business Broker
+Business Machine Mechanic
+Cabinetmaker
+Canvas Goods Maker
+Cardiologist
+Cardiothoracic Surgeon
+Careers Counsellor
+Carpenter
+Carpenter and Joiner
+Cartographer
+Ceramic Artist
+Chef
+Chemical Engineer
+Chemical Plant Operator
+Chemist
+Chemistry Technician
+Chief Information Officer
+Child Care Centre Manager
+Chiropractor
+Choreographer
+Cinema Manager
+Civil Engineer
+Clinical Coder
+Clinical Haematologist
+Clinical Psychologist
+Clothing Patternmaker
+Clothing Trades Worker
+Commissioned Fire Officer
+Commodities Trader
+Communications Operator
+Community Arts Worker
+Community Worker
+Company Secretary
+
+Conservation Officer
+Conservator
+Construction Estimator
+Contract Administrator
+Conveyancer
+
+Copywriter
+Corporate General Manager
+Corporate Treasurer
+Cotton Grower
+Counsellor
+Crop Farmer
+Customer Service Manager
+Dairy Cattle Farmer
+Dancer
+Database Administrator
+Deer Farmer
+Dental Hygienist
+Dental Prothetist
+Dental Specialist
+Dental Technician
+Dental Therapist
+Dentist
+Dermatologist
+Detective
+Developer Programmer
+Diesel Motor Mechanic
+Dietitian
+Director of Photography
+Diver
+Diversional Therapist
+Dog Handler
+
+Drainer
+Dressmaker
+Driller
+Driving Instructor
+Earth Science Technician
+Economist
+Education Adviser
+Education Manager
+Education Reviewer
+Educational Psychologist
+Electorate Officer
+Electrical Engineer
+Electrical Engineer
+Electrical Linesworker
+Electrician
+Electronics Engineer
+Electroplater
+Emergency Service Worker
+Endocrinologist
+Engineering Manager
+Engineering Patternmaker
+Engineering Technologist
+Engraver
+Environmental Consultant
+Environmental Engineer
+Environmental Manager
+Equipment Hire Manager
+Exporter
+External Auditor
+Facilities Manager
+Faculty Head
+Family Support Worker
+Farrier
+Fashion Designer
+Fibrous Plasterer
+Film and Video Editor
+Finance Broker
+Finance Manager
+Financial Dealer
+Financial Market Dealer
+Fire Fighter
+First Aid Trainer
+Fisheries Inspector
+Fitness Centre Manager
+Fitter
+Fitter and Turner
+Fitter-Welder
+Fleet Manager
+Floor Finisher
+
+Flower Grower
+Flying Instructor
+Food Technologist
+Footballer
+Forester
+Fruit Grower
+Funeral Director
+Funeral Worker
+Furniture Finisher
+Futures Trader
+Gallery Curator
+Gardener
+Gas Operator
+Gasfitter
+Gastroenterologist
+Geologist
+Geophysicist
+Geotechnical Engineer
+Glazier
+Goat Farmer
+Golfer
+Grape Grower
+
+Greenkeeper
+Gunsmith
+
+Hardware Technician
+Health Promotion Officer
+Helicopter Pilot
+Historian
+Homoeopath
+Horse Breeder
+Horse Trainer
+Hospital Pharmacist
+Hotel Manager
+Human Resource Adviser
+Human Resource Manager
+Hydrographer
+Illustrator
+Importer
+Industrial Designer
+Industrial Engineer
+Industrial Pharmacist
+Insurance Agent
+Insurance Broker
+Insurance Investigator
+Insurance Loss Adjuster
+Insurance Risk Surveyor
+Intelligence Officer
+Intensive Care Specialist
+Interior Decorator
+Interior Designer
+Internal Auditor
+Interpreter
+Jeweller
+Jewellery Designer
+Jockey
+Joiner
+Judge
+Kennel Hand
+Laboratory Manager
+Land Economist
+Landscape Architect
+Landscape Gardener
+Leather Goods Maker
+Legal Executive
+Liaison Officer
+Librarian
+Library Technician
+Licensed Club Manager
+Life Science Technician
+Life Scientist
+Lift Mechanic
+Light Technician
+Livestock Farmer
+Locksmith
+Magistrate
+Maintenance Planner
+Make Up Artist
+Management Accountant
+Management Consultant
+Manufacturer
+Marine Biologist
+Market Research Analyst
+Marketing Specialist
+Massage Therapist
+Master Fisher
+Materials Engineer
+Mathematician
+Meat Inspector
+Mechanical Engineer
+Medical Administrator
+Medical Oncologist
+Metal Fabricator
+Metal Polisher
+Metallurgist
+Meteorologist
+Microbiologist
+Midwife
+Migration Agent
+Mine Deputy
+Minister of Religion
+Mixed Crop Farmer
+Mixed Livestock Farmer
+Motel Manager
+Motor Mechanic
+Motorcycle Mechanic
+Multimedia Designer
+Museum Curator
+Music Director
+Music Professional
+Musician Instrumental
+Naturopath
+Naval Architect
+Network Administrator
+Network Analyst
+Neurologist
+Neurosurgeon
+Nurse Educator
+Nurse Manager
+Nurse Practitioner
+Nurse Researcher
+Nurseryperson
+Nursing Clinical Director
+Nut Grower
+Nutritionist
+Occupational Therapist
+Office Manager
+Ophthalmologist
+Optical Dispenser
+Optical Mechanic
+Optometrist
+Orthopaedic Surgeon
+Orthoptist
+Orthotist
+Osteopath
+Otorhinolaryngologist
+Paediatric Surgeon
+Paediatrician
+Painter
+Painting Trades Worker
+Panelbeater
+Park Ranger
+Pastrycook
+Patents Examiner
+Pathologist
+Petroleum Engineer
+Petroleum Operator
+Photographer
+Physicist
+Physiologist
+Physiotherapist
+Picture Framer
+Pig Farmer
+Plastics Technician
+Plumber
+Plumbing Inspector
+Podiatrist
+Police Officer
+Policy Analyst
+Post Office Manager
+Potter
+Poultry Farmer
+Pressure Welder
+Primary School Teacher
+Print Finisher
+Print Journalist
+Printing Machinist
+Prison Officer
+Procurement Manager
+Project Builder
+Property Manager
+Prosthetist
+Psychiatrist
+Psychologist
+Psychotherapist
+Public Relations Manager
+Quality Assurance Manager
+Quantity Surveyor
+Quarantine Officer
+Radiation Oncologist
+Radio Journalist
+Radio Presenter
+Railway Station Manager
+Real Estate Agent
+Records Manager
+Recreation Officer
+Recruitment Consultant
+Registered Nurse
+Rehabilitation Counsellor
+Renal Medicine Specialist
+Resident Medical Officer
+Residential Care Officer
+Retail Buyer
+Retail Pharmacist
+Rheumatologist
+Roof Plumber
+Roof Tiler
+Safety Inspector
+Sail Maker
+Sales Representative
+Saw Maker and Repairer
+School Principal
+Science Technician
+Screen Printer
+Script Editor
+Sculptor
+Secondary School Teacher
+Security Specialist
+Sheep Farmer
+Sheetmetal Trades Worker
+Ship Surveyor
+Ship's Engineer
+Ship's Master
+Ship's Officer
+Shipwright
+Spatial Scientist
+Sports Official
+Systems Test Engineer
+Tailor
+Theatre Manager

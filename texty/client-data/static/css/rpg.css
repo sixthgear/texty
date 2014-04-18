@@ -1,0 +1,203 @@
+@import url(http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic);
+@import url(http://fonts.googleapis.com/css?family=Sniglet);
+html, body, .col-md-4 {
+  height: 100%; }
+
+body {
+  font: 12px/18px "Cousine", monospace;
+  background-color: #191919;
+  color: #cccccc; }
+  body h1, body h2, body h3, body h4, body h5, body h6, body b {
+    color: white;
+    font-weight: bold; }
+  body i.fa {
+    width: 1em;
+    text-align: center; }
+  body label {
+    margin: 0;
+    padding: 0; }
+  body select {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    border-radius: 0px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    -webkit-appearance: caret;
+    padding: 0;
+    margin: 0;
+    margin-bottom: -1px; }
+  body .crit {
+    color: #bf0005;
+    font-weight: bold; }
+  body .high {
+    color: white;
+    font-weight: bold; }
+  body .med {
+    color: #bbbbbb; }
+  body .low {
+    color: #777777; }
+  body ul {
+    list-style: none;
+    padding: 0; }
+
+.command-input {
+  position: fixed;
+  bottom: 0;
+  width: 750px;
+  padding: 0.5em 0;
+  border-top: 1px solid white;
+  background-color: #191919;
+  color: #80ff00;
+  z-index: 100; }
+  .command-input input {
+    width: 720px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    font-size: 2em;
+    font-weight: bold;
+    background-color: transparent; }
+
+.left-column {
+  padding-top: 2em;
+  padding-bottom: 4em; }
+  .left-column .description {
+    margin-top: 3em; }
+    .left-column .description .intro {
+      color: #ffffb3;
+      font-size: 14px; }
+    .left-column .description .info {
+      color: white;
+      font-style: italic; }
+  .left-column .command {
+    color: #80ff00; }
+    .left-column .command b {
+      text-decoration: underline;
+      color: inherit; }
+  .left-column .broadcast {
+    color: #80ff00;
+    font-size: 2em;
+    font-weight: bold;
+    font-style: italic;
+    line-height: 24px; }
+  .left-column .response {
+    margin-top: -1em;
+    font-style: italic;
+    color: #ccff99; }
+  .left-column .combat {
+    color: #ae3b42; }
+  .left-column .sound, .left-column .sound-2x, .left-column .sound-3x, .left-column .sound-4x {
+    display: block;
+    font: lighter italic 14px/20px "Sniglet", sans-serif;
+    letter-spacing: 1px;
+    color: white; }
+  .left-column .sound-2x {
+    font-size: 2em;
+    font-weight: bold;
+    line-height: 24px; }
+  .left-column .sound-3x {
+    font-size: 3em;
+    font-weight: bold;
+    line-height: 36px; }
+  .left-column .sound-4x {
+    font-size: 4em;
+    font-weight: bold;
+    line-height: 48px; }
+  .left-column .object-list {
+    padding-left: 1em;
+    border-left: 1em solid #333333;
+    color: #cccccc; }
+  .left-column .action-list {
+    padding-left: 1em;
+    border-left: 1em solid #666666;
+    color: #cccccc;
+    font-style: italic; }
+  .left-column .info-list {
+    padding-left: 1em;
+    border-left: 1em solid #ffffb3;
+    color: #ffff99;
+    font-style: italic; }
+  .left-column .conversation-list {
+    padding-left: 1em;
+    border-left: 1em solid #0080ff;
+    color: #99ccff; }
+  .left-column .window {
+    margin: 1em 0;
+    padding: 1em;
+    background-color: #283c46;
+    border: 1em solid #262626;
+    color: #d9d9d9;
+    font: 12px/18px "Cousine", monospace; }
+    .left-column .window h6 {
+      margin: 0; }
+    .left-column .window .window-actions {
+      text-align: right;
+      position: relative;
+      bottom: 0; }
+    .left-column .window .btn {
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      -ms-border-radius: 0px;
+      border-radius: 0px;
+      margin-left: 1em;
+      padding: 0.5em !important;
+      z-index: 0;
+      border-color: #262626;
+      font: bold 12px "Cousine", monospace;
+      text-transform: uppercase; }
+      .left-column .window .btn i {
+        display: none; }
+
+.right-column {
+  position: fixed;
+  height: 100%;
+  min-width: 330px;
+  font: 12px/18px "Cousine", monospace;
+  background-color: #2d000c; }
+  .right-column small {
+    position: absolute;
+    bottom: 2px;
+    right: 1em;
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+    line-height: 10px; }
+  .right-column h6 {
+    position: relative;
+    padding: 0 1em;
+    margin: 18px 0 17px 0;
+    border-bottom: 1px solid white; }
+  .right-column .status-table {
+    width: 100%; }
+    .right-column .status-table th {
+      width: 90px;
+      color: #aaaaaa;
+      text-align: left;
+      white-space: nowrap;
+      padding-left: 1em; }
+    .right-column .status-table td {
+      position: relative;
+      min-width: 70px;
+      white-space: nowrap;
+      padding: 0;
+      padding-right: 1em; }
+    .right-column .status-table tr:hover th, .right-column .status-table tr:hover td {
+      background-color: #3c0010;
+      color: white; }
+  .right-column .status-list {
+    padding: 0;
+    list-style: none;
+    color: #aaaaaa; }
+    .right-column .status-list li {
+      position: relative;
+      padding: 0 1em;
+      margin: 0;
+      white-space: nowrap; }
+    .right-column .status-list li:hover {
+      background-color: #3c0010;
+      color: white; }
+  .right-column .character-table {
+    display: none; }
