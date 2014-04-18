@@ -3,13 +3,11 @@ from tornado import escape
 
 from texty.engine import server
 from texty.engine.parser import parser
-from texty.util.files import construct_name, construct_occupation
 from texty.builtins import commands
 from texty.builtins import characters
 from texty.builtins import story
 from texty.builtins.objects import obj
 
-import random
 import logging
 
 class TextyEngine(object):
@@ -88,17 +86,15 @@ class TextyEngine(object):
             connection.id
         ))
 
-        # create a player for this connection
+        # create a temporary player for this connection
         p = characters.Player(name='Player-%d' % connection.id, connection=connection)
-        p.gender = random.choice(['M', 'F'])
-        p.name = construct_name(p.gender)
-        p.occupation = construct_occupation()
 
+        # assign it to the list
         self.players[connection.id] = p
 
-        # send sidebar update
-        p.sidebar()
+        # and notify the story
         self.story.on_player_connect(p)
+
         # TODO: reconnect old players
 
     def on_disconnect(self, connection):
@@ -106,6 +102,8 @@ class TextyEngine(object):
         Server reported a disconnection
         """
         logging.info('Connection %d hungup.' % (connection.id))
+
+        # notify the story
         self.story.on_player_disconnect(self.players[connection.id])
 
         # remove player from player list

@@ -1,3 +1,4 @@
+from texty.util.files import construct_name, construct_occupation
 from texty.builtins.story import Story
 from colddeadwater.objects import *
 from colddeadwater import commands
@@ -66,6 +67,10 @@ class ColdDeadWater(Story):
         Start a player
         """
         # wakeup command, move player to Bertrams tent and introduce them
+        player.gender = random.choice(['M', 'F'])
+        player.name = construct_name(player.gender)
+        player.occupation = construct_occupation()
+
         player.do('wakeup')
         player.inventory += [PowerMoves(), objects.Frag(), MP5()]
         player.sidebar()

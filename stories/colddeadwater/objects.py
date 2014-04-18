@@ -50,6 +50,7 @@ class Radio(Portable):
     shortname = "Radio"
     description = "A small, battery operated, shortwave radio. This might be useful for communicating with other survivors."
     keywords = 'shortwave radio'
+    icon = 'fa-calendar-o'
     def use(self, command):
         pass
 

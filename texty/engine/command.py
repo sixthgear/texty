@@ -8,28 +8,24 @@ class Command(object):
     """
     def __init__(self, source, command, room=None, status=1, echo=True):
         self.source = source
+        self.command = command
         self.room = room or source.room
         self.status = status
-        self.callable, self.arguments = parser.parse(command, source)
-        self.command = command
         self.should_echo = echo
+        # parse command
+        self.callable, self.arguments = parser.parse(command, source)
         self.do_next = []
 
     def run(self):
         """
         Execute the command.
         """
-
-        # send echo
         self.echo()
-
         if not self.callable:
             return None
-
         # execute the callable
         response = self.callable(self) or None
-
-        # flush the do_next queue and execture commands
+        # flush the do_next queue and execute commands
         for command in self.do_next:
             self.source.do(command)
 

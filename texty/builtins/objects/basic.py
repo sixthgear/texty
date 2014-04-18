@@ -17,6 +17,7 @@ class Portable(BaseObject):
 
 class Box(Portable, Container):
     keywords = 'box'
+    icon = 'fa-briefcase'
 
 class Equipable(Portable):
     attributes = 'equipable'
@@ -27,6 +28,7 @@ class Weapon(Equipable):
     rate = 1 # per second
     range = 1 # feet
     weight = 5
+    icon = 'fa-magic'
 
 class RangedWeapon(Weapon):
     keywords = 'gun'
@@ -51,6 +53,7 @@ class MeleeWeapon(Weapon):
     rate = 1 # per second
     range = 1 # feet
     damage = 100 # per hit
+    icon = 'fa-wrench'
 
 class Explosive(Portable):
     keywords = 'explosive'
@@ -60,6 +63,7 @@ class Explosive(Portable):
     timer = 10 # seconds
     weight = 2
     pull_message = "%s %s the pin on %s."
+    icon = 'fa-asterisk'
 
 class Grenade(Explosive):
     keywords = 'grenade'
@@ -70,5 +74,7 @@ class Ammo(Portable):
     fits = () # tuple of weapons this ammo wil work with
     damage = 100 # per hit
     capacity = 10 # rounds
+    icon = 'fa-tablet'
+
     def __init__(self):
         self.capacity = self.__class__.capacity
