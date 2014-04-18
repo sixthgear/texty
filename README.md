@@ -7,3 +7,15 @@ Requirements
 ------------
 
 - tornado
+
+Usage
+-----
+
+Run server with specificed story module:
+
+    python run.py colddeadwater
+
+Then visit in your browser:
+
+    http://127.0.0.1:4000
+
