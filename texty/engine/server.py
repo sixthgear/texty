@@ -62,6 +62,7 @@ class MUD(object):
         self.app = web.Application([
             (r'/', HTMLClientHandler),
             (r'/websocket', Connection),
+            (r'/static/(.*)', web.StaticFileHandler, {'path': 'texty/client-data/static/'})
         ])
 
         # add a reference to this object so we can access it from handlers
