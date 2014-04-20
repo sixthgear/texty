@@ -1,128 +1,170 @@
 """
 Interaction commands.
 """
-from texty.engine.command import syntax, alias
+from texty.engine.command import command, syntax
 
-@syntax  ("get R.PORTABLE")
-@syntax  ("get PORTABLE from CONTAINER")
-@alias   ("pick up", "grab", "take")
-def get(command):
+@command ("get", "pick up", "grab", "take")
+def get(command, verb, object, prep, complement):
     """
     Get an object from the room.
     """
-    if len(command.arguments) == 0:
-        return command.to_source('Get what?')
-    if not command.arguments[0]:
-        return command.to_source('You don\'t see that here.')
-    for o in command.arguments[0]:
-        if command.source.inv_weight + o.weight > command.source.capacity:
-            return command.to_source('You are carrying too much to take that.')
-        command.source.inventory.append(o)
-        command.room.objects.remove(o)
-        command.to_source('You take %s.' % o.name)
-        command.to_room('%s takes %s.' % (command.source.name, o.name))
+    # resolve objects
+    if complement:
+        if prep in ['in' 'from', 'inside']:
+            # container
+            c = command.resolve(complement)
+            if not c:
+                a = complement.get('indef') or complement.get('spec') or 'a'
+                return command.response('You don\'t see {} {} here.'.format(a, complement['noun']))
+            if not hasattr(c, 'contents'):
+                return command.response('{} is not a container.'.format(a, complement['noun']))
+            # get something from container
+            o = command.resolve(object, container=c, scope='IN')
+        else:
+            return command.response('You can\'t %s %s <b>%s</b> something.' % (verb, object['noun'], prep))
 
-@syntax  ("drop I.PORTABLE")
-@syntax  ("drop I.PORTABLE [on] FLOOR", "put, throw")
-def drop(command):
-    """
-    Drop an object from inventory.
-    """
-    if len(command.arguments) == 0:
-        return command.to_source('Drop what?')
-    if not command.arguments[0]:
-        return command.to_source('You don\'t have that.')
-    for o in command.arguments[0]:
-        command.room.objects.append(o)
-        command.source.inventory.remove(o)
-        command.to_source('You drop %s.' % o.name)
-        command.to_room('%s drops %s.' % (command.source.name, o.name))
+    elif prep:
+        return command.response('That doesn\'t make sense.')
 
+    elif object:
+        o = command.resolve(object, scope='O')
 
-@syntax ("throw I.PORTABLE [at] CHARACTER")
-@syntax ("throw I.PORTABLE [to] DIRECTION")
-@syntax ("throw I.PORTABLE [in] ENTERABLE")
-@syntax ("throw I.PORTABLE out")
-@syntax ("throw I.PORTABLE out [of] ENTERABLE")
-# TODO. support for passing objects through windows,
-# TODO. or other impassible objects
-def throw(command):
-    """
-    """
-    pass
+    else:
+        return command.response('What do you want to get?')
 
+    if not o:
+        # resolution failed
+        n = object['noun']
+        a = object.get('indef') or object.get('spec') or 'a'
+        adj = str.join(', ', object.get('adjl', []))
+        return command.response('You don\'t see {} {} {} here.'.format(a, adj, n))
 
-@syntax ("put PORTABLE in CONTAINER")
-@alias  ("place")
-def put(command):
-    """
-    """
-    pass
+    command.source.inventory.append(o)
+    command.source.sidebar()
+    command.room.objects.remove(o)
+    command.to_source('A:You take %s.' % o.name)
+    command.to_room('A:%s takes %s.' % (command.source.name, o.name))
 
+@command ("drop", "leave")
+def drop(command, verb, object, prep, complement):
+    """
+    Put an object from the room.
+    """
+    # resolve objects
+    if complement:
+        return command.response('That doesn\'t make sense.')
 
-@syntax ("empty CONTAINER")
-def empty(command):
-    """
-    """
-    pass
+    elif prep:
+        return command.response('That doesn\'t make sense.')
 
+    elif object:
+        o = command.resolve(object, scope='I')
 
-@syntax ("wear I.EQUIPABLE")
-def wear(command):
-    """
-    """
-    pass
+    else:
+        return command.response('What do you want to get?')
 
+    if not o:
+        # resolution failed
+        n = object['noun']
+        a = object.get('indef') or object.get('spec') or 'a'
+        return command.response('You don\'t have {} {}.'.format(a, n))
 
-@syntax ("remove E.EQUIPABLE")
-@syntax ("remove PORTABLE from CONTAINER")
-def remove(command):
-    """
-    """
-    pass
+    command.source.inventory.remove(o)
+    command.source.sidebar()
+    command.room.objects.append(o)
+    command.to_source('A:You drop %s.' % o.name)
+    command.to_room('A:%s drop %s.' % (command.source.name, o.name))
 
 
-@syntax ("wield I.WEAPON")
-def wield(command):
-    """
-    """
-    pass
 
 
-@syntax ("unwield E.WEAPON", "remove")
-def unwield(command):
-    """
-    """
-    pass
 
 
-@syntax ("use USABLE")
-@syntax ("use USABLE [with] OBJECT")
-@syntax ("use OBJECT [with] USABLE")
-def use(command):
-    """
-    """
-    pass
+
+# @syntax ("throw I.PORTABLE [at] CHARACTER")
+# @syntax ("throw I.PORTABLE [to] DIRECTION")
+# @syntax ("throw I.PORTABLE [in] ENTERABLE")
+# @syntax ("throw I.PORTABLE out")
+# @syntax ("throw I.PORTABLE out [of] ENTERABLE")
+# # TODO. support for passing objects through windows,
+# # TODO. or other impassible objects
+# def throw(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
 
 
-@syntax ("open OPENABLE")
-def open(command):
-    """
-    """
-    pass
+# @syntax ("put PORTABLE in CONTAINER")
+# @alias  ("place")
+# def put(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
 
 
-@syntax ("close OPENABLE")
-def close(command):
-    """
-    """
-    pass
+# @syntax ("empty CONTAINER")
+# def empty(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
 
 
-@syntax ("give I.PORTABLE [to] CHARACTER")
-@syntax ("give CHARACTER I.PORTABLE")
-@alias  ("pass")
-def give(command):
-    """
-    """
-    pass
+# @syntax ("wear I.EQUIPABLE")
+# def wear(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
+
+
+# @syntax ("remove E.EQUIPABLE")
+# @syntax ("remove PORTABLE from CONTAINER")
+# def remove(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
+
+
+# @syntax ("wield I.WEAPON")
+# def wield(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
+
+
+# @syntax ("unwield E.WEAPON", "remove")
+# def unwield(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
+
+
+# @syntax ("use USABLE")
+# @syntax ("use USABLE [with] OBJECT")
+# @syntax ("use OBJECT [with] USABLE")
+# def use(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
+
+
+# @syntax ("open OPENABLE")
+# def open(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
+
+
+# @syntax ("close OPENABLE")
+# def close(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass
+
+
+# @syntax ("give I.PORTABLE [to] CHARACTER")
+# @syntax ("give CHARACTER I.PORTABLE")
+# @alias  ("pass")
+# def give(command, verb, object, prep, complement):
+#     """
+#     """
+#     pass

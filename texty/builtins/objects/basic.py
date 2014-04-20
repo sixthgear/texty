@@ -16,14 +16,14 @@ class Portable(BaseObject):
     weight = 1 # kg
 
 class Box(Portable, Container):
-    keywords = 'box'
+    nouns = 'box'
     icon = 'fa-briefcase'
 
 class Equipable(Portable):
     attributes = 'equipable'
 
 class Weapon(Equipable):
-    keywords = 'weapon'
+    nouns = 'weapon'
     attributes = 'wieldable'
     rate = 1 # per second
     range = 1 # feet
@@ -31,7 +31,7 @@ class Weapon(Equipable):
     icon = 'fa-magic'
 
 class RangedWeapon(Weapon):
-    keywords = 'gun'
+    nouns = 'gun'
     attributes = 'loadable'
     capacity = 10 # rounds
     range = 20 # feet
@@ -39,16 +39,16 @@ class RangedWeapon(Weapon):
         self.ammo = None
 
 class Rifle(RangedWeapon):
-    keywords = 'rifle'
+    nouns = 'rifle'
 
 class SubMachineGun(RangedWeapon):
-    keywords = 'smg machinegun'
+    nouns = 'smg machinegun'
 
 class Shotgun(RangedWeapon):
-    keywords = 'shotgun'
+    nouns = 'shotgun'
 
 class MeleeWeapon(Weapon):
-    keywords = 'melee'
+    nouns = 'melee'
     attributes = 'melee'
     rate = 1 # per second
     range = 1 # feet
@@ -56,7 +56,7 @@ class MeleeWeapon(Weapon):
     icon = 'fa-wrench'
 
 class Explosive(Portable):
-    keywords = 'explosive'
+    nouns = 'explosive'
     attributes = 'explosive'
     range = 1 # feet
     ordinance = 10 # tons
@@ -66,10 +66,10 @@ class Explosive(Portable):
     icon = 'fa-asterisk'
 
 class Grenade(Explosive):
-    keywords = 'grenade'
+    nouns = 'grenade'
 
 class Ammo(Portable):
-    keywords = 'ammo ammunition'
+    nouns = 'ammo ammunition'
     attributes = 'ammo'
     fits = () # tuple of weapons this ammo wil work with
     damage = 100 # per hit

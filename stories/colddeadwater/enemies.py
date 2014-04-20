@@ -4,7 +4,9 @@ import random
 class Zombie(Monster):
 
     name = 'a %s zombie'
-    keywords = 'zombie'
+    nouns = 'zombie'
+    adjectives = 'crumbling decaying disgusting fetid foul grotesque hideous horrible lumbering'
+    adjectives += 'mutilated overripe putrid rancid ravenous rotting shambling slobering'
 
     description = "Yet another member of the walking dead. At first you had trouble killing these creatures "
     description += "who so closely resembled your friends, your co-workers... your family. In time, "
@@ -22,7 +24,6 @@ class Zombie(Monster):
             'grotesque',
             'hideous',
             'horrible',
-            'lumbering',
             'lumbering',
             'mutilated',
             'overripe ',

@@ -4,9 +4,12 @@ import re
 
 class Map(object):
     """
-    Map
+    A Map is a simple graph of connected rooms. There is not a large reason at the moment
+    this could not be represeted by a simple dict instead.
     """
+
     def __init__(self):
+
         self.rooms = {}
 
     def load_data(self, map_file, room_file):

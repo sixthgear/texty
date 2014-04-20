@@ -1,30 +1,29 @@
 """
 Movement commands.
 """
+from texty.engine.command import command, syntax
 
-from texty.engine.command import syntax, alias
-from texty.util.searchdict import SearchDict
-
-DIRECTIONS = SearchDict({
-    'north': 'north',
-    'east': 'east',
-    'south': 'south',
-    'west': 'west',
-    'up': 'up',
-    'down': 'down'
-}, quiet=False)
-
-OPPOSITES = {
-    'north': 'to the south',
-    'east': 'to the west',
-    'south': 'to the north',
-    'west': 'to the east',
-    'up': 'below',
-    'down': 'above'
+DIRECTIONS = {
+    'north':    'north',
+    'east':     'east',
+    'south':    'south',
+    'west':     'west',
+    'up':       'up',
+    'down':     'down'
 }
 
-@syntax ("go [to] EXIT")
-def go(command):
+OPPOSITES = {
+    'north':    'to the south',
+    'east':     'to the west',
+    'south':    'to the north',
+    'west':     'to the east',
+    'up':       'below',
+    'down':     'above'
+}
+
+# @command ("go [to] EXIT")
+@command ("go", "walk")
+def go(command, verb, object, prep, complement):
 
     if len(command.arguments) == 0:
         return command.response('Go where?')
@@ -57,40 +56,40 @@ def go(command):
     else:
         return command.response('Can\'t go that way.')
 
-@syntax ("north")
-def north(command):
+@command ("north", "n")
+def north(command, verb, object, prep, complement):
     command.arguments = ['north']
-    return go(command)
+    return go(command, verb, object, prep, complement)
 
-@syntax ("south")
-def south(command):
+@command ("south", "s")
+def south(command, verb, object, prep, complement):
     command.arguments = ['south']
-    return go(command)
+    return go(command, verb, object, prep, complement)
 
-@syntax ("east")
-def east(command):
+@command ("east", "e")
+def east(command, verb, object, prep, complement):
     command.arguments = ['east']
-    return go(command)
+    return go(command, verb, object, prep, complement)
 
-@syntax ("west")
-def west(command):
+@command ("west", "w")
+def west(command, verb, object, prep, complement):
     command.arguments = ['west']
-    return go(command)
+    return go(command, verb, object, prep, complement)
 
-@syntax ("up")
-def up(command):
+@command ("up", "u")
+def up(command, verb, object, prep, complement):
     command.arguments = ['up']
-    return go(command)
+    return go(command, verb, object, prep, complement)
 
-@syntax ("down")
-def down(command):
+@command ("down", "d")
+def down(command, verb, object, prep, complement):
     command.arguments = ['down']
-    return go(command)
+    return go(command, verb, object, prep, complement)
 
-@syntax ("enter ENTERABLE")
-def enter(command):
+@command ("enter")
+def enter(command, verb, object, prep, complement):
     return None
 
-@syntax ("exit ENTERABLE")
-def exit(command):
+@command ("exit")
+def exit(command, verb, object, prep, complement):
     return None

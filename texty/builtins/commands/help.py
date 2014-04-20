@@ -2,12 +2,12 @@
 Help commands.
 """
 
-def help(command):
+def help(command, verb, object, prep, complement):
     """
     """
     pass
-        
-def commands(command):
+
+def commands(command, verb, object, prep, complement):
     """
     """
     pass

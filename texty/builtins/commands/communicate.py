@@ -1,14 +1,13 @@
 """
 Communication commands.
 """
+from texty.engine.command import command, syntax
 
-from texty.engine.command import syntax, alias
-
-@syntax ("say DIALOUGE...")
-@syntax ("say DIALOUGE... [to] CHARACTER")
-@syntax ("say [to] CHARACTER DIALOUGE...")
-@alias  ("shout", "ask", "tell", "ask", "\"")
-def say(command):
+# @syntax ("say DIALOUGE...")
+# @syntax ("say DIALOUGE... [to] CHARACTER")
+# @syntax ("say [to] CHARACTER DIALOUGE...")
+@command  ("say", "shout", "ask", "tell", "ask", "\"")
+def say(command, verb, object, prep, complement):
     """
     """
     if len(command.arguments) == 0:
@@ -19,28 +18,28 @@ def say(command):
     return
 
 
-def emote(command):
+def emote(command, verb, object, prep, complement):
     """
     """
     pass
 
-def follow(command):
+def follow(command, verb, object, prep, complement):
     """
     """
     pass
 
-def party(command):
+def party(command, verb, object, prep, complement):
     """
     party
     """
     pass
 
-def invite(command):
+def invite(command, verb, object, prep, complement):
     """
     """
     pass
 
-def join(command):
+def join(command, verb, object, prep, complement):
     """
     """
     pass
@@ -50,8 +49,8 @@ def join(command):
 @syntax ("trade [with,to] CHARACTER")
 @syntax ("trade I.PORTABLE...")
 @syntax ("trade I.PORTABLE... [with,to] CHARACTER")
-@alias  ("offer", "barter")
-def trade(command):
+@command  ("trade" ,"offer", "barter")
+def trade(command, verb, object, prep, complement):
     """
     """
     pass

@@ -30,12 +30,17 @@ class Player(Character):
         self.body = objectlist(self.__class__.body)
         self.status = 1
 
+    def on_connect(self): pass
+    def on_reconnect(self): pass
+    def on_disconnect(self): pass
+
     def do(self, command, echo=False):
         c = Command(source=self, command=command, status=self.status, echo=echo)
         c.run()
 
     def send(self, message):
-        self.connection.send(message)
+        if self.connection:
+            self.connection.send(message)
 
     def sidebar(self):
         """
@@ -69,7 +74,7 @@ class Player(Character):
                 'capacity': 0,
                 'amount': 0,
             },
-            'inventory': [{'type': x.keywords[0], 'name': x.shortname, 'description': x.description, 'icon': x.icon} for x in self.inventory],
+            'inventory': [{'type': '', 'name': x.shortname, 'description': x.description, 'icon': x.icon} for x in self.inventory],
 
         }
         self.send({'type': 'character', 'character': character})

@@ -1,10 +1,10 @@
 from texty.builtins.story import Story
 
-def hello(command):
+def hello(command, verb, object, prep, complement):
     Story.get().login_prompt(command.source)
     return
 
-def login(command):
+def login(command, verb, object, prep, complement):
     # TODO: perform authentication
     if len(command.arguments) == 0:
         command.to_source('Login as who?')

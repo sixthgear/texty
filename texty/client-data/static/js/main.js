@@ -24,6 +24,7 @@ function init() {
 
     // create global websocket
     var host = "ws://ironman.quitjobmakegames.com:4000/websocket";
+    var host = "ws://texty.local:4000/websocket";
     websocket = new WebSocket(host);
     websocket.onopen = function(evt) {
         // this.send('look');

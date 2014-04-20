@@ -1,9 +1,8 @@
-from texty.engine.command import syntax, alias
+from texty.engine.command import command, syntax
 from texty.builtins.story import Story
 
-
-@syntax ("wakeup")
-def wakeup(command):
+@command ("wakeup")
+def wakeup(command, verb, object, prep, complement):
 
     if not command.source.is_a('player'):
         return
@@ -27,8 +26,8 @@ def wakeup(command):
     p.send('I:"Bertram", you think to yourself. "I remember him."')
 
 
-@syntax ("combust")
-def combust(command):
+@command ("combust")
+def combust(command, verb, object, prep, complement):
 
     if not command.source.is_a('player'):
         return

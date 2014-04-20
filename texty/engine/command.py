@@ -1,5 +1,5 @@
 from texty.engine.parser import parser
-from texty.util.parsertools import Atom, Verb, Noun, List, Prep, prepositions
+# from texty.util.parsertools import Atom, Verb, Noun, List, Prep, prepositions
 import re
 
 class Command(object):
@@ -13,7 +13,7 @@ class Command(object):
         self.status = status
         self.should_echo = echo
         # parse command
-        self.callable, self.arguments = parser.parse(command, source)
+        self.callable, self.ast = parser.parse(command, source)
         self.do_next = []
 
     def run(self):
@@ -21,10 +21,14 @@ class Command(object):
         Execute the command.
         """
         self.echo()
+
         if not self.callable:
             return None
         # execute the callable
-        response = self.callable(self) or None
+
+        # self.to_source(self.callable.__name__ + ' ' + str.join(' ', self.arguments))
+        # return
+        response = self.callable(self, **self.ast) or None
         # flush the do_next queue and execute commands
         for command in self.do_next:
             self.source.do(command)
@@ -34,10 +38,10 @@ class Command(object):
         Echo the command back to the client
         """
         if self.should_echo:
-            if self.callable and self.callable.__name__ != 'error':
-                echo = self.callable.__name__
-            else:
-                echo = self.command
+            # if self.callable and self.callable.__name__ != 'error':
+            #     echo = self.callable.__name__
+            # else:
+            echo = self.command
             self.source.send({'type': 'command', 'command': echo})
 
     def response(self, message):
@@ -69,6 +73,73 @@ class Command(object):
         room.send(message, source=self.source)
 
 
+    def reject(self, message):
+        pass
+
+    def resolve(self, node, scope='ALL', attribute=None, container=None):
+        """
+        Given a node from the AST and optional scope paramaters, resolve the token
+        into an actual object.
+        """
+
+        compound_searches = {
+            'MY':   ('E', 'I', 'B'),             # search source equipment and inventory and body
+            'R':    ('C', 'O'),                  # search the room objects and characters
+            'ALL':  ('E', 'I', 'B', 'O', 'C'),
+        }
+
+        searches = {
+            'E':    self.source.equipment,
+            'I':    self.source.inventory,
+            'B':    self.source.body,
+            'C':    self.room.characters,
+            'O':    self.room.objects,
+        }
+
+        noun = node['noun']
+        adjectives = node.get('adjl') or []
+        ordinal = node.get('ord') or 1
+        quantifier = node.get('quant') or 1
+
+        if scope in compound_searches:
+            scopes = compound_searches[scope]
+        else:
+            scopes = scope.split()
+
+        for s in scopes:
+            result = searches[s].first(
+                query=noun,
+                adjectives=adjectives,
+                attribute=attribute,
+            )
+            if result:
+                break
+
+        return result
+
+
+# DECORATORS FOR COMMAND FUNCTIONS
+# --------------------------------
+
+class command(object):
+    """
+    A decorator for supplying command definitions and aliases
+    """
+    def __init__(self, *aliases):
+        self.aliases = aliases
+
+    def __call__(self, fn):
+
+        for a in self.aliases:
+            parser.register_command(fn, name=a)
+
+        def wrapper(command, *args, **kwargs):
+            return fn(command, *args, **kwargs)
+
+        wrapper.__name__ = fn.__name__
+        return wrapper
+
+
 class syntax(object):
     """
     A decorator for supplying a command definition
@@ -78,55 +149,14 @@ class syntax(object):
         """
         parse the syntax into grammar atoms. This only happens once when server is started.
         """
-        tokens = syntax.split()
-        if not tokens: return
-        self.atoms = [ Verb( tokens[0] ) ]
-
-        for t in tokens[1:]:
-            # optional checker
-            t, optional = re.subn(r'\[(.*)\]$', r'\1', t, 1)
-            optional = optional != 0
-
-            # preposition list
-            if t in prepositions:
-                self.atoms.append( Prep(t, optional) )
-                continue
-
-            # noun checker
-            m = re.match(r'([A-Z]+\.)?([A-Z]+)(\.\.\.)?$', t)
-            if m:
-                scope, attribute, multiple = m.groups()
-                if scope: scope = scope[:-1]
-                if multiple:
-                    atom = List(attribute, 1, 1, scope)
-                else:
-                    atom = Noun(attribute, 1, 1, scope)
-
-                self.atoms.append(atom)
-                continue
-
-        parser.register_syntax(self.atoms)
+        pass
 
     def __call__(self, fn):
         """
         parse to command to perform automatic lookups
         """
         parser.register_command(fn)
-        def wrapper(command):
-            return fn(command)
-        wrapper.__name__ = fn.__name__
-        return wrapper
-
-
-class alias(object):
-    """
-    A decorator for supplying an alias to an existing command definition
-    """
-    def __init__(self, *aliases):
-        pass
-
-    def __call__(self, fn):
-        def wrapper(command):
-            return fn(command)
+        def wrapper(command, *args, **kwargs):
+            return fn(command, *args, **kwargs)
         wrapper.__name__ = fn.__name__
         return wrapper

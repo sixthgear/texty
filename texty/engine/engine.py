@@ -15,6 +15,12 @@ class TextyEngine(object):
     The Texty Engine is a multiplayer text adventure server. It is fully
     pluggable, and features natural language parsing and an adaptive AI.
     """
+
+    options = {
+        # 1.5 seconds per update tick
+        'tick_length': 1500,
+    }
+
     def __init__(self, storyname=None):
         """
         Initialize TextyEngine.
@@ -31,17 +37,16 @@ class TextyEngine(object):
         # player dict holds all connected players
         self.players = {}
 
-        # ticks are periodic update intevals
-        self.tick_length = 1500
+        # ticks are periodic update intevals.
         self.tick = 0
-        self.timer = ioloop.PeriodicCallback(self.update, self.tick_length)
+        self.timer = ioloop.PeriodicCallback(self.update, self.options['tick_length'])
 
-        # server event handlers
+        # connect server event handlers
         self.server.on_connect = self.on_connect
         self.server.on_disconnect = self.on_disconnect
         self.server.on_read = self.on_read
 
-        # override the connection on_write handler so we can add <p>tags</p>
+        # conect server connection event handler
         server.Connection.on_write = self.on_write
 
         logging.info('')
@@ -63,9 +68,15 @@ class TextyEngine(object):
             logging.info('%03d:    %s', i, o)
 
         logging.info('')
-        logging.info('Keyword Table:')
+        logging.info('Noun Table:')
         logging.info('--------------')
-        for i, o in enumerate(parser.keyword_table):
+        for i, o in enumerate(parser.noun_table):
+            logging.info(o)
+
+        logging.info('')
+        logging.info('Adjective Table:')
+        logging.info('----------------')
+        for i, o in enumerate(parser.adjective_table):
             logging.info(o)
 
         logging.info('')
@@ -80,43 +91,58 @@ class TextyEngine(object):
         """
         Server reported a new connection.
         """
+        # log connection
         logging.info('New connection from %s:%s on connection %d.' % (
-            'ADDRESS', #connection.address[0],
-            'PORT', #connection.address[1],
-            connection.id
-        ))
-
+            'ADDRESS',
+            'PORT',
+            connection.id))
         # create a temporary player for this connection
-        p = characters.Player(name='Player-%d' % connection.id, connection=connection)
-
+        player = characters.Player(name='Player-%d' % connection.id, connection=connection)
         # assign it to the list
-        self.players[connection.id] = p
-
+        self.players[connection.id] = player
         # and notify the story
-        self.story.on_player_connect(p)
-
+        self.story.on_player_connect(player)
+        # notify the player
+        player.on_connect()
         # TODO: reconnect old players
+        # player.on_reconnect()
+
 
     def on_disconnect(self, connection):
         """
         Server reported a disconnection
         """
+        # log disconnection
         logging.info('Connection %d hungup.' % (connection.id))
-
+        player = self.players[connection.id]
+        # remove connection reference from player
+        player.connection = None
+        # notify the player
+        player.on_disconnect()
         # notify the story
-        self.story.on_player_disconnect(self.players[connection.id])
-
+        self.story.on_player_disconnect(player)
         # remove player from player list
+        # TODO: make sure that no rooms hold references to the player
+        # at this point
         del self.players[connection.id]
 
+
     def on_read(self, connection, data):
-        p = self.players[connection.id]
-        p.do(data, echo=True)
+        """
+        Read data from a player connection.
+        """
+        # dispatch command to player
+        player = self.players[connection.id]
+        logging.info('%s: %s' % (player.name, data))
+        player.do(data, echo=True)
+
 
     def on_write(self, data):
         """
         Hijack data and transform it into json messages for our custom client.
         """
+
+        # transform strings into JSON
         if isinstance(data, basestring):
             # broadcast
             if data.startswith('B:'):
@@ -146,10 +172,12 @@ class TextyEngine(object):
                     {'text': data}
                 ]})
 
+        # or encode dicts
         elif isinstance(data, dict):
             data = escape.json_encode(data)
 
         return data
+
 
     def run(self, address='127.0.0.1', port=4000):
         """
@@ -162,11 +190,21 @@ class TextyEngine(object):
         ioloop.IOLoop.instance().start()
         # NEVER REACHED
 
+
     def update(self):
+        """
+        Perform periodic game logic.
+        """
+        # increment counter
         self.tick += 1
-        self.story.update(self.tick)
         print (' [%04d] ...' % self.tick)
-        # self.server.broadcast(' >> tick %d' % self.tick)
+
+        # tick the story
+        self.story.update(self.tick)
+
+        # tick the combat
+        ####
+
 
     def shutdown(self):
         logging.info('Shutting down.')

@@ -1,15 +1,16 @@
 """
 Combat commands.
 """
-from texty.engine.command import syntax, alias
+from texty.engine.command import command, syntax
 from texty.builtins.objects import RangedWeapon, Ammo
 
-@syntax ("load")
-@syntax ("load I.AMMO")
-@syntax ("load MY.WEAPON")
-@syntax ("load I.AMMO [in] MY.WEAPON", "use, put")
-@syntax ("load MY.WEAPON [with] I.AMMO", "use")
-def load(command):
+# @syntax ("load")
+# @syntax ("load I.AMMO")
+# @syntax ("load MY.WEAPON")
+# @syntax ("load I.AMMO [in] MY.WEAPON", "use, put")
+# @syntax ("load MY.WEAPON [with] I.AMMO", "use")
+@command ("load")
+def load(command, verb, object, prep, complement):
     """
     Load a weapon with ammunition.
     """
@@ -36,55 +37,57 @@ def load(command):
 
 
 
-@syntax ("unload")
-@syntax ("unload MY.WEAPON")
-def unload(command):
+
+# @syntax ("unload MY.WEAPON")
+@command ("unload")
+def unload(command, verb, object, prep, complement):
     """
     Remove ammunition from a weapon.
     """
     pass
 
 
-@syntax ("pull [PIN] [from] I.EXPLOSIVE")
-def pull(command):
+# @syntax ("pull [PIN] [from] I.EXPLOSIVE")
+@command ("pull")
+def pull(command, verb, object, prep, complement):
     """
     Pulls a pin from an explosive.
     """
     pass
 
 
-@syntax ("kill")
-@syntax ("kill CHARACTER")
-@syntax ("kill CHARACTER [with] MY.WEAPON")
-@alias  ("attack")
-def kill(command):
+# @syntax ("kill")
+# @syntax ("kill CHARACTER")
+# @syntax ("kill CHARACTER [with] MY.WEAPON")
+@command  ("kill", "attack")
+def kill(command, verb, object, prep, complement):
     """
     """
     pass
 
 
-@syntax ("shoot [at] R.OBJECT")
-@alias  ("fire")
-def kill(command):
+# @syntax ("shoot [at] R.OBJECT")
+@command  ("shoot", "fire")
+def kill(command, verb, object, prep, complement):
     """
     Shoot a ranged weapon.
     """
     pass
 
 
-@syntax ("hit R.OBJECT")
-@alias  ("bash", "swing", "jab", "slash")
-def hit(command):
+# @syntax ("hit R.OBJECT")
+@command  ("hit", "bash", "swing", "jab", "slash")
+def hit(command, verb, object, prep, complement):
     """
     Use a melee weapon
     """
     pass
 
 
-@syntax ("flee")
-@syntax ("flee [to] EXIT")
-@alias  ("run [away]")
-def flee(command):
+# @syntax ("flee")
+# @syntax ("flee [to] EXIT")
+@command  ("flee run")
+def flee(command, verb, object, prep, complement):
     """
     """
     pass

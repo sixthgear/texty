@@ -7,7 +7,7 @@ class Monster(Character):
     """
     Base Enemy class
     """
-    keywords = 'enemy'
+    nouns = 'enemy'
     attributes = 'character'
     hitpoints = 100
 
