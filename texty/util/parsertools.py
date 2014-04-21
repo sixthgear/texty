@@ -1,20 +1,37 @@
-vocab = lambda v: set([x.strip() for x in v.split('|')])
+
 class VOCAB:
-    prepositions = vocab('at | in | inside | out | outside | into | on | to | upon | with | from | using')
-    indefinites = vocab('a | an | any')
-    specifics = vocab('my | the')
-    quantifiers  = vocab('1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10')
-    quantifiers |= vocab('one | two | three | fouth | five | six | seven | eight | nine | ten ')
-    quantifiers |= vocab('all | both | each | every | everything')
-    ordinals  = vocab('first | second | third | fourth | fifth | sixth | seventh | eighth | nineth | ninth | tenth | last')
-    ordinals |= vocab('1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10th')
-    superlatives = vocab('best | worst | closest | furthest | biggest | largest | smallest | dumbest')
+
+    v = lambda v: set([x.strip() for x in v.split('|')])
+
+    # special set that is updated as players enter or leave the game
+    characters      =   set()
+
+    # filled in dyamically
+    nouns           =   set()
+    adjectives      =   set()
+    superlatives    =   v('best | worst | closest | furthest | biggest | largest | smallest | dumbest')
+
+    prepositions    =   v('above | against | ahead | around | at | away | back | behind | below')
+    prepositions   |=   v('down | for | from | in | inside | into | off | on | out | outside | over')
+    prepositions   |=   v('through | to | toward | under | up | upon | using | with')
+
+    indefinites     =   v('a | an | any')
+    specifics       =   v('my | the')
+
+    quantifiers     =   v('1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10')
+    quantifiers    |=   v('one | two | three | fouth | five | six | seven | eight | nine | ten ')
+    quantifiers    |=   v('all | both | each | every | everything')
+
+    ordinals        =   v('first | second | third | fourth | fifth | sixth')
+    ordinals       |=   v('seventh | eighth | nineth | ninth | tenth | last')
+    ordinals       |=   v('1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10th')
+
 
 class TOK(object):
     """
     Data type for a processed symbol from the command.
     """
-    UNKNOWN,  VERB,  NOUN,  ADJ,  SUP,  OF,  PREP,  INDEF, SPEC,  QUANT, ORD,  COMMA,  AND,  END = range(14)
+    UNKNOWN, VERB, NOUN, ADJ, SUP, OF, PREP, INDEF, SPEC, QUANT, ORD, COMMA, AND, END = range(14)
 
     DESC = {
         UNKNOWN:    'UNKNOWN',

@@ -3,6 +3,8 @@ Interaction commands.
 """
 from texty.engine.command import command, syntax
 
+@syntax  ("get R.PORTABLE")
+@syntax  ("get PORTABLE in|from|inside CONTAINER")
 @command ("get", "pick up", "grab", "take")
 def get(command, verb, object, prep, complement):
     """
@@ -45,6 +47,8 @@ def get(command, verb, object, prep, complement):
     command.to_source('A:You take %s.' % o.name)
     command.to_room('A:%s takes %s.' % (command.source.name, o.name))
 
+@syntax  ("drop I.PORTABLE")
+@syntax  ("drop I.PORTABLE [on] FLOOR", "put | throw")
 @command ("drop", "leave")
 def drop(command, verb, object, prep, complement):
     """
