@@ -2,14 +2,21 @@
 Basic Objects to inherit from.
 """
 from texty.builtins.objects import BaseObject
+from texty.util.objectlist import ObjectList
 
 class Container(BaseObject):
     """
     This object can hold other objects.
     """
     attributes = 'container'
+
     def __init__(self):
         self.contents = ObjectList()
+
+    def serialize_contents(self):
+        items = [{'icon': o.icon, 'text': o.name + ' is inside.'} for o in self.contents]
+        return({'type': 'object', 'items': items})
+
 
 class Portable(BaseObject):
     attributes = 'portable'
@@ -21,6 +28,7 @@ class Box(Portable, Container):
 
 class Equipable(Portable):
     attributes = 'equipable'
+    fits = ()
 
 class Weapon(Equipable):
     nouns = 'weapon'
@@ -48,7 +56,7 @@ class Shotgun(RangedWeapon):
     nouns = 'shotgun'
 
 class MeleeWeapon(Weapon):
-    nouns = 'melee'
+    # nouns = 'melee'
     attributes = 'melee'
     rate = 1 # per second
     range = 1 # feet
@@ -69,12 +77,25 @@ class Grenade(Explosive):
     nouns = 'grenade'
 
 class Ammo(Portable):
+
     nouns = 'ammo ammunition'
     attributes = 'ammo'
+    item = 'ammo'
     fits = () # tuple of weapons this ammo wil work with
     damage = 100 # per hit
     capacity = 10 # rounds
     icon = 'fa-tablet'
+
+    @property
+    def contents(self):
+        a = BaseObject()
+        s = 's' if self.capacity != 1 else ''
+        a.name = '{n} {item}{s}'.format(n=self.capacity, item=self.item, s=s)
+        return [ a ]
+
+    def serialize_contents(self):
+        items = [{'icon': o.icon, 'text': '%s are inside.' % o.name} for o in self.contents]
+        return({'type': 'object', 'items': items})
 
     def __init__(self):
         self.capacity = self.__class__.capacity

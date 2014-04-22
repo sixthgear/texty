@@ -14,6 +14,7 @@ def load(command, verb, object, prep, complement):
     """
     Load a weapon with ammunition.
     """
+    raise SyntaxError('Quit breaking things kaptin.')
 
     weapon, ammo = command.arguments[:2]
 
@@ -44,6 +45,7 @@ def unload(command, verb, object, prep, complement):
     """
     Remove ammunition from a weapon.
     """
+    raise SyntaxError('Quit breaking things kaptin.')
     pass
 
 
@@ -63,6 +65,7 @@ def pull(command, verb, object, prep, complement):
 def kill(command, verb, object, prep, complement):
     """
     """
+    raise SyntaxError('Quit breaking things kaptin.')
     pass
 
 

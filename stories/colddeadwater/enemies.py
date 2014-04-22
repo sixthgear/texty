@@ -26,7 +26,7 @@ class Zombie(Monster):
             'horrible',
             'lumbering',
             'mutilated',
-            'overripe ',
+            'overripe',
             'putrid ',
             'rancid',
             'ravenous',

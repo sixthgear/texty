@@ -1,19 +1,27 @@
+v = lambda x: set([x.strip() for x in x.split('|')])
 
 class VOCAB:
-
-    v = lambda v: set([x.strip() for x in v.split('|')])
-
+    """
+    Dictionary of accepted symbols.
+    """
     # special set that is updated as players enter or leave the game
     characters      =   set()
 
     # filled in dyamically
+    commands        =   v('say | yell | shout | tell')
+    verbs           =   set()
     nouns           =   set()
     adjectives      =   set()
+    phrasals        =   set() # v('at | up | down | away | on | off ')
+
+    # set of reserved nouns
+    reserved        =   v('me | room | myself | self | floor | ground')
+
     superlatives    =   v('best | worst | closest | furthest | biggest | largest | smallest | dumbest')
 
-    prepositions    =   v('above | against | ahead | around | at | away | back | behind | below')
-    prepositions   |=   v('down | for | from | in | inside | into | off | on | out | outside | over')
-    prepositions   |=   v('through | to | toward | under | up | upon | using | with')
+    prepositions    =   v('above | against | ahead | around | at | behind | below')
+    prepositions   |=   v('for | from | in | inside | into | off | on | out | outside | over')
+    prepositions   |=   v('through | to | toward | under | upon | using | with')
 
     indefinites     =   v('a | an | any')
     specifics       =   v('my | the')
@@ -26,12 +34,16 @@ class VOCAB:
     ordinals       |=   v('seventh | eighth | nineth | ninth | tenth | last')
     ordinals       |=   v('1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10th')
 
+    tranformations = {
+        'my self':      'myself'
+    }
+
 
 class TOK(object):
     """
     Data type for a processed symbol from the command.
     """
-    UNKNOWN, VERB, NOUN, ADJ, SUP, OF, PREP, INDEF, SPEC, QUANT, ORD, COMMA, AND, END = range(14)
+    UNKNOWN, VERB, NOUN, ADJ, SUP, OF, PHRASAL, PREP, INDEF, SPEC, QUANT, ORD, COMMA, AND, STRING, END = range(16)
 
     DESC = {
         UNKNOWN:    'UNKNOWN',
@@ -40,6 +52,7 @@ class TOK(object):
         ADJ:        'ADJ',
         SUP:        'SUP',
         OF:         'OF',
+        PHRASAL:    'PHRASAL',
         PREP:       'PREP',
         INDEF:      'INDEF',
         SPEC:       'SPEC',
@@ -47,6 +60,7 @@ class TOK(object):
         ORD:        'ORD',
         COMMA:      'COMMA',
         AND:        'AND',
+        STRING:     'STRING',
         END:        'END',
     }
 

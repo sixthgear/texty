@@ -1,7 +1,6 @@
 from texty.util.parsertools import TOK, VOCAB
 import collections
 import re
-from pprint import pprint
 
 class Parser(object):
 
@@ -10,8 +9,6 @@ class Parser(object):
     function call for a command. Returns a command object and a list of arguments
     to pass to the function.
     """
-
-    OOPS = 'You don\'t know how to "%s".',
 
     def __init__(self):
         """
@@ -26,18 +23,20 @@ class Parser(object):
         self.syntax_table = list()
         # the object table is a simple list of all objects registered in the game.
         self.object_table = list()
-        # the noun table is a set of all object noun registered in the game.
-        self.noun_table = set()
-        # the adjective table is a set of all object adjective registered in the game.
-        self.adjective_table = set()
-        # the atrribute table is a set of all object attributes registered in the game.
-        self.attribute_table = set()
 
     def register_command(self, fn, name=None):
         """
         Register a command in the command table.
         """
         name = name or fn.__name__
+        words = name.lower().split()
+        if len(words) == 1:
+            VOCAB.verbs.add(words[0])
+        elif len(words) == 2:
+            VOCAB.verbs.add(words[0])
+            VOCAB.phrasals.add(words[1])
+        else:
+            raise SyntaxError('Commands must be one or two words.')
         self.command_table[name.lower()] = fn
 
     def register_syntax(self, syntax):
@@ -55,9 +54,9 @@ class Parser(object):
         into their respective sets.
         """
         self.object_table.append(obj)
-        self.noun_table.update(obj.nouns)
-        self.adjective_table.update(obj.adjectives)
-        self.attribute_table.update(obj.attributes)
+        VOCAB.nouns.update(obj.nouns)
+        VOCAB.adjectives.update(obj.adjectives)
+        # self.attribute_table.update(obj.attributes)
 
     def lex(self, command):
         """
@@ -66,8 +65,32 @@ class Parser(object):
         """
         tokens = []
 
+        class M:
+            REGULAR             =   0
+            VERB                =   1
+            STRING              =   2
+
+        mode = M.REGULAR
+
         # process each raw symbol in turn
         for t in re.findall('\w+|[.,]', command.lower()):
+
+            # check for an optional phrasal preposition or particle following a verb
+            if mode == M.VERB:
+                mode = M.REGULAR
+                if t in VOCAB.phrasals:
+                    tokens.append(TOK(TOK.PHRASAL, t))
+                    continue
+
+            # the say command, among others, will accept a literal string of unparsed characters
+            # so once we are in string mode, keep consuming string tokens until the end
+            if mode == M.STRING:
+                if tokens[-1:] and tokens[-1].typ == TOK.STRING:
+                    tokens[-1] += ' %s' % t
+                else:
+                    tokens.append(TOK(TOK.STRING, t))
+                continue
+
             if t == ',':
                 tokens.append(TOK(TOK.COMMA, t))
             elif t == 'of':
@@ -76,9 +99,16 @@ class Parser(object):
                 tokens.append(TOK(TOK.END, t))
             elif t == 'and':
                 tokens.append(TOK(TOK.AND, t))
-            elif t in self.command_table:
+
+            elif t in VOCAB.commands:
                 tokens.append(TOK(TOK.VERB, t))
-            elif t in self.adjective_table:
+                mode = M.STRING
+
+            elif t in VOCAB.verbs:
+                tokens.append(TOK(TOK.VERB, t))
+                mode = M.VERB
+
+            elif t in VOCAB.adjectives:
                 tokens.append(TOK(TOK.ADJ, t))
             elif t in VOCAB.superlatives:
                 tokens.append(TOK(TOK.SUP, t))
@@ -92,10 +122,17 @@ class Parser(object):
                 tokens.append(TOK(TOK.QUANT, t))
             elif t in VOCAB.ordinals:
                 tokens.append(TOK(TOK.ORD, t))
-            elif t in self.noun_table:
+
+            elif t in VOCAB.characters:
                 tokens.append(TOK(TOK.NOUN, t))
-            elif t.endswith('s') and t[:-1] in self.noun_table:
+            elif t in VOCAB.reserved:
+                tokens.append(TOK(TOK.NOUN, t))
+            elif t in VOCAB.nouns:
+                tokens.append(TOK(TOK.NOUN, t))
+            elif t.endswith('s') and t[:-1] in VOCAB.nouns:
                 tokens.append(TOK(TOK.NOUN, t[:-1]))
+
+
             else:
                 tokens.append(TOK(TOK.UNKNOWN, t))
 
@@ -106,9 +143,9 @@ class Parser(object):
         # return token stream
         return tokens
 
-    def parse(self, command, source):
+    def parse(self, command):
         """
-        Parse that fucker.
+        Parse that fucker. Return an AST that can be used directly by commands.
         """
         # lex the command
         tokens = self.lex(command)
@@ -143,6 +180,7 @@ class Parser(object):
             """
             if accept(rule): # self.token and
                 return True
+
             if callable(rule):
                 raise SyntaxError('Expected %s, got %s.' % (rule.__name__.upper(), self.token))
             else:
@@ -150,38 +188,35 @@ class Parser(object):
 
         def parse_command():
             """
-            Command -> verb end
-            Command -> verb prep NounPhrase end
-            Command -> verb prep NounPhrase prep NounPhrase end
-            Command -> verb NounPhrase end
-            Command -> verb NounPhrase prep NounPhrase end
+            Command ->  verb end
+            Command ->  verb string end
+            Command ->  verb prep NounPhrase end
+            Command ->  verb NounPhrase end
+            Command ->  verb NounPhrase prep NounPhrase end
             """
             cc = {
                 'verb':                     None,
-                'verb-prep':                None,
                 'object':                   None,
                 'prep':                     None,
                 'complement':               None,
             }
 
-            if expect(TOK.VERB):
+            if expect(verb):
                 cc['verb']                  = self.stack.pop()
 
                 if accept(TOK.END):
                     return cc
 
-                if accept(TOK.PREP) and expect(nounphrase):
+                if accept(TOK.STRING) and expect(TOK.END):
+                    _                       = self.stack.pop()
+                    cc['string']            = self.stack.pop()
+                    return cc
+
+                if accept(TOK.PREP) and expect(nounphrase) and expect(TOK.END):
+                    _                       = self.stack.pop()
                     cc['object']            = self.stack.pop()
-                    cc['verb-prep']         = self.stack.pop()
-
-                    if accept(TOK.END):
-                        return cc
-
-                    if expect(TOK.PREP) and expect(nounphrase) and expect(TOK.END):
-                        _                   = self.stack.pop()
-                        cc['complement']    = self.stack.pop()
-                        cc['prep']          = self.stack.pop()
-                        return cc
+                    cc['prep']              = self.stack.pop()
+                    return cc
 
                 if expect(nounphrase):
                     cc['object']            = self.stack.pop()
@@ -195,6 +230,22 @@ class Parser(object):
                         cc['prep']          = self.stack.pop()
                         return cc
 
+        def verb():
+            """
+            Verb -> verb
+            Verb -> verb phrasal
+            """
+            if accept(TOK.VERB):
+                verb                        = self.stack.pop()
+
+                if accept(TOK.PHRASAL):
+                    verb             += ' ' + self.stack.pop()
+                    return True, verb
+
+                return True, verb
+
+            return False, None
+
 
         def nounphrase():
             """
@@ -203,7 +254,14 @@ class Parser(object):
             NounPhrase -> AdjList Noun
             NounPhrase -> Noun
             """
-            np = {}
+            np = {
+                'noun':                     None,
+                'adjl':                     [],
+                'indef':                    None,
+                'spec':                     None,
+                'quant':                    None,
+                'ord':                      None,
+            }
 
             if accept(determiner):
                 np.update(self.stack.pop())
@@ -289,43 +347,48 @@ class Parser(object):
             Determiner  ->  spec ord | spec quant | quant spec
             Determiner  ->  ord of spec | quant of spec
             """
-            d = {}
+            d = {
+                'indef': None,
+                'spec': None,
+                'quant': None,
+                'ord': None,
+            }
 
             if accept(TOK.INDEF):
-                d['indef']                      = self.stack.pop()
+                d['indef']                  = self.stack.pop()
                 return True, d
 
             if accept(TOK.SPEC):
-                d['spec']                       = self.stack.pop()
+                d['spec']                   = self.stack.pop()
 
                 if accept(TOK.ORD):
-                    d['ord']                    = self.stack.pop()
+                    d['ord']                = self.stack.pop()
                     return True, d
 
                 if accept(TOK.QUANT):
-                    d['quant']                  = self.stack.pop()
+                    d['quant']              = self.stack.pop()
                     return True, d
 
                 return True, d
 
             if accept(TOK.QUANT):
-                d['quant']                      = self.stack.pop()
+                d['quant']                  = self.stack.pop()
 
                 if accept(TOK.SPEC):
-                    d['spec']                   = self.stack.pop()
+                    d['spec']               = self.stack.pop()
                     return True, d
 
                 if accept(TOK.OF) and expect(TOK.SPEC):
-                    d['spec']                   = self.stack.pop()
+                    d['spec']               = self.stack.pop()
                     return True, d
 
                 return True, d
 
             if accept(TOK.ORD):
-                d['ord'] = self.stack.pop()
+                d['ord']                    = self.stack.pop()
 
                 if accept(TOK.OF) and expect(TOK.SPEC):
-                    d['spec']                   = self.stack.pop()
+                    d['spec']               = self.stack.pop()
                     return True, d
 
                 return True, d
@@ -334,9 +397,8 @@ class Parser(object):
 
         try:
             command_ast = parse_command()
-            command_fn = self.command_table[tokens[0].val]
+            command_fn = self.command_table[command_ast['verb']]
             return command_fn, command_ast
-            # pprint(command_ast, indent=4, width=4)
 
         except SyntaxError, e:
             return self.error, {'message': e.message} #[verb]

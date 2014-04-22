@@ -16,12 +16,27 @@ class PRONOUN:
         None:   ['they' 'them', 'their','themself'],     # 'theirs',
     }
 
-def pn_sub(char): return PRONOUN_TABLE[char.gender][PRONOUN.SUB]
-def pn_obj(char): return PRONOUN_TABLE[char.gender][PRONOUN.OBJ]
-def pn_pos(char): return PRONOUN_TABLE[char.gender][PRONOUN.POS]
-def pn_ref(char): return PRONOUN_TABLE[char.gender][PRONOUN.REF]
+def pn_sub(char): return PRONOUN.TABLE[char.gender][PRONOUN.SUB]
+def pn_obj(char): return PRONOUN.TABLE[char.gender][PRONOUN.OBJ]
+def pn_pos(char): return PRONOUN.TABLE[char.gender][PRONOUN.POS]
+def pn_ref(char): return PRONOUN.TABLE[char.gender][PRONOUN.REF]
 def pn_plural_s(char): return '' if char.gender == 'Y' else 's'
 def pn_plural_es(char): return '' if char.gender == 'Y' else 'es'
+
+def resolve_single(string, subject, source=None):
+    """
+    """
+    return string.format(
+        name = subject.name,
+        names = subject.name + "'s",
+        he = pn_sub(subject),
+        him = pn_obj(subject),
+        his = pn_pos(subject),
+        hisself = pn_ref(subject),
+        s = pn_plural_s(subject),
+        es = pn_plural_es(subject)
+    )
+
 
 def resolve_singular(string, subject, object, source=None):
     """
@@ -29,9 +44,9 @@ def resolve_singular(string, subject, object, source=None):
     {sub} swing{sub_s} {sub_his} {weapon} wildly at {objs} head.
     The {weapon} misses {obj_his} head by mere inches. {obj} step{obj_s} back in surprise.
     """
-    if subject == source:
+    # if subject == source:
         # replace all subject lookups to 2nd person counterpart
-    if object == source:
+    # if object == source:
         # replace all object lookups to 2nd person counterpart
 
     return string.format(
@@ -39,10 +54,10 @@ def resolve_singular(string, subject, object, source=None):
         subs = subject.name + "'s",
         sub_he = pn_sub(subject),
         sub_him = pn_obj(subject),
-        sub_his = pn_pos(subject,
+        sub_his = pn_pos(subject),
         sub_hisself = pn_ref(subject),
         sub_s = pn_plural_s(subject),
-        sub_s = pn_plural_es(subject),
+        sub_es = pn_plural_es(subject),
 
         obj = object.name,
         objs = object.name + "'s",
@@ -51,5 +66,5 @@ def resolve_singular(string, subject, object, source=None):
         obj_his = pn_pos(object),
         obj_hisself = pn_ref(object),
         obj_s = pn_plural_s(object),
-        sub_es = pn_plural_es(object),
+        obj_es = pn_plural_es(object),
     )

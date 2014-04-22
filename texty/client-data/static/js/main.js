@@ -2,12 +2,12 @@ requirejs.config({
     appDir: ".",
     baseUrl: "static/js",
     paths: {
-        'jquery': ['http://code.jquery.com/jquery-1.11.0.min'],
-        'bootstrap': ['http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min'],
-        'underscore': ['http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min'],
-        'underscore-string': ['http://cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min'],
-        'handlebars': ['http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars'],
-        'handlebars-truncate': ['handlebars-truncate-helper']
+        'jquery': ['http://code.jquery.com/jquery-1.11.0.min', 'lib/jquery-1.11.0.min'],
+        'bootstrap': ['http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min', 'lib/bootstrap.min'],
+        'underscore': ['http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min', 'lib/underscore-min'],
+        'underscore-string': ['http://cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min', 'lib/underscore.string.min'],
+        'handlebars': ['http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars', 'lib/handlebars'],
+        'handlebars-truncate': ['lib/handlebars-truncate-helper']
     },
     shim: {
         'handlebars-truncate' : ['handlebars'],
@@ -23,8 +23,9 @@ require(['jquery', 'bootstrap', 'handlebars', 'handlebars-truncate', 'sampledata
 function init() {
 
     // create global websocket
-    var host = "ws://ironman.quitjobmakegames.com:4000/websocket";
-    var host = "ws://texty.local:4000/websocket";
+    // var host = "ws://ironman.quitjobmakegames.com:4000/websocket";
+    // var host = "ws://texty.local:4000/websocket";
+    var host =  "ws://" + window.location.hostname + ":4000/websocket";
     websocket = new WebSocket(host);
     websocket.onopen = function(evt) {
         // this.send('look');

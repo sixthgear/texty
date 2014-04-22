@@ -1,6 +1,6 @@
 from texty.builtins.characters import Character
-from texty.builtins.characters.body import *
-from texty.engine.command import Command
+from texty.builtins.characters import body
+from texty.builtins.characters.body import PARTS
 from texty.util import objectlist
 from collections import OrderedDict
 
@@ -9,36 +9,22 @@ class Player(Character):
 
     attributes = 'player'
 
-    body = [
-        Head(),
-        Torso(),
-        LeftArm(),
-        LeftHand(),
-        LeftLeg(),
-        LeftFoot(),
-        RightArm(),
-        RightHand(),
-        RightLeg(),
-        RightFoot(),
-    ]
-
     def __init__(self, name, room=None, connection=None):
         super(Player, self).__init__(name, room)
         # players are associated with a server connection
         self.connection = connection
         self.occupation = 'Former Computer Programmer'
-        self.body = objectlist(self.__class__.body)
+        # self.body = objectlist(self.__class__.body)
         self.status = 1
 
     def on_connect(self): pass
     def on_reconnect(self): pass
     def on_disconnect(self): pass
 
-    def do(self, command, echo=False):
-        c = Command(source=self, command=command, status=self.status, echo=echo)
-        c.run()
-
     def send(self, message):
+        """
+        Write a message to this player
+        """
         if self.connection:
             self.connection.send(message)
 
@@ -46,6 +32,19 @@ class Player(Character):
         """
         send sidebar update
         """
+
+        inv = []
+
+        for x in self.inventory:
+            inv.append({
+                'type': '',
+                'name': x.shortname,
+                'description': x.description,
+                'icon': x.icon
+            })
+
+        eq = OrderedDict((PARTS.DESC[x], y.shortname if y else '-') for x,y in self.eq_map.iteritems())
+
         character = {
             'name': self.name,
             'occupation': self.occupation,
@@ -53,28 +52,14 @@ class Player(Character):
                 {'level': 'high', 'text': 'You feel cold,', 'icon': 'fa-frown-o'},
                 {'level': 'med', 'text': 'You feel hungry.', 'icon': 'fa-cutlery'}
             ],
-            'equipment': OrderedDict((
-                ('Body', 'Muddy T-shirt'),
-                ('Legs', 'Jeans'),
-                ('Feet', 'Sneakers'),
-                ('Head', '-'),
-                ('Arms', '-'),
-                ('Neck', '-'),
-                ('Waist', '-'),
-                ('Shoulders', '-'),
-                ('L. Finger', '-'),
-                ('R. Finger', '-'),
-            )),
-            'hands': OrderedDict((
-                ('L. Hand', {'name': '-'}),
-                ('R. Hand', {'name': '-'}),
-            )),
+            'equipment': eq,
+            # 'hands': hands,
             'pack': {
                 'name': '-',
                 'capacity': 0,
                 'amount': 0,
             },
-            'inventory': [{'type': '', 'name': x.shortname, 'description': x.description, 'icon': x.icon} for x in self.inventory],
+            'inventory': inv,
 
         }
         self.send({'type': 'character', 'character': character})

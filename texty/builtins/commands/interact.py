@@ -1,83 +1,258 @@
 """
 Interaction commands.
 """
-from texty.engine.command import command, syntax
+from texty.engine.command import SCOPE, command, syntax
 
-@syntax  ("get R.PORTABLE")
-@syntax  ("get PORTABLE in|from|inside CONTAINER")
 @command ("get", "pick up", "grab", "take")
-def get(command, verb, object, prep, complement):
+def get(cmd, verb, object, prep, complement):
     """
-    Get an object from the room.
+    Get an object from the room or other container.
     """
-    # resolve objects
-    if complement:
-        if prep in ['in' 'from', 'inside']:
-            # container
-            c = command.resolve(complement)
-            if not c:
-                a = complement.get('indef') or complement.get('spec') or 'a'
-                return command.response('You don\'t see {} {} here.'.format(a, complement['noun']))
-            if not hasattr(c, 'contents'):
-                return command.response('{} is not a container.'.format(a, complement['noun']))
-            # get something from container
-            o = command.resolve(object, container=c, scope='IN')
-        else:
-            return command.response('You can\'t %s %s <b>%s</b> something.' % (verb, object['noun'], prep))
+    # command form D. VERB OBJECT PREP COMPLEMENT.
+    if verb and object and complement and prep in ('from', 'in', 'inside'):
+        valid, msg, x, y = cmd.rules(
+            (lambda _,y: y.resolve(),                    "You don't see {y} here."),
+            (lambda _,y: y.is_a('container'),            "{y} is not a container."),
+            (lambda x,y: x.resolve(SCOPE.IN, y),         "You don't see {x} in {y}."),
+            (lambda x,y: x.is_a('portable'),             "You can't remove {x} from {y}."),
+            (lambda x,y: x.allows('get'),                "You can't remove {x} from {y}. {R}"),
+            (lambda x,y: y.allows('get'),                "You can't remove {x} from {y}. {R}"),
+            (lambda x,y: True,                           "You get {x} from {y}.")
+        )
+        # get an object from within another object
+        y.obj.contents.remove(x.obj)
+        cmd.source.inventory.append(x.obj)
+        cmd.source.sidebar()
+        cmd.to_room('A:{} takes {} from {}.'.format(cmd.source.name, str(x), str(y)))
+        return cmd.response(msg)
 
-    elif prep:
-        return command.response('That doesn\'t make sense.')
+    # command form C. VERB PREP OBJECT.
+    elif verb and object and prep:
+        raise SyntaxError("That doesn't make sense.")
 
-    elif object:
-        o = command.resolve(object, scope='O')
+    # command form B. VERB OBJECT.
+    elif verb and object:
+        valid, msg, x, _ = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.ROOM),         "You don't see {x} here."),
+            (lambda x,_: x.is_a('portable'),            "{x} is far too heavy to move."),
+            (lambda x,_: x.allows('get'),               "You can't take {x}. {R}"),
+            (lambda x,_: True,                          "You take {x}."),
+        )
+        # get an object from the room
+        cmd.room.objects.remove(x.obj)
+        cmd.source.inventory.append(x.obj)
+        cmd.source.sidebar()
+        cmd.to_room('A:{} takes {}.'.format(cmd.source.name, str(x)))
+        return cmd.response(msg)
 
-    else:
-        return command.response('What do you want to get?')
+    # command form A. VERB.
+    elif verb:
+        raise SyntaxError("What would you like to get?")
 
-    if not o:
-        # resolution failed
-        n = object['noun']
-        a = object.get('indef') or object.get('spec') or 'a'
-        adj = str.join(', ', object.get('adjl', []))
-        return command.response('You don\'t see {} {} {} here.'.format(a, adj, n))
+    raise SyntaxError("That doesn't make ANY sense.")
 
-    command.source.inventory.append(o)
-    command.source.sidebar()
-    command.room.objects.remove(o)
-    command.to_source('A:You take %s.' % o.name)
-    command.to_room('A:%s takes %s.' % (command.source.name, o.name))
 
-@syntax  ("drop I.PORTABLE")
-@syntax  ("drop I.PORTABLE [on] FLOOR", "put | throw")
-@command ("drop", "leave")
-def drop(command, verb, object, prep, complement):
+@command ("drop", "leave", "throw away")
+def drop(cmd, verb, object, prep, complement):
     """
-    Put an object from the room.
+    Put an object in the room.
     """
-    # resolve objects
-    if complement:
-        return command.response('That doesn\'t make sense.')
+    # command form D. VERB OBJECT PREP COMPLEMENT.
+    if verb and object and complement:
+        raise SyntaxError("That doesn't make sense.")
 
-    elif prep:
-        return command.response('That doesn\'t make sense.')
+    # command form C. VERB PREP OBJECT.
+    elif verb and object and prep:
+        raise SyntaxError("That doesn't make sense.")
 
-    elif object:
-        o = command.resolve(object, scope='I')
+    # command form B. VERB OBJECT.
+    elif verb and object:
+        valid, msg, x, _ = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.INV),          "You don't have {x}."),
+            (lambda x,_: x.is_a('portable'),            "You can't drop {x}."),
+            (lambda x,_: x.allows('drop'),              "You can't drop {x}. {R}"),
+            (lambda x,_: True,                          "You drop {x}.")
+        )
+        # drop an object in the room
+        cmd.source.inventory.remove(x.obj)
+        cmd.room.objects.append(x.obj)
+        cmd.source.sidebar()
+        cmd.to_room('A:{} drops {}.'.format(cmd.source.name, str(x)))
+        return cmd.response(msg)
 
-    else:
-        return command.response('What do you want to get?')
+    # command form A. VERB.
+    elif verb:
+        raise SyntaxError("What would you like to drop?")
 
-    if not o:
-        # resolution failed
-        n = object['noun']
-        a = object.get('indef') or object.get('spec') or 'a'
-        return command.response('You don\'t have {} {}.'.format(a, n))
+    raise SyntaxError("That doesn't make ANY sense.")
 
-    command.source.inventory.remove(o)
-    command.source.sidebar()
-    command.room.objects.append(o)
-    command.to_source('A:You drop %s.' % o.name)
-    command.to_room('A:%s drop %s.' % (command.source.name, o.name))
+
+@command ("put", "place")
+def put(cmd, verb, object, prep, complement):
+    """
+    put PORTABLE in CONTAINER
+    """
+    # command form D. VERB OBJECT PREP COMPLEMENT.
+    # command form B. VERB OBJECT.
+    if (verb and object and complement and prep in ('in', 'into', 'inside')) or (verb and object and not prep):
+        valid, msg, x, y = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
+            (lambda x,_: x.is_a('portable'),             "You can't move {x}."),
+            (lambda x,y: y.provided(),                   "What do you want to put {x} in?"),
+            (lambda _,y: y.resolve(),                    "You don't see {y}."),
+            (lambda _,y: y.is_a('container'),            "{y} is not a container."),
+            (lambda x,y: x.allows('put'),                "You can't put {x} into {y}. {R}"),
+            (lambda x,y: y.allows('put'),                "You can't put {x} into {y}. {R}"),
+            (lambda x,y: True,                           "You put {x} into {y}.")
+        )
+        cmd.source.inventory.remove(x.obj)
+        y.obj.contents.append(x.obj)
+        cmd.source.sidebar()
+        cmd.to_room('A:{} puts {} into {}.'.format(cmd.source.name, str(x), str(y)))
+        return cmd.response(msg)
+
+    # command form C. VERB PREP OBJECT.
+    elif verb and object and prep:
+        raise SyntaxError("That doesn't make sense.")
+
+    # command form A. VERB.
+    elif verb:
+        raise SyntaxError("What would you like to put?")
+
+    raise SyntaxError("That doesn't make ANY sense.")
+
+
+@command ("give")
+def give(cmd, verb, object, prep, complement):
+    """
+    give PORTABLE to CHARACTER
+    """
+    # command form D. VERB OBJECT PREP COMPLEMENT.
+    # command form B. VERB OBJECT.
+    if (verb and object and complement and prep in ('to')) or (verb and object and not prep):
+        valid, msg, x, y = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
+            (lambda x,_: x.is_a('portable'),             "You can't move {x}."),
+            (lambda x,y: y.provided(),                   "Who do you want to give {x} to?"),
+            (lambda _,y: y.resolve(SCOPE.ROOM),          "You don't see {y} around."),
+            (lambda _,y: y.is_a('character'),            "{y} is not a person."),
+            (lambda x,y: x.allows('give'),               "You can't give {x} to {y}. {R}"),
+            (lambda x,y: y.allows('give'),               "You can't give {x} to {y}. {R}"),
+            (lambda x,y: True,                           "You give {x} to {y}.")
+        )
+        cmd.source.inventory.remove(x.obj)
+        y.obj.inventory.append(x.obj)
+        cmd.source.sidebar()
+        if hasattr(y.obj, 'sidebar'):
+            y.obj.sidebar()
+        cmd.to_room('A:{} gives {} to {}.'.format(cmd.source.name, str(x), str(y)))
+        return cmd.response(msg)
+
+    # command form C. VERB PREP OBJECT.
+    elif verb and object and prep:
+        raise SyntaxError("That doesn't make sense.")
+
+    # command form A. VERB.
+    elif verb:
+        raise SyntaxError("What would you like to give?")
+
+    raise SyntaxError("That doesn't make ANY sense.")
+
+
+
+# @syntax ("wear I.EQUIPABLE")
+@command ("equip", "eq", "wear", "wield", "put on")
+def equip(cmd, verb, object, prep, complement):
+    """
+    Equip things like a boss.
+    """
+    # command form D. VERB OBJECT PREP COMPLEMENT.
+
+    if (verb and object and complement and prep in ('on', 'in')):
+        valid, msg, x, y = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
+            (lambda x,_: x.is_a('equipable'),            "You can't equip {x}."),
+            (lambda _,y: y.resolve(SCOPE.BODY),          "You don't have {y}."),
+            (lambda _,y: y.is_a('bodypart'),             "{y} is not a body part."),
+            (lambda x,y: x.allows('equip'),              "You can't equip {x} on your {y}. {R}"),
+            (lambda x,y: y.allows('equip'),              "You can't equip {x} on your {y}. {R}"),
+            (lambda x,y: True,                           "You equip {x} on your {y}.")
+        )
+        cmd.source.equip(x.obj, parts=[y.obj.typ])
+        cmd.source.inventory.remove(x.obj)
+        cmd.source.sidebar()
+        cmd.to_room('A:{} equips {} on {}.'.format(cmd.source.name, str(x), str(y)))
+        return cmd.response(msg)
+
+    # command form C. VERB PREP OBJECT.
+    elif verb and object and prep:
+        raise SyntaxError("That doesn't make sense.")
+
+    # command form B. VERB OBJECT.
+    if (verb and object):
+        valid, msg, x, _ = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
+            (lambda x,_: x.is_a('equipable'),            "You can't equip {x}."),
+            (lambda x,_: x.allows('equip'),              "You can't equip {x}. {R}"),
+            (lambda x,_: True,                           "You equip {x}.")
+        )
+        cmd.source.equip(x.obj)
+        cmd.source.inventory.remove(x.obj)
+        cmd.source.sidebar()
+        cmd.to_room('A:{} equips {}.'.format(cmd.source.name, str(x)))
+        return cmd.response(msg)
+
+    # command form A. VERB.
+    elif verb:
+        raise SyntaxError("What would you like to {}?".format(verb))
+
+    raise SyntaxError("That doesn't make ANY sense.")
+
+
+@command ("unequip", "take off", "unwield", "remove")
+def unequip(cmd, verb, object, prep, complement):
+    """
+    Equip things like a boss.
+    """
+    # command form D. VERB OBJECT PREP COMPLEMENT.
+
+    if (verb and object and complement and prep in ('from', 'in')):
+        valid, msg, x, y = cmd.rules(
+            (lambda _,y: y.resolve(SCOPE.BODY),          "You don't have {y}."),
+            (lambda _,y: y.is_a('bodypart'),             "{y} is not a body part."),
+            (lambda x,_: x.resolve(SCOPE.EQUIP),         "You aren't wearing {x}."),
+            (lambda x,y: x.allows('unequip'),            "You can't remove {x} from your {y}. {R}"),
+            (lambda x,y: y.allows('unequip'),            "You can't remove {x} from your {y}. {R}"),
+            (lambda x,y: True,                           "You remove {x} from your {y}.")
+        )
+        cmd.source.unequip(x.obj, parts=[y.obj.typ])
+        cmd.source.inventory.append(x.obj)
+        cmd.source.sidebar()
+        cmd.to_room('A:{} removes {} from {}.'.format(cmd.source.name, str(x), str(y)))
+        return cmd.response(msg)
+
+    # command form C. VERB PREP OBJECT.
+    elif verb and object and prep:
+        raise SyntaxError("That doesn't make sense.")
+
+    # command form B. VERB OBJECT.
+    if (verb and object):
+        valid, msg, x, _ = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.EQUIP),         "You aren't wearing {x}."),
+            (lambda x,_: x.allows('unequip'),            "You can't remove {x}. {R}"),
+            (lambda x,_: True,                           "You remove {x}.")
+        )
+        cmd.source.unequip(x.obj)
+        cmd.source.inventory.append(x.obj)
+        cmd.source.sidebar()
+        cmd.to_room('A:{} removes {}.'.format(cmd.source.name, str(x)))
+        return cmd.response(msg)
+
+    # command form A. VERB.
+    elif verb:
+        raise SyntaxError("What would you like to {}?".format(verb))
+
+    raise SyntaxError("That doesn't make ANY sense.")
 
 
 
@@ -97,50 +272,11 @@ def drop(command, verb, object, prep, complement):
 #     """
 #     pass
 
-
-# @syntax ("put PORTABLE in CONTAINER")
-# @alias  ("place")
-# def put(command, verb, object, prep, complement):
-#     """
-#     """
-#     pass
-
-
 # @syntax ("empty CONTAINER")
 # def empty(command, verb, object, prep, complement):
 #     """
 #     """
 #     pass
-
-
-# @syntax ("wear I.EQUIPABLE")
-# def wear(command, verb, object, prep, complement):
-#     """
-#     """
-#     pass
-
-
-# @syntax ("remove E.EQUIPABLE")
-# @syntax ("remove PORTABLE from CONTAINER")
-# def remove(command, verb, object, prep, complement):
-#     """
-#     """
-#     pass
-
-
-# @syntax ("wield I.WEAPON")
-# def wield(command, verb, object, prep, complement):
-#     """
-#     """
-#     pass
-
-
-# @syntax ("unwield E.WEAPON", "remove")
-# def unwield(command, verb, object, prep, complement):
-#     """
-#     """
-#     pass
-
 
 # @syntax ("use USABLE")
 # @syntax ("use USABLE [with] OBJECT")
@@ -149,7 +285,6 @@ def drop(command, verb, object, prep, complement):
 #     """
 #     """
 #     pass
-
 
 # @syntax ("open OPENABLE")
 # def open(command, verb, object, prep, complement):
@@ -172,3 +307,7 @@ def drop(command, verb, object, prep, complement):
 #     """
 #     """
 #     pass
+
+
+# @syntax  ("drop I.PORTABLE")
+# @syntax  ("drop I.PORTABLE [on] FLOOR", "put | throw")

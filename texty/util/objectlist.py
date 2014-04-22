@@ -54,14 +54,9 @@ class ObjectList(list):
         """
         def search_objects(i):
 
-            found_noun = False
-            if query:
-                for n in i.nouns:
-                    if n.startswith(query):
-                        found_noun = True
-                        break
-                if not found_noun:
-                    return False
+            # found_noun = False
+            if query and query not in i.nouns:
+                return False
 
             # print adjectives, i.adjectives
             if adjectives and not set(adjectives).issubset(i.adjectives):
@@ -76,6 +71,9 @@ class ObjectList(list):
             return True
 
         return filter(search_objects, self)
+
+    def __add__(self, rhs):
+        return ObjectList(list.__add__(self, rhs))
 
     def append(self, value):
         # TODO: make sure objects has keyword attribute

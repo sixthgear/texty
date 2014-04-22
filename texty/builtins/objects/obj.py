@@ -19,9 +19,9 @@ class MetaObject(type):
 
         # Split nouns string into a list
         if attrs.has_key('nouns'):
-            attrs['nouns'] = attrs['nouns'].split()
+            attrs['nouns'] = set(attrs['nouns'].split())
         else:
-            attrs['nouns'] = []
+            attrs['nouns'] = set()
 
         # Split adjectives string into a set
         if attrs.has_key('adjectives'):
@@ -39,13 +39,20 @@ class MetaObject(type):
         # Combine attributes from parent classes
         for b in bases:
             if hasattr(b, 'nouns'):
-                attrs['nouns'].extend(b.nouns)
+                attrs['nouns'].update(b.nouns)
 
             if hasattr(b, 'attributes'):
                 attrs['attributes'].update(b.attributes)
 
             if hasattr(b, 'adjectives'):
                 attrs['adjectives'].update(b.adjectives)
+
+        # use docstring for description if none defined
+        if attrs.get('__doc__') and (not attrs.get('description') or not attrs.get('name')):
+            doc = attrs.get('__doc__').strip().split('---')
+            attrs['name'] = doc[0].strip()
+            attrs['description'] = str.join('', doc[1:]).strip()
+
 
         # Create the class and add it to the registry
         # TODO: don't add abstract clases to the registry!
@@ -65,7 +72,7 @@ class BaseObject(object):
     description = 'This is a nice object.'
     icon = 'fa-briefcase'
 
-    nouns = []
+    nouns = set()
     attributes = set(['object'])
     adjectives = set()
 
@@ -73,9 +80,15 @@ class BaseObject(object):
         return '<%s:%s>' % (self.__class__.__name__, self.name)
 
     def is_a(self, attr):
-        return attr in self.attributes
+        attrs = set(attr.split())
+        return attrs.issubset(self.attributes)
+
+    def is_any(self, attr):
+        attrs = set(attr.split())
+        return len(attrs & self.attributes) > 0
+
+    def allows(self, verbs):
+        return True
 
     def serialize(self):
         return {'icon': self.icon, 'text': '<b>%s</b> is here.' % self.name}
-
-

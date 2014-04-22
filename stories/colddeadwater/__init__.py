@@ -1,5 +1,7 @@
+from texty.util import english
 from texty.util.files import construct_name, construct_occupation
 from texty.builtins.story import Story
+
 from colddeadwater.objects import *
 from colddeadwater import commands
 from colddeadwater import characters
@@ -49,8 +51,13 @@ class ColdDeadWater(Story):
         characters.Tank().move_to(self.map.rooms['A4'])
 
         # distribute starting area equipment
-        for o in [Radio, Model70, MP5, BoxRifleCartridges, Magazine9mm, Magazine9mm, Crowbar ]:
+        for o in [Radio, Model70, MP5, BoxRifleCartridges, Magazine9mm, Magazine9mm, Crowbar]:
             self.starting_room.objects.append(o())
+
+        crate = Crate()
+        crate.contents += [PowerMoves(), PowerMoves(), PowerMoves(), PowerMoves(), PowerMoves(), PowerMoves()]
+
+        self.starting_room.objects.append(crate)
 
         for o in [objects.Frag(), objects.Frag()]:
             self.map.rooms['A4'].objects.append(o)
@@ -62,6 +69,31 @@ class ColdDeadWater(Story):
                 z = enemies.Zombie()
                 z.move_to(room)
 
+
+        for i in range(200):
+            room = random.choice(self.map.rooms.values())
+            if room.id.startswith('A'):
+                i = random.choice((
+                    ClifBar, ClifBar, ClifBar, ClifBar, ClifBar,
+                    VibramFivefinger,
+                    LeatherBoots, LeatherBoots, LeatherBoots,
+                    MotorcycleHelmet, MotorcycleHelmet,
+                    Tshirt, Tshirt, Tshirt,
+                    RippedJeans, RippedJeans, RippedJeans,
+                    CivilWarTrenchcoat,
+                    BoxRifleCartridges, BoxRifleCartridges, BoxRifleCartridges, BoxRifleCartridges,
+                    Model70,
+                    MP5,
+                    Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm,
+                    Radio,
+                    Frag, Frag,
+                    Crowbar))()
+                room.objects.append(i)
+
+        for room in self.map.rooms.values():
+            room.objects.sort(key=lambda i: i.icon)
+
+
     def on_player_connect(self, player):
         """
         Start a player
@@ -70,10 +102,18 @@ class ColdDeadWater(Story):
         player.gender = random.choice(['M', 'F'])
         player.name = construct_name(player.gender)
         player.occupation = construct_occupation()
+        player.nouns.update(set(player.name.lower().split()))
+        player.description = english.resolve_single(player.__class__.description, player)
 
         player.do('wakeup')
-        player.inventory += [PowerMoves(), objects.Frag(), MP5()]
+        # player.inventory += [PowerMoves(), objects.Frag()]
+        # player.equip(RippedJeans())
+        # player.equip(Tshirt())
+        # player.equip(MP5())
+
         player.sidebar()
+
+        return player
 
     def on_player_disconnect(self, player):
 

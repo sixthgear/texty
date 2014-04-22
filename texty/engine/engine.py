@@ -3,6 +3,8 @@ from tornado import escape
 
 from texty.engine import server
 from texty.engine.parser import parser
+from texty.util.parsertools import VOCAB
+
 from texty.builtins import commands
 from texty.builtins import characters
 from texty.builtins import story
@@ -70,21 +72,27 @@ class TextyEngine(object):
         logging.info('')
         logging.info('Noun Table:')
         logging.info('--------------')
-        for i, o in enumerate(parser.noun_table):
+        for i, o in enumerate(VOCAB.nouns):
             logging.info(o)
 
         logging.info('')
         logging.info('Adjective Table:')
         logging.info('----------------')
-        for i, o in enumerate(parser.adjective_table):
+        for i, o in enumerate(VOCAB.adjectives):
             logging.info(o)
 
         logging.info('')
-        logging.info('Attribute Table:')
+        logging.info('Verb Table:')
         logging.info('----------------')
-        for i, o in enumerate(parser.attribute_table):
+        for i, o in enumerate(VOCAB.verbs):
             logging.info(o)
-        logging.info('')
+
+        # logging.info('')
+        # logging.info('Attribute Table:')
+        # logging.info('----------------')
+        # for i, o in enumerate(parser.attribute_table):
+        #     logging.info(o)
+        # logging.info('')
 
 
     def on_connect(self, connection):
@@ -96,14 +104,24 @@ class TextyEngine(object):
             'ADDRESS',
             'PORT',
             connection.id))
-        # create a temporary player for this connection
+
+        # create a player for this connection
         player = characters.Player(name='Player-%d' % connection.id, connection=connection)
+
+        # and notify the story
+        player = self.story.on_player_connect(player)
+
         # assign it to the list
         self.players[connection.id] = player
-        # and notify the story
-        self.story.on_player_connect(player)
+
+        # add players nouns to the vocab
+        VOCAB.characters.update(player.nouns)
+
         # notify the player
         player.on_connect()
+
+
+
         # TODO: reconnect old players
         # player.on_reconnect()
 
@@ -121,6 +139,10 @@ class TextyEngine(object):
         player.on_disconnect()
         # notify the story
         self.story.on_player_disconnect(player)
+
+        # remove players first name to the vocab
+        # VOCAB.characters -= player.nouns
+
         # remove player from player list
         # TODO: make sure that no rooms hold references to the player
         # at this point

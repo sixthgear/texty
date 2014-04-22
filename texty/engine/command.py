@@ -1,34 +1,114 @@
+from texty.builtins.objects import obj
 from texty.engine.parser import parser
-# from texty.util.parsertools import Atom, Verb, Noun, List, Prep, prepositions
+from texty.util.parsertools import VOCAB, v
+from collections import namedtuple
+from pprint import pprint
 import re
+
+class SCOPE:
+
+    EQUIP, INV, BODY, OBJ, CHAR, IN, HAS, ANY, ROOM = range(9)
+
+class ObjectASTProxy(object):
+    """
+    Proxy Object that allows commands to refer to the same object both before resolution (when it a set
+    of descriptions from the AST) and after is has been resolved into a real-world object.
+    """
+    def __init__(self, ast_node, command):
+        self.command = command
+        self.ast_node = ast_node
+
+        self.scope = None
+        self.container = None
+        self.obj = None
+
+    def provided(self):
+        return self.ast_node != None
+
+    def resolve(self, scope=SCOPE.ANY, target=None):
+        if not self.ast_node:
+            raise Exception('No AST node provided for ObjectASTProxy.', str(self))
+        if target:
+            target = target.obj
+
+        result = self.command.resolve(self.ast_node, scope=scope, target=target)
+
+        self.obj = result[0]
+        self.scope = result[1]
+        self.container = result[2]
+
+        return self.obj != None
+
+    def is_resolved(self):
+        if not self.obj:
+            raise Exception('AST node {} has not been resolved.', str(self))
+        return True
+
+    def is_a(self, what):
+        self.is_resolved()
+        return self.obj.is_a(what)
+
+    def is_any(self, what):
+        self.is_resolved()
+        return self.obj.is_any(what)
+
+    def allows(self, what):
+        self.is_resolved()
+        return self.obj.allows(what)
+
+    def __str__(self):
+        if self.obj:
+            return self.obj.name
+        elif self.ast_node:
+            desc = {
+                'detr': 'a', # {indef}{spec} {quant}{ord}'.format(**self.ast_node),
+                'adjs': str.join(', ', self.ast_node.get('adjl')),
+                'noun': self.ast_node.get('noun')
+            }
+            return '{detr} {adjs} {noun}'.format(**desc)
+        else:
+            return ''
+
 
 class Command(object):
     """
-    Command objects are passed to each command function to provide scope references
+    Command objects are passed to each command function. They serve to provide a point of
+    reference to the command function about the source of the command and other important aspects
+    of the game state.
+
+    TODO: this should give a reference to the Map object somehow.
     """
-    def __init__(self, source, command, room=None, status=1, echo=True):
+
+    def __init__(self, source, command, room=None, echo=True):
         self.source = source
         self.command = command
         self.room = room or source.room
-        self.status = status
         self.should_echo = echo
-        # parse command
-        self.callable, self.ast = parser.parse(command, source)
         self.do_next = []
 
     def run(self):
         """
         Execute the command.
         """
+        # echo command to terminal
         self.echo()
+        # parse command
+        fn, ast = parser.parse(self.command)
+        pprint(ast, indent=4, width=4)
+        # save reference to ast to use in helper funcions
+        self.fn = fn
+        self.ast = ast
 
-        if not self.callable:
+        if not fn:
             return None
-        # execute the callable
 
-        # self.to_source(self.callable.__name__ + ' ' + str.join(' ', self.arguments))
-        # return
-        response = self.callable(self, **self.ast) or None
+        # TODO: perform noun preresolution from syntax table
+        # execute the callable
+        try:
+            response = fn(self, **ast) or None
+        except SyntaxError, e:
+            return self.response(e.message)
+
         # flush the do_next queue and execute commands
         for command in self.do_next:
             self.source.do(command)
@@ -38,9 +118,6 @@ class Command(object):
         Echo the command back to the client
         """
         if self.should_echo:
-            # if self.callable and self.callable.__name__ != 'error':
-            #     echo = self.callable.__name__
-            # else:
             echo = self.command
             self.source.send({'type': 'command', 'command': echo})
 
@@ -53,7 +130,8 @@ class Command(object):
 
     def enqueue(self, command):
         """
-        Enqueue follow-up commands to execute next
+        Enqueue follow-up commands to execute next.
+        TODO: these should perhaps be scheduled to respect tick fairness.
         """
         self.do_next.append(command)
 
@@ -72,50 +150,88 @@ class Command(object):
             return
         room.send(message, source=self.source)
 
+    def rules(self, *rules):
+        """
+        Apply dem rules.
+        """
+        # make proxy objects to pass back and forth
+        x = ObjectASTProxy(self.ast.get('object'), command=self)
+        y = ObjectASTProxy(self.ast.get('complement'), command=self)
 
-    def reject(self, message):
-        pass
+        # iterate rules
+        message = None
+        for rule, m in rules:
+            # rule failed
+            out = rule(x, y)
+            message = m.format(x=str(x), y=str(y), R=out)
+            if not out:
+                raise SyntaxError(message)
 
-    def resolve(self, node, scope='ALL', attribute=None, container=None):
+        # send out final message as a response,
+        # then yield control back to command function with resolved objects
+        return True, message, x, y
+
+
+    def resolve(self, node, scope=SCOPE.ANY, attr=None, target=None):
         """
         Given a node from the AST and optional scope paramaters, resolve the token
         into an actual object.
         """
 
-        compound_searches = {
-            'MY':   ('E', 'I', 'B'),             # search source equipment and inventory and body
-            'R':    ('C', 'O'),                  # search the room objects and characters
-            'ALL':  ('E', 'I', 'B', 'O', 'C'),
+        compound_scopes = {
+            SCOPE.HAS:      [SCOPE.EQUIP, SCOPE.INV, SCOPE.BODY],
+            SCOPE.ROOM:     [SCOPE.OBJ, SCOPE.CHAR],
+            SCOPE.ANY:      [SCOPE.EQUIP, SCOPE.INV, SCOPE.BODY, SCOPE.OBJ, SCOPE.CHAR],
         }
 
-        searches = {
-            'E':    self.source.equipment,
-            'I':    self.source.inventory,
-            'B':    self.source.body,
-            'C':    self.room.characters,
-            'O':    self.room.objects,
-        }
+        if not target:
+            target = self.source
 
-        noun = node['noun']
-        adjectives = node.get('adjl') or []
-        ordinal = node.get('ord') or 1
-        quantifier = node.get('quant') or 1
+        noun = node.get('noun')
+        adjs = node.get('adjl')
+        # search each scope
+        for s in (compound_scopes.get(scope) or [scope]):
+            if s == SCOPE.IN:
+                source = target.contents
+            elif s == SCOPE.EQUIP:
+                source = target.equipment
+            elif s == SCOPE.INV:
+                source = target.inventory
+            elif s == SCOPE.BODY:
+                source = target.body
+            elif s == SCOPE.OBJ:
+                source = self.room.objects
+            elif s == SCOPE.CHAR:
+                source = self.room.characters
+            else:
+                source = None
 
-        if scope in compound_searches:
-            scopes = compound_searches[scope]
-        else:
-            scopes = scope.split()
-
-        for s in scopes:
-            result = searches[s].first(
-                query=noun,
-                adjectives=adjectives,
-                attribute=attribute,
-            )
+            result = source.first(noun, adjectives=adjs, attribute=attr)
+            # return the resolved object and the scope it was found in
             if result:
-                break
+                return (result, s, source)
 
-        return result
+        return (None, scope, None)
+
+    def expect_obj(self, obj):
+
+        if not obj:
+            n = self.ast.get('object').get('noun')
+            adj = str.join(', ', self.ast.get('object').get('adjl'))
+            raise SyntaxError('You don\'t see a {} {} here.'.format(adj, n))
+        return obj
+
+
+    def expect(self, prep=None):
+
+        preps = v(prep)
+        if not self.ast.get('prep') in preps:
+            verb = self.ast.get('verb')
+            prep = self.ast.get('prep')
+            obj = self.ast.get('object').get('noun')
+            response = str.format('You can\'t {} {} a {}.', verb, prep, obj)
+            raise SyntaxError(response)
+        return True
 
 
 # DECORATORS FOR COMMAND FUNCTIONS
@@ -126,6 +242,7 @@ class command(object):
     A decorator for supplying command definitions and aliases
     """
     def __init__(self, *aliases):
+
         self.aliases = aliases
 
     def __call__(self, fn):
@@ -156,7 +273,9 @@ class syntax(object):
         parse to command to perform automatic lookups
         """
         parser.register_command(fn)
+
         def wrapper(command, *args, **kwargs):
             return fn(command, *args, **kwargs)
+
         wrapper.__name__ = fn.__name__
         return wrapper

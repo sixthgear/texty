@@ -8,7 +8,6 @@ def wakeup(command, verb, object, prep, complement):
         return
 
     p = command.source
-    p.status = 1
     p.move_to(Story.get().starting_room)
 
     command.to_room(
