@@ -37,6 +37,7 @@ class ColdDeadWater(Story):
             room.objects = []
 
         self.initialize()
+
         for p in players:
             p.send('A:Game is resetting.')
             p.move_to(self.starting_room)
@@ -70,7 +71,7 @@ class ColdDeadWater(Story):
                 z.move_to(room)
 
 
-        for i in range(200):
+        for i in range(400):
             room = random.choice(self.map.rooms.values())
             if room.id.startswith('A'):
                 i = random.choice((
