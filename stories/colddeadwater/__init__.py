@@ -92,7 +92,7 @@ class ColdDeadWater(Story):
                 room.objects.append(i)
 
         for room in self.map.rooms.values():
-            room.objects.sort(key=lambda i: i.icon)
+            room.objects.sort(key=lambda i: (i.icon, i.shortname))
 
 
     def on_player_connect(self, player):
