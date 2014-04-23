@@ -111,8 +111,12 @@ class MUD(object):
         data = data[:100]
         # remove all but whitelisted characters
         data = re.sub('[^\w\d\-\?,.!:; ]', '', data)
-        # fire event
-        self.on_read(connection, data)
+
+        data = data.strip()
+
+        if data:
+            # fire event
+            self.on_read(connection, data)
 
 
     def broadcast(self, message, exclude=None):

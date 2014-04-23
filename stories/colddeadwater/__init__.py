@@ -52,16 +52,22 @@ class ColdDeadWater(Story):
         characters.Tank().move_to(self.map.rooms['A4'])
 
         # distribute starting area equipment
-        for o in [Radio, Model70, MP5, BoxRifleCartridges, Magazine9mm, Magazine9mm, Crowbar]:
-            self.starting_room.objects.append(o())
+        self.starting_room.objects += [
+            Radio(),
+            Model70(),
+            MP5(),
+            BoxRifleCartridges(),
+            Magazine9mm(),
+            Magazine9mm(),
+            Crowbar(),
+            Crate(),
+        ]
 
-        crate = Crate()
-        crate.contents += [PowerMoves(), PowerMoves(), PowerMoves(), PowerMoves(), PowerMoves(), PowerMoves()]
+        self.map.rooms['A4'].objects += [
+            Frag(),
+            Frag(),
+        ]
 
-        self.starting_room.objects.append(crate)
-
-        for o in [objects.Frag(), objects.Frag()]:
-            self.map.rooms['A4'].objects.append(o)
 
         # distribute zombies
         for i in range(100):
@@ -85,7 +91,8 @@ class ColdDeadWater(Story):
                     BoxRifleCartridges, BoxRifleCartridges, BoxRifleCartridges, BoxRifleCartridges,
                     Model70,
                     MP5,
-                    Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm,
+                    Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm,
+                    Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm,
                     Radio,
                     Frag, Frag,
                     Crowbar))()

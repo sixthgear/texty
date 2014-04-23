@@ -113,17 +113,7 @@ class PowerMoves(Portable):
     def use(self, command):
         pass
 
-class Crate(Box):
-    """
-    a shockingly generic crate
-    ---
-    This is your standard videogame crate. Shockingly so. The texture looks really flat and it\'s
-    just sitting there looking really generic and stuff.
-    """
-    shortname = 'Crate'
-    adjectives = 'shockingly generic'
-    nouns = 'crate'
-    icon = 'fa-dropbox'
+
 
 class Tshirt(Equipable):
     """
@@ -217,5 +207,15 @@ class ClifBar(Portable):
     nouns = 'bar'
     icon = 'fa-cutlery'
 
-
-
+class Crate(Box):
+    """
+    a shockingly generic crate
+    ---
+    This is your standard videogame crate. Shockingly so. The texture looks really flat and it\'s
+    just sitting there looking really generic and stuff.
+    """
+    shortname = 'Crate'
+    adjectives = 'shockingly generic'
+    nouns = 'crate'
+    icon = 'fa-dropbox'
+    contents = [PowerMoves] * 10 + [ClifBar] * 2

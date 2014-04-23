@@ -11,7 +11,7 @@ class Container(BaseObject):
     attributes = 'container'
 
     def __init__(self):
-        self.contents = ObjectList()
+        self.contents = ObjectList([x() for x in self.__class__.contents])
 
     def serialize_contents(self):
         items = [{'icon': o.icon, 'text': o.name + ' is inside.'} for o in self.contents]

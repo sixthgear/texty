@@ -5,7 +5,7 @@ class Zombie(Monster):
 
     name = 'a %s zombie'
     nouns = 'zombie'
-    adjectives = 'crumbling decaying disgusting fetid foul grotesque hideous horrible lumbering'
+    adjectives = 'crumbling decaying disgusting fetid foul grotesque hideous horrible lumbering '
     adjectives += 'mutilated overripe putrid rancid ravenous rotting shambling slobering'
 
     description = "Yet another member of the walking dead. At first you had trouble killing these creatures "
@@ -14,26 +14,7 @@ class Zombie(Monster):
     description += "loved ones, no matter how much they look alike. Kill them all."
 
     def __init__(self):
-
-        adjective = (
-            'crumbling',
-            'decaying',
-            'disgusting',
-            'fetid',
-            'foul',
-            'grotesque',
-            'hideous',
-            'horrible',
-            'lumbering',
-            'mutilated',
-            'overripe',
-            'putrid ',
-            'rancid',
-            'ravenous',
-            'rotting',
-            'shambling',
-            'slobering',
-        )
-
-        super(Zombie, self).__init__(self.__class__.name % random.choice(adjective))
+        adjs = random.sample(self.adjectives, 1)
+        super(Zombie, self).__init__(self.__class__.name % str.join(', ', adjs))
+        self.adjectives = adjs
 
