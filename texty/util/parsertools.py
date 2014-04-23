@@ -1,3 +1,5 @@
+from texty.util.enums import TOK
+
 v = lambda x: set([x.strip() for x in x.split('|')])
 
 class VOCAB:
@@ -39,30 +41,10 @@ class VOCAB:
     }
 
 
-class TOK(object):
+class Token(object):
     """
     Data type for a processed symbol from the command.
     """
-    UNKNOWN, VERB, NOUN, ADJ, SUP, OF, PHRASAL, PREP, INDEF, SPEC, QUANT, ORD, COMMA, AND, STRING, END = range(16)
-
-    DESC = {
-        UNKNOWN:    'UNKNOWN',
-        VERB:       'VERB',
-        NOUN:       'NOUN',
-        ADJ:        'ADJ',
-        SUP:        'SUP',
-        OF:         'OF',
-        PHRASAL:    'PHRASAL',
-        PREP:       'PREP',
-        INDEF:      'INDEF',
-        SPEC:       'SPEC',
-        QUANT:      'QUANT',
-        ORD:        'ORD',
-        COMMA:      'COMMA',
-        AND:        'AND',
-        STRING:     'STRING',
-        END:        'END',
-    }
 
     def __init__(self, typ, val):
         self.typ = typ
@@ -70,7 +52,6 @@ class TOK(object):
 
     def __repr__(self):
         if self.val:
-            return '%s: "%s"' % (self.DESC.get(self.typ), self.val)
+            return '%s: "%s"' % (self.typ, self.val)
         else:
-            return '%s' % (self.DESC.get(self.typ))
-
+            return self.typ

@@ -1,5 +1,6 @@
 from texty.util import english
 from texty.util import objectlist
+from texty.util import serialize
 from texty.util.files import construct_name, construct_occupation
 from texty.builtins.story import Story
 
@@ -114,7 +115,7 @@ class ColdDeadWater(Story):
 
         player.do('wakeup')
 
-        player.sidebar()
+        player.send(serialize.full_character(player))
 
         return player
 

@@ -2,11 +2,13 @@
 Helper functions to make nice english output.
 """
 
+from texty.util.enums import PRONOUN_TYPES
+
 class PRONOUN:
     """
     Pronoun table to use in action descriptions.
     """
-    SUB, OBJ, POS, REF = range(4)
+
     TABLE = {
         #         SUB,   OBJ,    POS,    REF             # PRO,
         'Y':    ['you', 'you',  'your', 'yourself'],     # 'yours',
@@ -16,10 +18,10 @@ class PRONOUN:
         None:   ['they' 'them', 'their','themself'],     # 'theirs',
     }
 
-def pn_sub(char): return PRONOUN.TABLE[char.gender][PRONOUN.SUB]
-def pn_obj(char): return PRONOUN.TABLE[char.gender][PRONOUN.OBJ]
-def pn_pos(char): return PRONOUN.TABLE[char.gender][PRONOUN.POS]
-def pn_ref(char): return PRONOUN.TABLE[char.gender][PRONOUN.REF]
+def pn_sub(char): return PRONOUN.TABLE[char.gender][PRONOUN_TYPES.SUB.value]
+def pn_obj(char): return PRONOUN.TABLE[char.gender][PRONOUN_TYPES.OBJ.value]
+def pn_pos(char): return PRONOUN.TABLE[char.gender][PRONOUN_TYPES.POS.value]
+def pn_ref(char): return PRONOUN.TABLE[char.gender][PRONOUN_TYPES.REF.value]
 def pn_plural_s(char): return '' if char.gender == 'Y' else 's'
 def pn_plural_es(char): return '' if char.gender == 'Y' else 'es'
 

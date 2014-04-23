@@ -1,6 +1,7 @@
 from texty.builtins.characters import Character
 from texty.builtins.characters import body
-from texty.builtins.characters.body import PARTS
+# from texty.builtins.characters.body import PARTS
+from texty.util.enums import EQ_PARTS
 from texty.util import objectlist
 from collections import OrderedDict
 
@@ -14,8 +15,11 @@ class Player(Character):
         # players are associated with a server connection
         self.connection = connection
         self.occupation = 'Former Computer Programmer'
-        # self.body = objectlist(self.__class__.body)
         self.status = 1
+
+        # take a copy, since we modify this directly and don't want to change nouns
+        # for everyone!
+        self.nouns = self.__class__.nouns.copy()
 
     def on_connect(self): pass
     def on_reconnect(self): pass
@@ -28,38 +32,4 @@ class Player(Character):
         if self.connection:
             self.connection.send(message)
 
-    def sidebar(self):
-        """
-        send sidebar update
-        """
 
-        inv = []
-
-        for x in self.inventory:
-            inv.append({
-                'type': '',
-                'name': x.shortname,
-                'description': x.description,
-                'icon': x.icon
-            })
-
-        eq = OrderedDict((PARTS.DESC[x], y.shortname if y else '-') for x,y in self.eq_map.items())
-
-        character = {
-            'name': self.name,
-            'occupation': self.occupation,
-            'status': [
-                {'level': 'high', 'text': 'You feel cold,', 'icon': 'fa-frown-o'},
-                {'level': 'med', 'text': 'You feel hungry.', 'icon': 'fa-cutlery'}
-            ],
-            'equipment': eq,
-            # 'hands': hands,
-            'pack': {
-                'name': '-',
-                'capacity': 0,
-                'amount': 0,
-            },
-            'inventory': inv,
-
-        }
-        self.send({'type': 'character', 'character': character})

@@ -2,6 +2,12 @@
 Information commands.
 """
 from texty.engine.command import command, syntax, SCOPE, TextyException
+from texty.util import serialize
+
+@command('info')
+def info(cmd, verb, object, prep, complement):
+    cmd.to_source(str(cmd.source.nouns))
+    return
 
 
 @command('look', 'look at', 'examine')
@@ -22,7 +28,7 @@ def look(cmd, verb, object, prep, complement):
             (lambda x,_: True,                           "You look inside {x}.")
         )
         cmd.response(msg)
-        cmd.to_source(x.obj.serialize_contents())
+        cmd.to_source(serialize.list(x.obj.contents, '{} is inside'))
         return
 
     # command form B. VERB OBJECT.
@@ -37,17 +43,19 @@ def look(cmd, verb, object, prep, complement):
         cmd.to_source({'type': 'object', 'items': [{'icon': x.obj.icon, 'text': x.obj.description}]})
 
         if x.is_any('container ammo'):
-            cmd.to_source(x.obj.serialize_contents())
+            cmd.to_source(serialize.list(x.obj.contents, '{} is inside.'))
+
+        if x.is_a('character'):
+            cmd.to_source(serialize.list(x.obj.equipment, 'He is wearing {}.'))
+
         return
 
     # command form A. VERB.
     elif verb:
         cmd.response('You examine your surroundings.')
-        cmd.to_source(cmd.room.serialize())
+        cmd.to_source(serialize.room(cmd.room))
         cmd.to_source('I:Exits: {}'.format(" ".join([x.upper() for x in cmd.room.exits.keys()])))
-        cmd.to_source({
-            'type': 'object',
-            'items': [o.serialize() for o in cmd.room.contents if o != cmd.source]})
+        cmd.to_source(serialize.list(cmd.room.contents, '{} is here.', exclude=[cmd.source]))
         return
 
     raise TextyException("That doesn't make ANY sense.")

@@ -88,5 +88,3 @@ class BaseObject(metaclass=MetaObject):
     def allows(self, verbs):
         return True
 
-    def serialize(self):
-        return {'icon': self.icon, 'text': '<b>%s</b> is here.' % self.name}

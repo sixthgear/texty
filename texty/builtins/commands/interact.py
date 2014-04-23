@@ -2,6 +2,7 @@
 Interaction commands.
 """
 from texty.engine.command import SCOPE, command, syntax, TextyException
+from texty.util import serialize
 
 @command ("get", "pick up", "grab", "take")
 def get(cmd, verb, object, prep, complement):
@@ -22,7 +23,7 @@ def get(cmd, verb, object, prep, complement):
         # get an object from within another object
         y.obj.contents.remove(x.obj)
         cmd.source.inventory.append(x.obj)
-        cmd.source.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} takes {} from {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
@@ -41,7 +42,7 @@ def get(cmd, verb, object, prep, complement):
         # get an object from the room
         cmd.room.objects.remove(x.obj)
         cmd.source.inventory.append(x.obj)
-        cmd.source.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} takes {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 
@@ -76,7 +77,7 @@ def drop(cmd, verb, object, prep, complement):
         # drop an object in the room
         cmd.source.inventory.remove(x.obj)
         cmd.room.objects.append(x.obj)
-        cmd.source.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} drops {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 
@@ -107,7 +108,7 @@ def put(cmd, verb, object, prep, complement):
         )
         cmd.source.inventory.remove(x.obj)
         y.obj.contents.append(x.obj)
-        cmd.source.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} puts {} into {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
@@ -142,9 +143,11 @@ def give(cmd, verb, object, prep, complement):
         )
         cmd.source.inventory.remove(x.obj)
         y.obj.inventory.append(x.obj)
-        cmd.source.sidebar()
-        if hasattr(y.obj, 'sidebar'):
-            y.obj.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
+
+        if y.obj.is_a('player'):
+            cmd.source.send(serialize.full_character(y.obj))
+
         cmd.to_room('A:{} gives {} to {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
@@ -180,7 +183,7 @@ def equip(cmd, verb, object, prep, complement):
         )
         cmd.source.equip(x.obj, parts=[y.obj.typ])
         cmd.source.inventory.remove(x.obj)
-        cmd.source.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} equips {} on {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
@@ -198,7 +201,7 @@ def equip(cmd, verb, object, prep, complement):
         )
         cmd.source.equip(x.obj)
         cmd.source.inventory.remove(x.obj)
-        cmd.source.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} equips {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 
@@ -227,7 +230,7 @@ def unequip(cmd, verb, object, prep, complement):
         )
         cmd.source.unequip(x.obj, parts=[y.obj.typ])
         cmd.source.inventory.append(x.obj)
-        cmd.source.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} removes {} from {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
@@ -244,7 +247,7 @@ def unequip(cmd, verb, object, prep, complement):
         )
         cmd.source.unequip(x.obj)
         cmd.source.inventory.append(x.obj)
-        cmd.source.sidebar()
+        cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} removes {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 

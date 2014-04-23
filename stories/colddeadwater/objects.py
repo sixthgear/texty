@@ -1,5 +1,5 @@
 from texty.builtins.objects import *
-from texty.builtins.characters.body import PARTS
+from texty.util.enums import EQ_PARTS
 
 class Model70(Rifle):
     """
@@ -14,7 +14,7 @@ class Model70(Rifle):
     capacity = 5 # rounds
     rate = 1 # per second
     range = 10 # feet
-    fits = (PARTS.HAND_L, PARTS.HAND_R)
+    fits = (EQ_PARTS.L_HAND, EQ_PARTS.R_HAND)
 
 class MP5(SubMachineGun):
     """
@@ -29,7 +29,7 @@ class MP5(SubMachineGun):
     capacity = 30
     rate = 13
     range = 50
-    fits = (PARTS.HAND_L, PARTS.HAND_R)
+    fits = (EQ_PARTS.L_HAND, EQ_PARTS.R_HAND)
 
 class Crowbar(MeleeWeapon):
     """
@@ -42,7 +42,7 @@ class Crowbar(MeleeWeapon):
     nouns = "crowbar"
     # -- melee
     rate = 1
-    fits = (PARTS.HAND_L, PARTS.HAND_R)
+    fits = (EQ_PARTS.L_HAND, EQ_PARTS.R_HAND)
 
 class Frag(Grenade):
     """
@@ -127,7 +127,7 @@ class Tshirt(Equipable):
     nouns = 'shirt t-shirt tshirt'
     icon = 'fa-tags'
     # ---
-    fits = (PARTS.BODY,)
+    fits = (EQ_PARTS.BODY,)
 
 class RippedJeans(Equipable):
     """
@@ -141,7 +141,7 @@ class RippedJeans(Equipable):
     nouns = 'jeans pants'
     icon = 'fa-tags'
     # ---
-    fits = (PARTS.LEGS,)
+    fits = (EQ_PARTS.LEGS,)
 
 class LeatherBoots(Equipable):
     """
@@ -154,7 +154,7 @@ class LeatherBoots(Equipable):
     nouns = 'boot'
     icon = 'fa-tags'
     # ---
-    fits = (PARTS.FEET,)
+    fits = (EQ_PARTS.FEET,)
 
 class MotorcycleHelmet(Equipable):
     """
@@ -167,7 +167,7 @@ class MotorcycleHelmet(Equipable):
     nouns = 'helmet'
     icon = 'fa-tags'
     # ---
-    fits = (PARTS.HEAD,)
+    fits = (EQ_PARTS.HEAD,)
 
 class CivilWarTrenchcoat(Equipable):
     """
@@ -180,7 +180,7 @@ class CivilWarTrenchcoat(Equipable):
     nouns = 'trenchcoat coat'
     icon = 'fa-tags'
     # ---
-    fits = (PARTS.SHOULDERS,)
+    fits = (EQ_PARTS.SHOULDERS,)
 
 class VibramFivefinger(Equipable):
     """
@@ -193,7 +193,7 @@ class VibramFivefinger(Equipable):
     nouns = 'shoe'
     icon = 'fa-tags'
     # ---
-    fits = (PARTS.FEET,)
+    fits = (EQ_PARTS.FEET,)
 
 class ClifBar(Portable):
     """

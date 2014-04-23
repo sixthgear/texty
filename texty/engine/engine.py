@@ -1,3 +1,6 @@
+# from tornado.platform.asyncio import AsyncIOMainLoop
+# import asyncio
+
 from tornado import ioloop
 from tornado import escape
 
@@ -211,6 +214,8 @@ class TextyEngine(object):
         logging.info('Ready to rock on %s:%d.' % (address, port))
         self.timer.start()
         ioloop.IOLoop.instance().start()
+        # AsyncIOMainLoop().install()
+        # asyncio.get_event_loop().run_forever()
         # NEVER REACHED
 
 

@@ -1,6 +1,7 @@
 from texty.util.exceptions import TextyException
 from texty.builtins.objects import BaseObject
 from texty.builtins.characters import body
+from texty.util.enums import EQ_PARTS
 from texty.util import objectlist, english
 from texty.engine.command import Command
 from collections import OrderedDict
@@ -11,48 +12,44 @@ class Character(BaseObject):
     Base character class, from which all other character classes are inherited from
     """
 
-    """
-    class STATUS:
-        LIMBO
-        DEAD
-        NORMAL
-        FIGHTING
-        RESTING
-        SLEEPING
-        INCAPACITATED
+    # info
+    name            = 'Mr. Character'
+    gender          = 'N'
+    occupation      = None
+    description     = '{he} looks about as ready to kill you as anyone else here.'
+    attributes      = 'character'
 
-        LIMBO -> PLAYING
+    # stats
+    hp              = 100
+    capacity        = 20
 
+    # simple lists provide templates to instantiate
+    inventory       = []
+    equipment       = {}
 
-    class FLAGS:
-        BLINDED,
-        SLOW,
+    def __init__(self, name=None, room=None):
 
-    """
-    # status levels dictate complete changes in player behavior
-    name = 'Mr. Character'
-    gender = 'N'
-    occupation = None
-    description = '{he} looks about as ready to kill you as anyone else here.'
-    attributes = 'character'
-
-    hitpoints = 100
-    capacity = 20
-
-    inventory = []
-    equipment = []
-
-    def __init__(self, name = None, room=None):
-
+        # copy data from class on init. This lets us reset the character to
+        # initial values if required by calling __init__ again.
         self.name = name or self.__class__.name
         self.description = english.resolve_single(self.__class__.description, self)
-        self.hitpoints = self.__class__.hitpoints
+        self.hp = self.__class__.hp
 
-        self.inventory = objectlist(self.__class__.inventory)
+        # instantiate classes from inventory list upon init.
+        self.inventory = objectlist((x() for x in self.__class__.inventory))
 
-        self.equipment = objectlist(self.__class__.equipment)
-        self.eq_map = OrderedDict(((x, None) for x in range(len(body.PARTS.DESC))))
+        # equipment is the searchable object list containing everything the character is
+        # currently wielding/wearing. eq_map is the mapping from EQ_PARTS enum to the
+        # object.
+        self.equipment = objectlist()
+        self.eq_map = OrderedDict(((x, None) for x in EQ_PARTS ))
+        for eq, x in self.__class__.equipment.items():
+            obj = x()
+            self.equipment.append(obj)
+            self.eq_map[eq] = obj
 
+
+        # hacky object list to allow noun resolution
         self.body = objectlist((
             body.Body(),
             body.Legs(),
@@ -95,17 +92,25 @@ class Character(BaseObject):
         """
         pass
 
-    def equip(self, object, parts=None):
 
+    def equip(self, object, parts=None):
+        """
+        Take reference to object and assign it to characters equipment slots.
+        """
+
+        # first check if this object is equipable
         if not object.is_a('equipable'):
             raise TextyException('{} is not equipable.'.format(object.name))
 
+        # next make sure if it has defined a "fits" list.
         if not object.fits:
             raise TextyException('{} does not fit anything.'.format(object.name))
 
+        # use the "fits" list if no specific parts specified
         if not parts:
             parts = object.fits
 
+        # try each part
         for p in parts:
 
             if p not in object.fits:
@@ -116,6 +121,7 @@ class Character(BaseObject):
                 self.equipment.append(object)
                 return True
 
+        # tried to equip object in all supplied positions, didn't work.
         raise TextyException('You already have something there.'.format(object.name))
 
     def unequip(self, object, parts=None):
@@ -150,14 +156,3 @@ class Character(BaseObject):
             else:
                 self.room.characters.append(self)
 
-    def serialize(self):
-        """
-        Turn character into a dict suitable for sending to client as JSON.
-        """
-        data = dict()
-        data['icon'] = {'N': 'fa-male', 'M': 'fa-male', 'F': 'fa-female', None: ''}[self.gender]
-        if self.occupation:
-            data['text'] = '<b>%s</b> the %s is here.' % (self.first, self.occupation.lower())
-        else:
-            data['text'] = '<b>%s</b> is here.' % (self.name)
-        return data

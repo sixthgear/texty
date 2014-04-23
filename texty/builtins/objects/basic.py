@@ -13,11 +13,6 @@ class Container(BaseObject):
     def __init__(self):
         self.contents = ObjectList([x() for x in self.__class__.contents])
 
-    def serialize_contents(self):
-        items = [{'icon': o.icon, 'text': o.name + ' is inside.'} for o in self.contents]
-        return({'type': 'object', 'items': items})
-
-
 class Portable(BaseObject):
     attributes = 'portable'
     weight = 1 # kg
@@ -92,10 +87,6 @@ class Ammo(Portable):
         s = 's' if self.capacity != 1 else ''
         a.name = '{n} {item}{s}'.format(n=self.capacity, item=self.item, s=s)
         return [ a ]
-
-    def serialize_contents(self):
-        items = [{'icon': o.icon, 'text': '%s are inside.' % o.name} for o in self.contents]
-        return({'type': 'object', 'items': items})
 
     def __init__(self):
         self.capacity = self.__class__.capacity

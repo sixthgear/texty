@@ -35,10 +35,3 @@ class Room(BaseObject):
     @property
     def contents(self):
         return self.characters + self.objects
-
-    def serialize(self):
-        return {
-            'type':     'description',
-            'intro':    self.title,
-            'text':     self.description,
-        }

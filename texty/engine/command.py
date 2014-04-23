@@ -2,15 +2,12 @@ from texty.util.exceptions import TextyException
 from texty.builtins.objects import obj
 from texty.engine.parser import parser
 from texty.util.parsertools import VOCAB, v
+from texty.util.enums import SCOPE
+
 from collections import namedtuple
 from pprint import pprint
 import logging
 import re
-
-
-class SCOPE:
-
-    EQUIP, INV, BODY, OBJ, CHAR, IN, HAS, ANY, ROOM = range(9)
 
 
 class ObjectASTProxy(object):

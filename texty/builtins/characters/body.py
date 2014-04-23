@@ -2,23 +2,8 @@
 Body Parts
 """
 from texty.builtins.objects import BaseObject
+from texty.util.enums import EQ_PARTS
 
-class PARTS:
-    BODY, LEGS, FEET, HEAD, ARMS, NECK, WAIST, SHOULDERS, FING_L, FING_R, HAND_L, HAND_R = range(12)
-    DESC = {
-        BODY:       'Body',
-        LEGS:       'Legs',
-        FEET:       'Feet',
-        HEAD:       'Head',
-        ARMS:       'Arms',
-        NECK:       'Neck',
-        WAIST:      'Waist',
-        SHOULDERS:  'Shoulders',
-        FING_L:     'L. Finger',
-        FING_R:     'R. Finger',
-        HAND_L:     'L. Hand',
-        HAND_R:     'R. Hand',
-    }
 
 class BodyPart(BaseObject):
     attributes = 'bodypart'
@@ -28,56 +13,56 @@ class Body(BodyPart):
     body
     """
     nouns = 'torso abdomen stomach'
-    typ = PARTS.BODY
+    typ = EQ_PARTS.BODY
 
 class Legs(BodyPart):
     """
     legs
     """
     nouns = 'leg'
-    typ = PARTS.LEGS
+    typ = EQ_PARTS.LEGS
 
 class Feet(BodyPart):
     """
     feet
     """
     nouns = 'foot feet'
-    typ = PARTS.FEET
+    typ = EQ_PARTS.FEET
 
 class Head(BodyPart):
     """
     fat head
     """
     nouns = 'head'
-    typ = PARTS.HEAD
+    typ = EQ_PARTS.HEAD
 
 class Arms(BodyPart):
     """
     arms
     """
     nouns = 'arm'
-    typ = PARTS.ARMS
+    typ = EQ_PARTS.ARMS
 
 class Neck(BodyPart):
     """
     neck
     """
     nouns = 'neck'
-    typ = PARTS.NECK
+    typ = EQ_PARTS.NECK
 
 class Waist(BodyPart):
     """
     waist
     """
     nouns = 'waist'
-    typ = PARTS.WAIST
+    typ = EQ_PARTS.WAIST
 
 class Shoulders(BodyPart):
     """
     shoulders
     """
     nouns = 'shoulder'
-    typ = PARTS.SHOULDERS
+    typ = EQ_PARTS.SHOULDERS
 
 class FingerLeft(BodyPart):
     """
@@ -85,7 +70,7 @@ class FingerLeft(BodyPart):
     """
     adjectives = 'left'
     nouns = 'finger'
-    typ = PARTS.FING_L
+    typ = EQ_PARTS.L_FINGER
 
 class FingerRight(BodyPart):
     """
@@ -93,7 +78,7 @@ class FingerRight(BodyPart):
     """
     adjectives = 'right'
     nouns = 'finger'
-    typ = PARTS.FING_R
+    typ = EQ_PARTS.R_FINGER
 
 class HandLeft(BodyPart):
     """
@@ -101,7 +86,7 @@ class HandLeft(BodyPart):
     """
     adjectives = 'left'
     nouns = 'hand'
-    typ = PARTS.HAND_L
+    typ = EQ_PARTS.L_HAND
 
 class HandRight(BodyPart):
     """
@@ -109,4 +94,4 @@ class HandRight(BodyPart):
     """
     adjectives = 'right'
     nouns = 'hand'
-    typ = PARTS.HAND_R
+    typ = EQ_PARTS.R_HAND

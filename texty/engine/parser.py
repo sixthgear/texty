@@ -1,5 +1,7 @@
 from texty.util.exceptions import TextyException
-from texty.util.parsertools import TOK, VOCAB
+from texty.util.parsertools import Token, VOCAB
+from texty.util.enums import TOK
+
 import collections
 import re
 
@@ -80,7 +82,7 @@ class Parser(object):
             if mode == M.VERB:
                 mode = M.REGULAR
                 if t in VOCAB.phrasals:
-                    tokens.append(TOK(TOK.PHRASAL, t))
+                    tokens.append(Token(TOK.PHRASAL, t))
                     continue
 
             # the say command, among others, will accept a literal string of unparsed characters
@@ -89,57 +91,57 @@ class Parser(object):
                 if tokens[-1:] and tokens[-1].typ == TOK.STRING:
                     tokens[-1] += ' %s' % t
                 else:
-                    tokens.append(TOK(TOK.STRING, t))
+                    tokens.append(Token(TOK.STRING, t))
                 continue
 
             if t == ',':
-                tokens.append(TOK(TOK.COMMA, t))
+                tokens.append(Token(TOK.COMMA, t))
             elif t == 'of':
-                tokens.append(TOK(TOK.OF, t))
+                tokens.append(Token(TOK.OF, t))
             elif t == '.':
-                tokens.append(TOK(TOK.END, t))
+                tokens.append(Token(TOK.END, t))
             elif t == 'and':
-                tokens.append(TOK(TOK.AND, t))
+                tokens.append(Token(TOK.AND, t))
 
             elif t in VOCAB.commands:
-                tokens.append(TOK(TOK.VERB, t))
+                tokens.append(Token(TOK.VERB, t))
                 mode = M.STRING
 
             elif t in VOCAB.verbs:
-                tokens.append(TOK(TOK.VERB, t))
+                tokens.append(Token(TOK.VERB, t))
                 mode = M.VERB
 
             elif t in VOCAB.adjectives:
-                tokens.append(TOK(TOK.ADJ, t))
+                tokens.append(Token(TOK.ADJ, t))
             elif t in VOCAB.superlatives:
-                tokens.append(TOK(TOK.SUP, t))
+                tokens.append(Token(TOK.SUP, t))
             elif t in VOCAB.prepositions:
-                tokens.append(TOK(TOK.PREP, t))
+                tokens.append(Token(TOK.PREP, t))
             elif t in VOCAB.indefinites:
-                tokens.append(TOK(TOK.INDEF, t))
+                tokens.append(Token(TOK.INDEF, t))
             elif t in VOCAB.specifics:
-                tokens.append(TOK(TOK.SPEC, t))
+                tokens.append(Token(TOK.SPEC, t))
             elif t in VOCAB.quantifiers:
-                tokens.append(TOK(TOK.QUANT, t))
+                tokens.append(Token(TOK.QUANT, t))
             elif t in VOCAB.ordinals:
-                tokens.append(TOK(TOK.ORD, t))
+                tokens.append(Token(TOK.ORD, t))
 
             elif t in VOCAB.characters:
-                tokens.append(TOK(TOK.NOUN, t))
+                tokens.append(Token(TOK.NOUN, t))
             elif t in VOCAB.reserved:
-                tokens.append(TOK(TOK.NOUN, t))
+                tokens.append(Token(TOK.NOUN, t))
             elif t in VOCAB.nouns:
-                tokens.append(TOK(TOK.NOUN, t))
+                tokens.append(Token(TOK.NOUN, t))
             elif t.endswith('s') and t[:-1] in VOCAB.nouns:
-                tokens.append(TOK(TOK.NOUN, t[:-1]))
+                tokens.append(Token(TOK.NOUN, t[:-1]))
 
 
             else:
-                tokens.append(TOK(TOK.UNKNOWN, t))
+                tokens.append(Token(TOK.UNKNOWN, t))
 
         # append end token if it doesn't exist
         if tokens and tokens[-1].typ != TOK.END:
-            tokens.append(TOK(TOK.END, '.'))
+            tokens.append(Token(TOK.END, '.'))
 
         # return token stream
         return tokens
