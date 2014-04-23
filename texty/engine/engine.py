@@ -7,12 +7,15 @@ from tornado import escape
 from texty.engine import server
 from texty.engine.parser import parser
 from texty.util.parsertools import VOCAB
+from texty.util.serialize import dispatch
 
 from texty.builtins import commands
 from texty.builtins import characters
 from texty.builtins import story
 from texty.builtins.objects import obj
 
+import itertools
+import collections
 import logging
 
 
@@ -56,47 +59,18 @@ class TextyEngine(object):
         server.Connection.on_write = self.on_write
 
         logging.info('')
-        logging.info('Command Table:')
-        logging.info('--------------')
-        for i, o in enumerate(parser.command_table.items()):
-            logging.info('%03d:    %s', i, o)
-
-        logging.info('')
-        logging.info('Syntax Table:')
-        logging.info('-------------')
-        for i, o in enumerate(parser.syntax_table):
-            logging.info('%03d:    %s', i, o)
-
-        logging.info('')
         logging.info('Object Table:')
         logging.info('-------------')
         for i, o in enumerate(parser.object_table):
-            logging.info('%03d:    %s', i, o)
+            logging.info('%03d:    %s', i, o.__name__)
 
+
+        cols = '{:<16}{:<16}{:<16}{:<16}'
         logging.info('')
-        logging.info('Noun Table:')
-        logging.info('--------------')
-        for i, o in enumerate(VOCAB.nouns):
-            logging.info(o)
-
-        logging.info('')
-        logging.info('Adjective Table:')
-        logging.info('----------------')
-        for i, o in enumerate(VOCAB.adjectives):
-            logging.info(o)
-
-        logging.info('')
-        logging.info('Verb Table:')
-        logging.info('----------------')
-        for i, o in enumerate(VOCAB.verbs):
-            logging.info(o)
-
-        # logging.info('')
-        # logging.info('Attribute Table:')
-        # logging.info('----------------')
-        # for i, o in enumerate(parser.attribute_table):
-        #     logging.info(o)
-        # logging.info('')
+        logging.info(cols.format('Verbs', 'Nouns', 'Adjectives', 'Attribs'))
+        logging.info(cols.format('-----', '-----', '----------', '-------'))
+        for v, n, ad, at in itertools.zip_longest(VOCAB.verbs, VOCAB.nouns, VOCAB.adjectives, parser.attribute_table, fillvalue=''):
+            logging.info(cols.format(v, n, ad, at))
 
 
     def on_connect(self, connection):
@@ -144,8 +118,9 @@ class TextyEngine(object):
         # notify the story
         self.story.on_player_disconnect(player)
 
-        # remove players first name to the vocab
-        # VOCAB.characters -= player.nouns
+        # remove players name from the vocab
+        VOCAB.characters.subtract(player.nouns)
+        VOCAB.characters += collections.Counter()
 
         # remove player from player list
         # TODO: make sure that no rooms hold references to the player
@@ -167,41 +142,8 @@ class TextyEngine(object):
         """
         Hijack data and transform it into json messages for our custom client.
         """
-
         # transform strings into JSON
-        if isinstance(data, str):
-            # broadcast
-            if data.startswith('B:'):
-                data = escape.json_encode({'type': 'broadcast', 'text': data[2:]})
-
-            # conversation
-            elif data.startswith('C:'):
-                data = escape.json_encode({'type': 'conversation', 'items': [
-                    {'icon': 'fa-quote-left', 'text': data[2:]},
-                ]})
-
-            # action
-            elif data.startswith('A:'):
-                data = escape.json_encode({'type': 'action', 'items': [
-                    {'icon': 'fa-bolt', 'text': data[2:]},
-                ]})
-
-            # info
-            elif data.startswith('I:'):
-                data = escape.json_encode({'type': 'info', 'items': [
-                    {'icon': 'fa-eye', 'text': data[2:]},
-                ]})
-
-            # other
-            else:
-                data = escape.json_encode({'type': 'action', 'items': [
-                    {'text': data}
-                ]})
-
-        # or encode dicts
-        elif isinstance(data, dict):
-            data = escape.json_encode(data)
-
+        data = escape.json_encode(dispatch(data))
         return data
 
 

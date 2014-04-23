@@ -1,28 +1,24 @@
 from texty.util.exceptions import TextyException
 from texty.builtins.objects import BaseObject
 from texty.builtins.characters import body
-from texty.util.enums import EQ_PARTS
+from texty.util.enums import EQ_PARTS, CHAR_STATUS, CHAR_FLAG
 from texty.util import objectlist, english
 from texty.engine.command import Command
 from collections import OrderedDict
-
 
 class Character(BaseObject):
     """
     Base character class, from which all other character classes are inherited from
     """
-
     # info
     name            = 'Mr. Character'
     gender          = 'N'
-    occupation      = None
+    occupation      = ''
     description     = '{he} looks about as ready to kill you as anyone else here.'
     attributes      = 'character'
-
     # stats
     hp              = 100
     capacity        = 20
-
     # simple lists provide templates to instantiate
     inventory       = []
     equipment       = {}
@@ -34,39 +30,31 @@ class Character(BaseObject):
         self.name = name or self.__class__.name
         self.description = english.resolve_single(self.__class__.description, self)
         self.hp = self.__class__.hp
+        self.room = room
+        self.status = CHAR_STATUS.NORMAL
 
         # instantiate classes from inventory list upon init.
         self.inventory = objectlist((x() for x in self.__class__.inventory))
 
         # equipment is the searchable object list containing everything the character is
-        # currently wielding/wearing. eq_map is the mapping from EQ_PARTS enum to the
-        # object.
+        # currently wielding/wearing.
         self.equipment = objectlist()
-        self.eq_map = OrderedDict(((x, None) for x in EQ_PARTS ))
+        self.eq_map = OrderedDict(((x, None) for x in EQ_PARTS))
+
+        # eq_map is the mapping from EQ_PARTS enum to the object.
         for eq, x in self.__class__.equipment.items():
             obj = x()
             self.equipment.append(obj)
             self.eq_map[eq] = obj
 
-
-        # hacky object list to allow noun resolution
-        self.body = objectlist((
-            body.Body(),
-            body.Legs(),
-            body.Feet(),
-            body.Head(),
-            body.Arms(),
-            body.Neck(),
-            body.Waist(),
-            body.Shoulders(),
-            body.FingerLeft(),
-            body.FingerRight(),
-            body.HandLeft(),
-            body.HandRight(),
-        ))
-
-        self.room = room
-        self.status = 1
+    @property
+    def icon(self):
+        if self.gender in ('M', 'N'):
+            return 'fa-male'
+        elif self.gender == 'F':
+            return 'fa-female'
+        else:
+            return ''
 
     @property
     def first(self):
@@ -92,12 +80,10 @@ class Character(BaseObject):
         """
         pass
 
-
     def equip(self, object, parts=None):
         """
         Take reference to object and assign it to characters equipment slots.
         """
-
         # first check if this object is equipable
         if not object.is_a('equipable'):
             raise TextyException('{} is not equipable.'.format(object.name))
@@ -125,7 +111,8 @@ class Character(BaseObject):
         raise TextyException('You already have something there.'.format(object.name))
 
     def unequip(self, object, parts=None):
-
+        """
+        """
         if not parts:
             parts = object.fits
 
@@ -136,7 +123,6 @@ class Character(BaseObject):
                 return True
 
         raise TextyException('Couldn\'t Unequip {}.'.format(object.name))
-
 
 
     def move_to(self, room):

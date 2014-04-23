@@ -1,40 +1,39 @@
 from texty.util.enums import TOK
-
-v = lambda x: set([x.strip() for x in x.split('|')])
+import collections
 
 class VOCAB:
     """
     Dictionary of accepted symbols.
     """
     # special set that is updated as players enter or leave the game
-    characters      =   set()
+    characters      =   collections.Counter()
 
     # filled in dyamically
-    commands        =   v('say | yell | shout | tell')
     verbs           =   set()
     nouns           =   set()
     adjectives      =   set()
-    phrasals        =   set() # v('at | up | down | away | on | off ')
+    phrasals        =   set()
+    commands        =   {'say', 'yell', 'shout', 'tell'}
 
     # set of reserved nouns
-    reserved        =   v('me | room | myself | self | floor | ground')
+    reserved        =   {'me', 'room', 'myself', 'self', 'floor', 'ground'}
 
-    superlatives    =   v('best | worst | closest | furthest | biggest | largest | smallest | dumbest')
+    superlatives    =   {'best', 'worst', 'closest', 'furthest', 'biggest', 'largest', 'smallest', 'dumbest'}
 
-    prepositions    =   v('above | against | ahead | around | at | behind | below')
-    prepositions   |=   v('for | from | in | inside | into | off | on | out | outside | over')
-    prepositions   |=   v('through | to | toward | under | upon | using | with')
+    prepositions    =   {'above', 'against', 'ahead', 'around', 'at', 'behind', 'below'}
+    prepositions   |=   {'for', 'from', 'in', 'inside', 'into', 'off', 'on', 'out', 'outside', 'over'}
+    prepositions   |=   {'through', 'to', 'toward', 'under', 'upon', 'using', 'with'}
 
-    indefinites     =   v('a | an | any')
-    specifics       =   v('my | the')
+    indefinites     =   {'a', 'an', 'any'}
+    specifics       =   {'my', 'the'}
 
-    quantifiers     =   v('1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10')
-    quantifiers    |=   v('one | two | three | fouth | five | six | seven | eight | nine | ten ')
-    quantifiers    |=   v('all | both | each | every | everything')
+    quantifiers     =   {'1', '2', '3', '4', '5', '6', '7', '8', '9', '10'}
+    quantifiers    |=   {'one', 'two', 'three', 'fouth', 'five', 'six', 'seven', 'eight', 'nine', 'ten '}
+    quantifiers    |=   {'all', 'both', 'each', 'every', 'everything'}
 
-    ordinals        =   v('first | second | third | fourth | fifth | sixth')
-    ordinals       |=   v('seventh | eighth | nineth | ninth | tenth | last')
-    ordinals       |=   v('1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th | 9th | 10th')
+    ordinals        =   {'first', 'second', 'third', 'fourth', 'fifth', 'sixth'}
+    ordinals       |=   {'seventh', 'eighth', 'nineth', 'ninth', 'tenth', 'last'}
+    ordinals       |=   {'1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th'}
 
     tranformations = {
         'my self':      'myself'

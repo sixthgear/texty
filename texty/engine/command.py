@@ -1,10 +1,9 @@
 from texty.util.exceptions import TextyException
 from texty.builtins.objects import obj
 from texty.engine.parser import parser
-from texty.util.parsertools import VOCAB, v
+from texty.util.parsertools import VOCAB
 from texty.util.enums import SCOPE
 
-from collections import namedtuple
 from pprint import pprint
 import logging
 import re
@@ -193,8 +192,10 @@ class Command(object):
 
         noun = node.get('noun')
         adjs = node.get('adjl')
+
         # search each scope
         for s in (compound_scopes.get(scope) or [scope]):
+
             if s == SCOPE.IN:
                 source = target.contents
             elif s == SCOPE.EQUIP:
@@ -211,31 +212,12 @@ class Command(object):
                 source = None
 
             result = source.first(noun, adjectives=adjs, attribute=attr)
+
             # return the resolved object and the scope it was found in
             if result:
                 return (result, s, source)
 
         return (None, scope, None)
-
-    def expect_obj(self, obj):
-
-        if not obj:
-            n = self.ast.get('object').get('noun')
-            adj = str.join(', ', self.ast.get('object').get('adjl'))
-            raise TextyException('You don\'t see a {} {} here.'.format(adj, n))
-        return obj
-
-
-    def expect(self, prep=None):
-
-        preps = v(prep)
-        if not self.ast.get('prep') in preps:
-            verb = self.ast.get('verb')
-            prep = self.ast.get('prep')
-            obj = self.ast.get('object').get('noun')
-            response = str.format('You can\'t {} {} a {}.', verb, prep, obj)
-            raise TextyException(response)
-        return True
 
 
 # DECORATORS FOR COMMAND FUNCTIONS

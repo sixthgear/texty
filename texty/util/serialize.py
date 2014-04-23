@@ -1,45 +1,64 @@
 from collections import OrderedDict
 
+
+def dispatch(data):
+
+    if isinstance(data, dict):
+        return data
+
+    if not isinstance(data, str):
+        return {}
+
+    # broadcast
+    if data.startswith('B:'):
+        data = {
+            'type': 'broadcast',
+            'text': data[2:]
+        }
+    # conversation
+    elif data.startswith('C:'):
+        data = {
+            'type': 'conversation',
+            'items': [ {'icon': 'fa-quote-left', 'text': data[2:]}, ]
+        }
+    # action
+    elif data.startswith('A:'):
+        data = {
+            'type': 'action',
+            'items': [ {'icon': 'fa-bolt', 'text': data[2:]}, ]
+        }
+    # info
+    elif data.startswith('I:'):
+        data = {
+            'type': 'info',
+            'items': [ {'icon': 'fa-eye', 'text': data[2:]},]
+        }
+    # other
+    else:
+        data = {
+            'type': 'action',
+            'items': [ {'text': data} ]
+        }
+
+    return data
+
+
 def room(room):
+    """
+    Serialize room data into a description.
+    """
     data = {}
     data['type'] = 'description'
     data['intro'] = room.title
     data['text'] = room.description
     return data
 
-def obj(obj, template='{} is here.'):
-
-    data = {}
-    data['icon'] = obj.icon,
-    data['text'] = template.format('<b>{name}</b>'.format(name=obj.name))
-    return data
-
-def list(container, template='{} is here', exclude=None):
-    data = {'type': 'object'}
-    data['items'] = []
-    for x in container:
-        if exclude and x in exclude: continue
-        if x.is_a('character'):
-            item = char(x, template)
-        else:
-            item = obj(x, template)
-
-        data['items'].append(item)
-    return data
-
 def char(char, template='{} is here.'):
     """
-    Turn character into a dict suitable for sending to client as JSON.
+    Serialize a character for brief mention.
     """
     data = {}
-
-    if char.gender in ('M', 'N'):
-        data['icon'] = 'fa-male'
-    elif char.gender == 'F':
-        data['icon'] = 'fa-female'
-    else:
-        data['icon'] = ''
-
+    data['icon'] = char.icon
     if char.occupation:
         job = char.occupation.lower()
         data['text'] = template.format('<b>{name}</b> the {job}'.format(name=char.first, job=job))
@@ -48,10 +67,33 @@ def char(char, template='{} is here.'):
 
     return data
 
+def obj(obj, template='{} is here.'):
+    """
+    Serialize an object.
+    """
+    data = {}
+    data['icon'] = obj.icon,
+    data['text'] = template.format('<b>{name}</b>'.format(name=obj.name))
+    return data
+
+def list(container, template='{} is here', exclude=None):
+    """
+    Serialize an object list.
+    """
+    data = {'type': 'object'}
+    data['items'] = []
+    for x in container:
+        if exclude and x in exclude: continue
+        if x.is_a('character'):
+            item = char(x, template)
+        else:
+            item = obj(x, template)
+        data['items'].append(item)
+    return data
 
 def full_character(player):
     """
-    send full character update
+    Seriaize a full character update.
     """
     data = {'type': 'character'}
 

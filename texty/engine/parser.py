@@ -26,6 +26,7 @@ class Parser(object):
         self.syntax_table = list()
         # the object table is a simple list of all objects registered in the game.
         self.object_table = list()
+        self.attribute_table = set()
 
     def register_command(self, fn, name=None):
         """
@@ -56,10 +57,11 @@ class Parser(object):
         Register an object in the object table, and place its keywords and atrributes
         into their respective sets.
         """
+        self.attribute_table.update(obj.attributes)
         self.object_table.append(obj)
         VOCAB.nouns.update(obj.nouns)
         VOCAB.adjectives.update(obj.adjectives)
-        # self.attribute_table.update(obj.attributes)
+
 
     def lex(self, command):
         """
@@ -102,15 +104,12 @@ class Parser(object):
                 tokens.append(Token(TOK.END, t))
             elif t == 'and':
                 tokens.append(Token(TOK.AND, t))
-
             elif t in VOCAB.commands:
                 tokens.append(Token(TOK.VERB, t))
                 mode = M.STRING
-
             elif t in VOCAB.verbs:
                 tokens.append(Token(TOK.VERB, t))
                 mode = M.VERB
-
             elif t in VOCAB.adjectives:
                 tokens.append(Token(TOK.ADJ, t))
             elif t in VOCAB.superlatives:
@@ -125,7 +124,6 @@ class Parser(object):
                 tokens.append(Token(TOK.QUANT, t))
             elif t in VOCAB.ordinals:
                 tokens.append(Token(TOK.ORD, t))
-
             elif t in VOCAB.characters:
                 tokens.append(Token(TOK.NOUN, t))
             elif t in VOCAB.reserved:
@@ -134,8 +132,6 @@ class Parser(object):
                 tokens.append(Token(TOK.NOUN, t))
             elif t.endswith('s') and t[:-1] in VOCAB.nouns:
                 tokens.append(Token(TOK.NOUN, t[:-1]))
-
-
             else:
                 tokens.append(Token(TOK.UNKNOWN, t))
 
