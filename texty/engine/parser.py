@@ -1,3 +1,4 @@
+from texty.util.exceptions import TextyException
 from texty.util.parsertools import TOK, VOCAB
 import collections
 import re
@@ -36,7 +37,7 @@ class Parser(object):
             VOCAB.verbs.add(words[0])
             VOCAB.phrasals.add(words[1])
         else:
-            raise SyntaxError('Commands must be one or two words.')
+            raise TextyException('Commands must be one or two words.')
         self.command_table[name.lower()] = fn
 
     def register_syntax(self, syntax):
@@ -160,7 +161,7 @@ class Parser(object):
             Helper function to see if the token matches the given terminal or non-terminal,
             If yes, advance the token iterator if the argument was a terminal.
             """
-            if callable(rule):
+            if isinstance(rule, collections.Callable):
                 a, b = rule()
                 if a:
                     self.stack.append(b)
@@ -175,16 +176,16 @@ class Parser(object):
 
         def expect(rule):
             """
-            Helper function to do the same thing as accept, but raise a SyntaxError if the
+            Helper function to do the same thing as accept, but raise a TextyException if the
             match does not succeed.
             """
             if accept(rule): # self.token and
                 return True
 
             if callable(rule):
-                raise SyntaxError('Expected %s, got %s.' % (rule.__name__.upper(), self.token))
+                raise TextyException('Expected %s, got %s.' % (rule.__name__.upper(), self.token))
             else:
-                raise SyntaxError('Expected %s, got %s.' % (TOK.DESC[rule], self.token))
+                raise TextyException('Expected %s, got %s.' % (TOK.DESC[rule], self.token))
 
         def parse_command():
             """
@@ -400,7 +401,7 @@ class Parser(object):
             command_fn = self.command_table[command_ast['verb']]
             return command_fn, command_ast
 
-        except SyntaxError, e:
+        except TextyException as e:
             return self.error, {'message': e.message} #[verb]
 
     def error(self, command, message):

@@ -4,7 +4,6 @@ if __name__ == '__main__':
 
     import sys
     import logging
-
     from optparse import OptionParser, OptionError
     from texty.engine import TextyEngine
 
@@ -21,7 +20,7 @@ if __name__ == '__main__':
     except OptionError:
         sys.exit(2)
     except IndexError:
-        print 'No story specified'
+        print('No story specified')
         sys.exit(2)
 
     logging.basicConfig(

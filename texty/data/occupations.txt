@@ -77,13 +77,11 @@ Communications Operator
 Community Arts Worker
 Community Worker
 Company Secretary
-
 Conservation Officer
 Conservator
 Construction Estimator
 Contract Administrator
 Conveyancer
-
 Copywriter
 Corporate General Manager
 Corporate Treasurer
@@ -110,7 +108,6 @@ Director of Photography
 Diver
 Diversional Therapist
 Dog Handler
-
 Drainer
 Dressmaker
 Driller
@@ -160,7 +157,6 @@ Fitter and Turner
 Fitter-Welder
 Fleet Manager
 Floor Finisher
-
 Flower Grower
 Flying Instructor
 Food Technologist
@@ -183,10 +179,8 @@ Glazier
 Goat Farmer
 Golfer
 Grape Grower
-
 Greenkeeper
 Gunsmith
-
 Hardware Technician
 Health Promotion Officer
 Helicopter Pilot

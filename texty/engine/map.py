@@ -36,7 +36,7 @@ class Map(object):
                 if re.match(r'[A-Z]\d+', room):
                     # this is a room
                     # create it if it doesn't yet exist
-                    if not self.rooms.has_key(room):
+                    if not room in self.rooms:
                         self.rooms[room] = Room(room)
                     # check for exits
                     if w:
@@ -71,7 +71,7 @@ class Map(object):
             # loop through room list, and attach titles and descriptions
             if len(row) == 0: continue
             room = row[0]
-            if not self.rooms.has_key(room): continue
+            if not room in self.rooms: continue
             if len(row) == 1: continue
             self.rooms[room].title = row[1]
             if len(row) == 2: continue

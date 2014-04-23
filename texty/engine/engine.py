@@ -12,6 +12,7 @@ from texty.builtins.objects import obj
 
 import logging
 
+
 class TextyEngine(object):
     """
     The Texty Engine is a multiplayer text adventure server. It is fully
@@ -165,7 +166,7 @@ class TextyEngine(object):
         """
 
         # transform strings into JSON
-        if isinstance(data, basestring):
+        if isinstance(data, str):
             # broadcast
             if data.startswith('B:'):
                 data = escape.json_encode({'type': 'broadcast', 'text': data[2:]})
@@ -219,7 +220,7 @@ class TextyEngine(object):
         """
         # increment counter
         self.tick += 1
-        print (' [%04d] ...' % self.tick)
+        # print (' [%04d] ...' % self.tick)
 
         # tick the story
         self.story.update(self.tick)

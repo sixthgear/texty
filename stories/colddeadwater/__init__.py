@@ -1,4 +1,5 @@
 from texty.util import english
+from texty.util import objectlist
 from texty.util.files import construct_name, construct_occupation
 from texty.builtins.story import Story
 
@@ -31,10 +32,10 @@ class ColdDeadWater(Story):
         Reset map and characters
         """
         players = []
-        for id, room in self.map.rooms.iteritems():
+        for id, room in self.map.rooms.items():
             players += [c for c in room.characters if c.is_a('player')]
-            room.characters = []
-            room.objects = []
+            room.characters = objectlist()
+            room.objects = objectlist()
 
         self.initialize()
 
@@ -68,35 +69,33 @@ class ColdDeadWater(Story):
             Frag(),
         ]
 
+        d  = list()
+        d += [MP5] * 10
+        d += [Model70] * 10
+        d += [Magazine9mm] * 30
+        d += [BoxRifleCartridges] * 30
+        d += [Crowbar] * 20
+        d += [Frag] * 20
+        d += [Radio] * 10
+        d += [ClifBar] * 40
+        d += [CivilWarTrenchcoat] * 5
+        d += [LeatherBoots] * 5
+        d += [MotorcycleHelmet] * 5
+        d += [RippedJeans] * 10
+        d += [Tshirt] * 15
+        d += [VibramFivefinger] * 2
+        d += [Crate] * 10
+
+        for i in range(200):
+            room = random.choice(list(self.map.rooms.values()))
+            room.objects.append(random.choice(d)())
 
         # distribute zombies
         for i in range(100):
-            room = random.choice(self.map.rooms.values())
+            room = random.choice(list(self.map.rooms.values()))
             if not room.id.startswith('A'):
                 z = enemies.Zombie()
                 z.move_to(room)
-
-
-        for i in range(400):
-            room = random.choice(self.map.rooms.values())
-            if room.id.startswith('A'):
-                i = random.choice((
-                    ClifBar, ClifBar, ClifBar, ClifBar, ClifBar,
-                    VibramFivefinger,
-                    LeatherBoots, LeatherBoots, LeatherBoots,
-                    MotorcycleHelmet, MotorcycleHelmet,
-                    Tshirt, Tshirt, Tshirt,
-                    RippedJeans, RippedJeans, RippedJeans,
-                    CivilWarTrenchcoat,
-                    BoxRifleCartridges, BoxRifleCartridges, BoxRifleCartridges, BoxRifleCartridges,
-                    Model70,
-                    MP5,
-                    Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm,
-                    Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm, Magazine9mm,
-                    Radio,
-                    Frag, Frag,
-                    Crowbar))()
-                room.objects.append(i)
 
         for room in self.map.rooms.values():
             room.objects.sort(key=lambda i: (i.icon, i.shortname))
@@ -114,10 +113,6 @@ class ColdDeadWater(Story):
         player.description = english.resolve_single(player.__class__.description, player)
 
         player.do('wakeup')
-        # player.inventory += [PowerMoves(), objects.Frag()]
-        # player.equip(RippedJeans())
-        # player.equip(Tshirt())
-        # player.equip(MP5())
 
         player.sidebar()
 

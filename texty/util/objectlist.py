@@ -37,11 +37,8 @@ class ObjectList(list):
     Searchable on
     """
     def first(self, query, **kwargs):
-        results = self.search(query, **kwargs)
-        if results:
-            return results[0]
-        else:
-            return None
+        result = next(self.search(query, **kwargs), None)
+        return result
 
     def search(self, query=None, adjectives=None, attribute=None, condition=None):
         results = self.__do_search(query, adjectives, attribute, condition)

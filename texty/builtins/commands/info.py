@@ -1,7 +1,8 @@
 """
 Information commands.
 """
-from texty.engine.command import command, syntax, SCOPE
+from texty.engine.command import command, syntax, SCOPE, TextyException
+
 
 @command('look', 'look at', 'examine')
 def look(cmd, verb, object, prep, complement):
@@ -10,7 +11,7 @@ def look(cmd, verb, object, prep, complement):
     """
     # command form D. VERB OBJECT PREP COMPLEMENT.
     if verb and object and complement and prep:
-        raise SyntaxError("That doesn't make sense.")
+        raise TextyException("That doesn't make sense.")
 
     # command form C. VERB PREP OBJECT.
     elif verb and object and prep in ('in', 'into', 'inside'):
@@ -32,7 +33,9 @@ def look(cmd, verb, object, prep, complement):
             (lambda x,_: True,                          "You examine {x}."),
         )
         cmd.response(msg)
+
         cmd.to_source({'type': 'object', 'items': [{'icon': x.obj.icon, 'text': x.obj.description}]})
+
         if x.is_any('container ammo'):
             cmd.to_source(x.obj.serialize_contents())
         return
@@ -41,10 +44,11 @@ def look(cmd, verb, object, prep, complement):
     elif verb:
         cmd.response('You examine your surroundings.')
         cmd.to_source(cmd.room.serialize())
-        cmd.to_source('Exits: {}'.format(" ".join([x.upper() for x in cmd.room.exits.keys()])))
+        cmd.to_source('I:Exits: {}'.format(" ".join([x.upper() for x in cmd.room.exits.keys()])))
         cmd.to_source({
             'type': 'object',
             'items': [o.serialize() for o in cmd.room.contents if o != cmd.source]})
         return
 
-    raise SyntaxError("That doesn't make ANY sense.")
+    raise TextyException("That doesn't make ANY sense.")
+

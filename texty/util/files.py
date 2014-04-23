@@ -37,13 +37,13 @@ def construct_name(gender=None):
 
     gender = gender or random.choice(['M', 'F'])
     if gender == 'M':
-        first = random_line('texty/data/male.txt').next()
+        first = next(random_line('texty/data/male.txt'))
     else:
-        first = random_line('texty/data/female.txt').next()
+        first = next(random_line('texty/data/female.txt'))
 
-    family = random_line('texty/data/family.txt').next()
+    family = next(random_line('texty/data/family.txt'))
     return '%s %s' % (first, family)
 
 def construct_occupation():
-    return random_line('texty/data/occupations.txt').next()
+    return next(random_line('texty/data/occupations.txt'))
 

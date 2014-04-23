@@ -16,4 +16,5 @@ tmp
 
 *.db
 work/
+__pycache__
 

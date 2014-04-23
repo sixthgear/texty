@@ -32,7 +32,7 @@ def go(command, verb, object, prep, complement):
     except KeyError:
         return command.response('What direction is that?!?')
 
-    if command.room.exits.has_key(direction):
+    if direction in command.room.exits:
 
         old_room = command.source.room
         new_room = command.room.exits[direction]

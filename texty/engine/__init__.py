@@ -1,1 +1,1 @@
-from engine import *
+from texty.engine.engine import *

@@ -1,7 +1,7 @@
 """
 Interaction commands.
 """
-from texty.engine.command import SCOPE, command, syntax
+from texty.engine.command import SCOPE, command, syntax, TextyException
 
 @command ("get", "pick up", "grab", "take")
 def get(cmd, verb, object, prep, complement):
@@ -28,7 +28,7 @@ def get(cmd, verb, object, prep, complement):
 
     # command form C. VERB PREP OBJECT.
     elif verb and object and prep:
-        raise SyntaxError("That doesn't make sense.")
+        raise TextyException("That doesn't make sense.")
 
     # command form B. VERB OBJECT.
     elif verb and object:
@@ -47,9 +47,9 @@ def get(cmd, verb, object, prep, complement):
 
     # command form A. VERB.
     elif verb:
-        raise SyntaxError("What would you like to get?")
+        raise TextyException("What would you like to get?")
 
-    raise SyntaxError("That doesn't make ANY sense.")
+    raise TextyException("That doesn't make ANY sense.")
 
 
 @command ("drop", "leave", "throw away")
@@ -59,11 +59,11 @@ def drop(cmd, verb, object, prep, complement):
     """
     # command form D. VERB OBJECT PREP COMPLEMENT.
     if verb and object and complement:
-        raise SyntaxError("That doesn't make sense.")
+        raise TextyException("That doesn't make sense.")
 
     # command form C. VERB PREP OBJECT.
     elif verb and object and prep:
-        raise SyntaxError("That doesn't make sense.")
+        raise TextyException("That doesn't make sense.")
 
     # command form B. VERB OBJECT.
     elif verb and object:
@@ -82,9 +82,9 @@ def drop(cmd, verb, object, prep, complement):
 
     # command form A. VERB.
     elif verb:
-        raise SyntaxError("What would you like to drop?")
+        raise TextyException("What would you like to drop?")
 
-    raise SyntaxError("That doesn't make ANY sense.")
+    raise TextyException("That doesn't make ANY sense.")
 
 
 @command ("put", "place")
@@ -113,13 +113,13 @@ def put(cmd, verb, object, prep, complement):
 
     # command form C. VERB PREP OBJECT.
     elif verb and object and prep:
-        raise SyntaxError("That doesn't make sense.")
+        raise TextyException("That doesn't make sense.")
 
     # command form A. VERB.
     elif verb:
-        raise SyntaxError("What would you like to put?")
+        raise TextyException("What would you like to put?")
 
-    raise SyntaxError("That doesn't make ANY sense.")
+    raise TextyException("That doesn't make ANY sense.")
 
 
 @command ("give")
@@ -150,13 +150,13 @@ def give(cmd, verb, object, prep, complement):
 
     # command form C. VERB PREP OBJECT.
     elif verb and object and prep:
-        raise SyntaxError("That doesn't make sense.")
+        raise TextyException("That doesn't make sense.")
 
     # command form A. VERB.
     elif verb:
-        raise SyntaxError("What would you like to give?")
+        raise TextyException("What would you like to give?")
 
-    raise SyntaxError("That doesn't make ANY sense.")
+    raise TextyException("That doesn't make ANY sense.")
 
 
 
@@ -186,7 +186,7 @@ def equip(cmd, verb, object, prep, complement):
 
     # command form C. VERB PREP OBJECT.
     elif verb and object and prep:
-        raise SyntaxError("That doesn't make sense.")
+        raise TextyException("That doesn't make sense.")
 
     # command form B. VERB OBJECT.
     if (verb and object):
@@ -204,9 +204,9 @@ def equip(cmd, verb, object, prep, complement):
 
     # command form A. VERB.
     elif verb:
-        raise SyntaxError("What would you like to {}?".format(verb))
+        raise TextyException("What would you like to {}?".format(verb))
 
-    raise SyntaxError("That doesn't make ANY sense.")
+    raise TextyException("That doesn't make ANY sense.")
 
 
 @command ("unequip", "take off", "unwield", "remove")
@@ -233,7 +233,7 @@ def unequip(cmd, verb, object, prep, complement):
 
     # command form C. VERB PREP OBJECT.
     elif verb and object and prep:
-        raise SyntaxError("That doesn't make sense.")
+        raise TextyException("That doesn't make sense.")
 
     # command form B. VERB OBJECT.
     if (verb and object):
@@ -250,9 +250,9 @@ def unequip(cmd, verb, object, prep, complement):
 
     # command form A. VERB.
     elif verb:
-        raise SyntaxError("What would you like to {}?".format(verb))
+        raise TextyException("What would you like to {}?".format(verb))
 
-    raise SyntaxError("That doesn't make ANY sense.")
+    raise TextyException("That doesn't make ANY sense.")
 
 
 

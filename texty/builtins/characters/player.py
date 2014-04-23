@@ -43,7 +43,7 @@ class Player(Character):
                 'icon': x.icon
             })
 
-        eq = OrderedDict((PARTS.DESC[x], y.shortname if y else '-') for x,y in self.eq_map.iteritems())
+        eq = OrderedDict((PARTS.DESC[x], y.shortname if y else '-') for x,y in self.eq_map.items())
 
         character = {
             'name': self.name,

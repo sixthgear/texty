@@ -18,19 +18,19 @@ class MetaObject(type):
             return type.__new__(cls, name, bases, attrs)
 
         # Split nouns string into a list
-        if attrs.has_key('nouns'):
+        if 'nouns' in attrs:
             attrs['nouns'] = set(attrs['nouns'].split())
         else:
             attrs['nouns'] = set()
 
         # Split adjectives string into a set
-        if attrs.has_key('adjectives'):
+        if 'adjectives' in attrs:
             attrs['adjectives'] = set(attrs['adjectives'].split())
         else:
             attrs['adjectives'] = set()
 
         # Split attribues string into a set
-        if attrs.has_key('attributes'):
+        if 'attributes' in attrs:
             attrs['attributes'] = set(attrs['attributes'].split())
         else:
             attrs['attributes'] = set()
@@ -61,12 +61,10 @@ class MetaObject(type):
         return new_class
 
 
-class BaseObject(object):
+class BaseObject(metaclass=MetaObject):
     """
     Base object
     """
-    __metaclass__ = MetaObject
-
     name = 'an object'
     shortname = 'Obj'
     description = 'This is a nice object.'

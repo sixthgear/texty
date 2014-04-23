@@ -125,6 +125,6 @@ class MUD(object):
         """
         if exclude == None:
             exclude = []
-        for (id, connection) in self.connections.iteritems():
+        for (id, connection) in self.connections.items():
             if connection not in exclude:
                 connection.send(message)

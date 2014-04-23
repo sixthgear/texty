@@ -1,13 +1,35 @@
+from texty.util.exceptions import TextyException
 from texty.builtins.objects import BaseObject
 from texty.builtins.characters import body
 from texty.util import objectlist, english
 from texty.engine.command import Command
 from collections import OrderedDict
 
+
 class Character(BaseObject):
     """
     Base character class, from which all other character classes are inherited from
     """
+
+    """
+    class STATUS:
+        LIMBO
+        DEAD
+        NORMAL
+        FIGHTING
+        RESTING
+        SLEEPING
+        INCAPACITATED
+
+        LIMBO -> PLAYING
+
+
+    class FLAGS:
+        BLINDED,
+        SLOW,
+
+    """
+    # status levels dictate complete changes in player behavior
     name = 'Mr. Character'
     gender = 'N'
     occupation = None
@@ -16,10 +38,12 @@ class Character(BaseObject):
 
     hitpoints = 100
     capacity = 20
+
     inventory = []
-    equipment = {}
+    equipment = []
 
     def __init__(self, name = None, room=None):
+
         self.name = name or self.__class__.name
         self.description = english.resolve_single(self.__class__.description, self)
         self.hitpoints = self.__class__.hitpoints
@@ -74,10 +98,10 @@ class Character(BaseObject):
     def equip(self, object, parts=None):
 
         if not object.is_a('equipable'):
-            raise SyntaxError('{} is not equipable.'.format(object.name))
+            raise TextyException('{} is not equipable.'.format(object.name))
 
         if not object.fits:
-            raise SyntaxError('{} does not fit anything.'.format(object.name))
+            raise TextyException('{} does not fit anything.'.format(object.name))
 
         if not parts:
             parts = object.fits
@@ -85,27 +109,27 @@ class Character(BaseObject):
         for p in parts:
 
             if p not in object.fits:
-                raise SyntaxError('It doesn\'t fit there.')
+                raise TextyException('It doesn\'t fit there.')
 
             if not self.eq_map.get(p):
                 self.eq_map[p] = object
                 self.equipment.append(object)
                 return True
 
-        raise SyntaxError('You already have something there.'.format(object.name))
+        raise TextyException('You already have something there.'.format(object.name))
 
     def unequip(self, object, parts=None):
 
         if not parts:
             parts = object.fits
 
-        for part, eq in self.eq_map.iteritems():
+        for part, eq in self.eq_map.items():
             if eq == object:
                 self.eq_map[part] = None
                 self.equipment.remove(object)
                 return True
 
-        raise SyntaxError('Couldn\'t Unequip {}.'.format(object.name))
+        raise TextyException('Couldn\'t Unequip {}.'.format(object.name))
 
 
 
@@ -115,11 +139,9 @@ class Character(BaseObject):
         an internal call. The calling function is reponsible to send notifications.
         Use None to remove the player from all rooms.
         """
-
         # first remove this player from the rooms characters list
         if self.room and self in self.room.characters:
             self.room.characters.remove(self)
-
         # next change the players room reference, and then add to the new room's character list
         if room:
             self.room = room

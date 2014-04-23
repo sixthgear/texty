@@ -1,18 +1,22 @@
+from texty.util.exceptions import TextyException
 from texty.builtins.objects import obj
 from texty.engine.parser import parser
 from texty.util.parsertools import VOCAB, v
 from collections import namedtuple
 from pprint import pprint
+import logging
 import re
+
 
 class SCOPE:
 
     EQUIP, INV, BODY, OBJ, CHAR, IN, HAS, ANY, ROOM = range(9)
 
+
 class ObjectASTProxy(object):
     """
-    Proxy Object that allows commands to refer to the same object both before resolution (when it a set
-    of descriptions from the AST) and after is has been resolved into a real-world object.
+    Proxy Object that allows commands to refer to the same object both before resolution (when it
+    a set of descriptions from the AST) and after is has been resolved into a real-world object.
     """
     def __init__(self, ast_node, command):
         self.command = command
@@ -27,7 +31,7 @@ class ObjectASTProxy(object):
 
     def resolve(self, scope=SCOPE.ANY, target=None):
         if not self.ast_node:
-            raise Exception('No AST node provided for ObjectASTProxy.', str(self))
+            raise TextyException('No AST node provided for ObjectASTProxy.', str(self))
         if target:
             target = target.obj
 
@@ -41,7 +45,7 @@ class ObjectASTProxy(object):
 
     def is_resolved(self):
         if not self.obj:
-            raise Exception('AST node {} has not been resolved.', str(self))
+            raise TextyException('AST node {} has not been resolved.', str(self))
         return True
 
     def is_a(self, what):
@@ -94,7 +98,7 @@ class Command(object):
         self.echo()
         # parse command
         fn, ast = parser.parse(self.command)
-        pprint(ast, indent=4, width=4)
+        # pprint(ast, indent=4, width=4)
         # save reference to ast to use in helper funcions
         self.fn = fn
         self.ast = ast
@@ -106,7 +110,7 @@ class Command(object):
         # execute the callable
         try:
             response = fn(self, **ast) or None
-        except SyntaxError, e:
+        except TextyException as e:
             return self.response(e.message)
 
         # flush the do_next queue and execute commands
@@ -125,6 +129,9 @@ class Command(object):
         """
         Send the response to the echo
         """
+
+        logging.info('%s: %s' % (self.source.name, message))
+        logging.info('---')
         if self.should_echo:
             self.source.send({'type': 'command', 'response': message})
 
@@ -165,7 +172,7 @@ class Command(object):
             out = rule(x, y)
             message = m.format(x=str(x), y=str(y), R=out)
             if not out:
-                raise SyntaxError(message)
+                raise TextyException(message)
 
         # send out final message as a response,
         # then yield control back to command function with resolved objects
@@ -218,7 +225,7 @@ class Command(object):
         if not obj:
             n = self.ast.get('object').get('noun')
             adj = str.join(', ', self.ast.get('object').get('adjl'))
-            raise SyntaxError('You don\'t see a {} {} here.'.format(adj, n))
+            raise TextyException('You don\'t see a {} {} here.'.format(adj, n))
         return obj
 
 
@@ -230,7 +237,7 @@ class Command(object):
             prep = self.ast.get('prep')
             obj = self.ast.get('object').get('noun')
             response = str.format('You can\'t {} {} a {}.', verb, prep, obj)
-            raise SyntaxError(response)
+            raise TextyException(response)
         return True
 
 
