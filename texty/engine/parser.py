@@ -183,7 +183,7 @@ class Parser(object):
             if callable(rule):
                 raise TextyException('Expected %s, got %s.' % (rule.__name__.upper(), self.token))
             else:
-                raise TextyException('Expected %s, got %s.' % (TOK.DESC[rule], self.token))
+                raise TextyException('Expected %s, got %s.' % (rule.name, self.token))
 
         def parse_command():
             """

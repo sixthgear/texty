@@ -3,6 +3,7 @@ Basic Objects to inherit from.
 """
 from texty.builtins.objects import BaseObject
 from texty.util.objectlist import ObjectList
+from texty.util.exceptions import TextyException
 
 class Container(BaseObject):
     """
@@ -31,15 +32,44 @@ class Weapon(Equipable):
     rate = 1 # per second
     range = 1 # feet
     weight = 5
-    icon = 'fa-magic'
 
 class RangedWeapon(Weapon):
     nouns = 'gun'
     attributes = 'loadable'
     capacity = 10 # rounds
     range = 20 # feet
+    icon = 'icon-gun'
+
     def __init__(self):
         self.ammo = None
+
+    def load(self, ammo):
+        """
+        """
+        if not ammo.is_a('ammo'):
+            raise TextyException('{} is not ammunition.'.format(ammo.name))
+        if not hasattr(ammo, 'fits') or self.__class__ not in ammo.fits:
+            raise TextyException('{} doesn\'t fit in {}.'.format(ammo.name, self.name))
+        if self.ammo:
+            raise TextyException('{} is already loaded.'.format(self.name))
+        self.ammo = ammo
+        return True
+
+    def unload(self):
+        """
+        """
+        if not self.ammo:
+            raise TextyException('{} is empty.'.format(self.name))
+        ammo, self.ammo = self.ammo, None
+        return ammo
+
+    @property
+    def contents(self):
+        if self.ammo:
+            return self.ammo.contents
+        else:
+            return []
+
 
 class Rifle(RangedWeapon):
     nouns = 'rifle'
@@ -56,7 +86,7 @@ class MeleeWeapon(Weapon):
     rate = 1 # per second
     range = 1 # feet
     damage = 100 # per hit
-    icon = 'fa-wrench'
+    icon = 'icon-screwdriver'
 
 class Explosive(Portable):
     nouns = 'explosive'
@@ -66,7 +96,7 @@ class Explosive(Portable):
     timer = 10 # seconds
     weight = 2
     pull_message = "%s %s the pin on %s."
-    icon = 'fa-asterisk'
+    icon = 'icon-bomb'
 
 class Grenade(Explosive):
     nouns = 'grenade'
@@ -79,14 +109,14 @@ class Ammo(Portable):
     fits = () # tuple of weapons this ammo wil work with
     damage = 100 # per hit
     capacity = 10 # rounds
-    icon = 'fa-tablet'
+    icon = 'icon-package'
 
     @property
     def contents(self):
         a = BaseObject()
-        s = 's' if self.capacity != 1 else ''
-        a.name = '{n} {item}{s}'.format(n=self.capacity, item=self.item, s=s)
-        return [ a ]
+        s = 's' if self.amount != 1 else ''
+        a.name = '{n} {item}{s}'.format(n=self.amount, item=self.item, s=s)
+        return ObjectList([ a ])
 
     def __init__(self):
-        self.capacity = self.__class__.capacity
+        self.amount = self.__class__.capacity

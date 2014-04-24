@@ -27,11 +27,22 @@ def dispatch(data):
             'type': 'action',
             'items': [ {'icon': 'fa-bolt', 'text': data[2:]}, ]
         }
+
+    elif data.startswith('MV:'):
+        data = {
+            'type': 'action',
+            'items': [ {'icon': 'icon-steps', 'text': data[3:]}, ]
+        }
     # info
     elif data.startswith('I:'):
         data = {
             'type': 'info',
-            'items': [ {'icon': 'fa-eye', 'text': data[2:]},]
+            'items': [ {'icon': 'icon-eye', 'text': data[2:]},]
+        }
+    elif data.startswith('X:'):
+        data = {
+            'type': 'info',
+            'items': [ {'icon': 'icon-exit', 'text': data[2:]},]
         }
     # other
     else:
@@ -72,7 +83,7 @@ def obj(obj, template='{} is here.'):
     Serialize an object.
     """
     data = {}
-    data['icon'] = obj.icon,
+    data['icon'] = obj.icon
     data['text'] = template.format('<b>{name}</b>'.format(name=obj.name))
     return data
 
@@ -98,8 +109,8 @@ def full_character(player):
     data = {'type': 'character'}
 
     status = [
-        {'level': 'high', 'text': 'You feel cold,', 'icon': 'fa-frown-o'},
-        {'level': 'med', 'text': 'You feel hungry.', 'icon': 'fa-cutlery'}
+        {'level': 'high', 'text': 'You feel cold,', 'icon': 'icon-temperature'},
+        {'level': 'med', 'text': 'You feel hungry.', 'icon': 'icon-food'}
     ]
 
     inv = []

@@ -17,7 +17,6 @@ class ObjectASTProxy(object):
     def __init__(self, ast_node, command):
         self.command = command
         self.ast_node = ast_node
-
         self.scope = None
         self.container = None
         self.obj = None
@@ -86,26 +85,29 @@ class Command(object):
         self.should_echo = echo
         self.do_next = []
 
+    def parse(self):
+        self.fn, self.ast = parser.parse(self.command)
+
     def run(self):
         """
         Execute the command.
         """
+        # parse command
+        # save reference to ast to use in helper funcions
+        if not self.fn and self.ast:
+            self.parse()
+
         # echo command to terminal
         self.echo()
-        # parse command
-        fn, ast = parser.parse(self.command)
-        # pprint(ast, indent=4, width=4)
-        # save reference to ast to use in helper funcions
-        self.fn = fn
-        self.ast = ast
 
-        if not fn:
+        # no callable returned by parser
+        if not self.fn:
             return None
 
         # TODO: perform noun preresolution from syntax table
         # execute the callable
         try:
-            response = fn(self, **ast) or None
+            response = self.fn(self, **self.ast) or None
         except TextyException as e:
             return self.response(e.message)
 

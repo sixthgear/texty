@@ -1,4 +1,6 @@
 from texty.engine.map import Map
+import sys
+import importlib
 import logging
 
 class Story(object):
@@ -10,14 +12,12 @@ class Story(object):
     loaded_story = None
 
     def __init__(self):
-
         # perform map loading
         self.map = Map()
         self.map.load_data(
             self.options.get('map_file'),
             self.options.get('room_file'))
         self.starting_room = self.map.rooms[self.options.get('start_at')]
-
         # call initialize
         self.initialize()
 
@@ -39,14 +39,14 @@ class Story(object):
         Try to load a story from disk.
         """
         try:
-            story_module = __import__(story)
+            story_module = importlib.import_module(story)
             cls.loaded_story = story_module.storyclass()
             logging.info('Story "%s" %s loaded.' % (cls.loaded_story.__name__, cls.loaded_story.__version__))
             return cls.loaded_story
+
         except (ImportError, AttributeError):
-            print('Couldn\'t find story %s' % story)
-            raise
-            return False
+            print('Couldn\'t find story %s' % story, file=sys.stderr)
+            sys.exit()
 
     @classmethod
     def get(cls):

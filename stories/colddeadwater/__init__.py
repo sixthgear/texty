@@ -127,4 +127,3 @@ class ColdDeadWater(Story):
 
 
 storyclass = ColdDeadWater
-

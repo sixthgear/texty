@@ -26,8 +26,7 @@ class TextyEngine(object):
     """
 
     options = {
-        # 1.5 seconds per update tick
-        'tick_length': 1500,
+        'tick_length': 1500,    # 1.5 seconds per update tick
     }
 
     def __init__(self, storyname=None):
@@ -64,13 +63,27 @@ class TextyEngine(object):
         for i, o in enumerate(parser.object_table):
             logging.info('%03d:    %s', i, o.__name__)
 
+        # create vocab table formatting strings
+        cols = '| {:<10.10} | {:<6.6} | {:<14.14} | {:<12.12} | {:<10.10} | {:<10.10} |'
+        vert = '+-{:<10.10}-+-{:<6.6}-+-{:<14.14}-+-{:<12.12}-+-{:<10.10}-+-{:<10.10}-+'
+        rule = ['-'*20] * 6
 
-        cols = '{:<16}{:<16}{:<16}{:<16}'
         logging.info('')
-        logging.info(cols.format('Verbs', 'Nouns', 'Adjectives', 'Attribs'))
-        logging.info(cols.format('-----', '-----', '----------', '-------'))
-        for v, n, ad, at in itertools.zip_longest(VOCAB.verbs, VOCAB.nouns, VOCAB.adjectives, parser.attribute_table, fillvalue=''):
-            logging.info(cols.format(v, n, ad, at))
+        logging.info(vert.format(*rule))
+        logging.info(cols.format('VERBS', 'PHRASE', 'ADJECTIVES', 'NOUNS', 'PREPS', 'ATTRIBUTES'))
+        logging.info(vert.format(*rule))
+        table = itertools.zip_longest(
+            sorted(parser.command_table),
+            sorted(VOCAB.phrasals),
+            sorted(VOCAB.adjectives | VOCAB.superlatives),
+            sorted(VOCAB.nouns | VOCAB.reserved),
+            sorted(VOCAB.prepositions),
+            sorted(parser.attribute_table),
+            fillvalue=''
+        )
+        for c in table:
+            logging.info(cols.format(*c))
+        logging.info(vert.format(*rule))
 
 
     def on_connect(self, connection):
@@ -135,6 +148,7 @@ class TextyEngine(object):
         # dispatch command to player
         player = self.players[connection.id]
         logging.info('%s: %s' % (player.name, data))
+
         player.do(data, echo=True)
 
 
@@ -167,11 +181,8 @@ class TextyEngine(object):
         """
         # increment counter
         self.tick += 1
-        # print (' [%04d] ...' % self.tick)
-
         # tick the story
         self.story.update(self.tick)
-
         # tick the combat
         ####
 

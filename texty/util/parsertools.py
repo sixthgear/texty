@@ -35,10 +35,6 @@ class VOCAB:
     ordinals       |=   {'seventh', 'eighth', 'nineth', 'ninth', 'tenth', 'last'}
     ordinals       |=   {'1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th'}
 
-    tranformations = {
-        'my self':      'myself'
-    }
-
 
 class Token(object):
     """

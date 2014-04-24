@@ -72,6 +72,7 @@ class Character(BaseObject):
         Parse and execute a text command for this player.
         """
         c = Command(source=self, command=command, echo=echo)
+        c.parse()
         c.run()
 
     def send(self, message):
@@ -98,7 +99,6 @@ class Character(BaseObject):
 
         # try each part
         for p in parts:
-
             if p not in object.fits:
                 raise TextyException('It doesn\'t fit there.')
 

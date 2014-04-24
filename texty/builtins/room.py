@@ -6,16 +6,13 @@ class Room(BaseObject):
     Room object
     """
     def __init__(self, id, title='', description=''):
-
         # basic information
         self.id = id
         self.title = title
         self.intro = ''
         self.description = description
-
         # exits is a dict mapping from direction names to room references
         self.exits = {}
-
         # these are Texty ObjectLists so that we can search for them easier in
         # the noun resolution phase of the parser with keywords, scopes and attribures
         self.characters = ObjectList()

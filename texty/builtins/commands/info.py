@@ -22,13 +22,13 @@ def look(cmd, verb, object, prep, complement):
     # command form C. VERB PREP OBJECT.
     elif verb and object and prep in ('in', 'into', 'inside'):
         valid, msg, x, _ = cmd.rules(
-            (lambda x,_: x.resolve(),                    "You don't see {x} here."),
-            (lambda x,_: x.is_any('container ammo'),     "You can't look in {x}."),
-            (lambda x,_: x.allows('look in'),            "You can't look in {x}. {R}"),
-            (lambda x,_: True,                           "You look inside {x}.")
+            (lambda x,_: x.resolve(),                         "You don't see {x} here."),
+            (lambda x,_: x.is_any('container ammo loadable'), "You can't look in {x}."),
+            (lambda x,_: x.allows('look in'),                 "You can't look in {x}. {R}"),
+            (lambda x,_: True,                                "You look inside {x}.")
         )
         cmd.response(msg)
-        cmd.to_source(serialize.list(x.obj.contents, '{} is inside'))
+        cmd.to_source(serialize.list(x.obj.contents, '{} is inside.'))
         return
 
     # command form B. VERB OBJECT.
@@ -42,7 +42,7 @@ def look(cmd, verb, object, prep, complement):
 
         cmd.to_source({'type': 'object', 'items': [{'icon': x.obj.icon, 'text': x.obj.description}]})
 
-        if x.is_any('container ammo'):
+        if x.is_any('container ammo loadable'):
             cmd.to_source(serialize.list(x.obj.contents, '{} is inside.'))
 
         if x.is_a('character'):
@@ -54,7 +54,7 @@ def look(cmd, verb, object, prep, complement):
     elif verb:
         cmd.response('You examine your surroundings.')
         cmd.to_source(serialize.room(cmd.room))
-        cmd.to_source('I:Exits: {}'.format(" ".join([x.upper() for x in cmd.room.exits.keys()])))
+        cmd.to_source('X:Exits: {}'.format(', '.join([x.name for x in cmd.room.exits])))
         cmd.to_source(serialize.list(cmd.room.contents, '{} is here.', exclude=[cmd.source]))
         return
 

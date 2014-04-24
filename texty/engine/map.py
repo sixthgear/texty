@@ -1,4 +1,5 @@
 from texty.builtins.room import Room
+from texty.util.enums import DIRECTIONS
 import csv
 import re
 
@@ -41,28 +42,31 @@ class Map(object):
                     # check for exits
                     if w:
                         # west reference is set, so make exits
-                        self.rooms[room].exits['west'] = w
-                        w.exits['east'] = self.rooms[room]
+                        self.rooms[room].exits[DIRECTIONS.WEST] = w
+                        w.exits[DIRECTIONS.EAST] = self.rooms[room]
                     if u[x]:
                         # up reference is set, so make exits
-                        self.rooms[room].exits['up'] = u[x]
-                        u[x].exits['down'] = self.rooms[room]
+                        self.rooms[room].exits[DIRECTIONS.UP] = u[x]
+                        u[x].exits[DIRECTIONS.DOWN] = self.rooms[room]
                     elif n[x]:
                         # north reference is set, so make exits
-                        self.rooms[room].exits['north'] = n[x]
-                        n[x].exits['south'] = self.rooms[room]
+                        self.rooms[room].exits[DIRECTIONS.NORTH] = n[x]
+                        n[x].exits[DIRECTIONS.SOUTH] = self.rooms[room]
                     # set north and west references
                     w = n[x] = u[x] = self.rooms[room]
 
                 elif room == '.':
                     # this is a horizontal link, so clear the up reference
                     u[x] = None
+
                 elif room == '%':
                     # TODO: one way, or door, needs logic here
                     u[x] = None
+
                 elif room == '|':
                     # this is a vertical link, so clear the north and west references
                     n[x] = w = None
+
                 else:
                     # this is a blank cell, so clear all references
                     w = n[x] = u[x] = None

@@ -16,16 +16,16 @@
     {{!/if}}
 </script>
 
-<!-- COMMAND - RESPONSE -->
+<!-- BROADCAST -->
 <script id="broadcast-template" type="text/x-handlebars-template">
-    <p class="broadcast"><i class="fa fa-bolt"></i> {{!{ text }}}</p>
+    <p class="broadcast"><i class="icon icon-power"></i> {{!{ text }}}</p>
 </script>
 
 <!-- LIST -->
 <script id="list-template" type="text/x-handlebars-template">
     <ul class="{{! type }}-list">
         {{!#each items}}
-        <li><i class="fa {{! this.icon }}"></i> {{!{ this.text }}}</li>
+        <li><i class="{{! this.icon }}"></i> {{!{ this.text }}}</li>
         {{!/each}}
     </ul>
 </script>
@@ -48,7 +48,7 @@
         <div class="window-actions">
             {{!#each buttons ~}}
             <a href="" class="btn btn-{{! this.type }}">
-                <i class="fa {{! this.icon }}"></i>
+                <i class="{{! this.icon }}"></i>
                 {{! this.label }}
             </a>
             {{!~/each}}
@@ -63,7 +63,7 @@
 
     <ul class="status-list status-messages">
     {{!#each status}}
-        <li class="{{! this.level }}"><i class="fa {{! this.icon }}"></i> {{! this.text }}</li>
+        <li class="{{! this.level }}"><i class="icon {{! this.icon }}"></i> {{! this.text }}</li>
     {{!/each}}
     </ul>
 
@@ -119,7 +119,7 @@
     <h6>
         <label for="inventory-select">
             Inventory
-            <i class="fa fa-caret-down"></i>
+            <i class="icon icon-arrow-down"></i>
         </label>
 
         <select name="inventory-select" id="inventory-select">
@@ -137,7 +137,7 @@
 
     <ul class="status-list inventory">
     {{!#each inventory }}
-        <li class="{{! this.type }}">      <i class="fa {{! this.icon }}"></i>   {{{! this.name }}} <small>{{{! truncate this.description 30 }}}</small></li>
+        <li class="{{! this.type }}">      <i class="icon {{! this.icon }}"></i>   {{{! this.name }}} <small>{{{! truncate this.description 30 }}}</small></li>
     {{!/each}}
     </ul>
 

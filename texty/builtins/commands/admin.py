@@ -1,7 +1,7 @@
 from texty.engine.command import command, syntax
 from texty.builtins.story import Story
 
-@command ("rrreset")
+@command ("reset")
 def reset(command, verb, object, prep, complement):
 
     if not command.source.is_a('player'):

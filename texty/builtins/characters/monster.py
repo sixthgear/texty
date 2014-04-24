@@ -10,4 +10,5 @@ class Monster(Character):
     nouns = 'enemy'
     attributes = 'character'
     hitpoints = 100
+    icon = 'icon-skull'
 

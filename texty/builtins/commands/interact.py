@@ -1,7 +1,8 @@
 """
 Interaction commands.
 """
-from texty.engine.command import SCOPE, command, syntax, TextyException
+from texty.engine.command import SCOPE, command, syntax
+from texty.util.exceptions import TextyException
 from texty.util import serialize
 
 @command ("get", "pick up", "grab", "take")
@@ -53,7 +54,7 @@ def get(cmd, verb, object, prep, complement):
     raise TextyException("That doesn't make ANY sense.")
 
 
-@command ("drop", "leave", "throw away")
+@command ("drop", "throw away")
 def drop(cmd, verb, object, prep, complement):
     """
     Put an object in the room.
@@ -98,14 +99,20 @@ def put(cmd, verb, object, prep, complement):
     if (verb and object and complement and prep in ('in', 'into', 'inside')) or (verb and object and not prep):
         valid, msg, x, y = cmd.rules(
             (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
-            (lambda x,_: x.is_a('portable'),             "You can't move {x}."),
+            (lambda x,_: x.is_any('portable'),           "You can't move {x}."),
             (lambda x,y: y.provided(),                   "What do you want to put {x} in?"),
             (lambda _,y: y.resolve(),                    "You don't see {y}."),
-            (lambda _,y: y.is_a('container'),            "{y} is not a container."),
+            (lambda _,y: y.is_any('container loadable'), "{y} is not a container."),
             (lambda x,y: x.allows('put'),                "You can't put {x} into {y}. {R}"),
             (lambda x,y: y.allows('put'),                "You can't put {x} into {y}. {R}"),
             (lambda x,y: True,                           "You put {x} into {y}.")
         )
+
+        if x.is_a('ammo') and y.is_a('loadable'):
+            from . combat import load
+            return load(cmd, 'load', object, 'in', complement)
+            # cmd.enqueue('load {} in {}'.format())
+
         cmd.source.inventory.remove(x.obj)
         y.obj.contents.append(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
@@ -164,7 +171,7 @@ def give(cmd, verb, object, prep, complement):
 
 
 # @syntax ("wear I.EQUIPABLE")
-@command ("equip", "eq", "wear", "wield", "put on")
+@command ("equip", "eq", "wear", "wield", "wi", "put on")
 def equip(cmd, verb, object, prep, complement):
     """
     Equip things like a boss.
@@ -259,6 +266,13 @@ def unequip(cmd, verb, object, prep, complement):
 
 
 
+# @syntax ("use USABLE")
+# @syntax ("use USABLE [with] OBJECT")
+# @syntax ("use OBJECT [with] USABLE")
+def use(cmd, verb, object, prep, complement):
+    """
+    """
+    pass
 
 
 
@@ -281,13 +295,7 @@ def unequip(cmd, verb, object, prep, complement):
 #     """
 #     pass
 
-# @syntax ("use USABLE")
-# @syntax ("use USABLE [with] OBJECT")
-# @syntax ("use OBJECT [with] USABLE")
-# def use(command, verb, object, prep, complement):
-#     """
-#     """
-#     pass
+
 
 # @syntax ("open OPENABLE")
 # def open(command, verb, object, prep, complement):
@@ -302,15 +310,3 @@ def unequip(cmd, verb, object, prep, complement):
 #     """
 #     pass
 
-
-# @syntax ("give I.PORTABLE [to] CHARACTER")
-# @syntax ("give CHARACTER I.PORTABLE")
-# @alias  ("pass")
-# def give(command, verb, object, prep, complement):
-#     """
-#     """
-#     pass
-
-
-# @syntax  ("drop I.PORTABLE")
-# @syntax  ("drop I.PORTABLE [on] FLOOR", "put | throw")

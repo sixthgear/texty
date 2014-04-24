@@ -47,7 +47,9 @@ class Connection(websocket.WebSocketHandler):
 
 
 class MUD(object):
-
+    """
+    Main server class that wraps all tornado websocket communcation.
+    """
     # event handlers
     def on_connect(self, connection): pass
     def on_disconnect(self, connection): pass
@@ -57,14 +59,12 @@ class MUD(object):
         # connection tracking
         self.connections = dict()
         self.serial = 0
-
         # tornado objects
         self.app = web.Application([
             (r'/', HTMLClientHandler),
             (r'/websocket', Connection),
             (r'/static/(.*)', web.StaticFileHandler, {'path': 'texty/client-data/static/'})
         ])
-
         # add a reference to this object so we can access it from handlers
         self.app.MUD = self
 
@@ -73,7 +73,6 @@ class MUD(object):
         Start the server.
         """
         self.app.listen(port)
-
     def stop(self):
         pass
 
@@ -83,11 +82,9 @@ class MUD(object):
         """
         # set id to next serial and increment
         id = self.serial = self.serial + 1
-
         # save reference
         self.connections[id] = connection
         self.connections[id].id = id
-
         # fire event
         self.on_connect(connection)
 
@@ -97,7 +94,6 @@ class MUD(object):
         """
         # fire event
         self.on_disconnect(connection)
-
         # remove connection from list
         id = connection.id
         if id in self.connections:
@@ -107,17 +103,15 @@ class MUD(object):
         """
         Received data from a connection. Clean it up and pass it to application.
         """
-        # truncate incoming data
-        data = data[:100]
+        # truncate incoming data to 100 chars
         # remove all but whitelisted characters
+        data = data[:100]
         data = re.sub('[^\w\d\-\?,.!:; ]', '', data)
-
         data = data.strip()
 
+        # fire event
         if data:
-            # fire event
             self.on_read(connection, data)
-
 
     def broadcast(self, message, exclude=None):
         """

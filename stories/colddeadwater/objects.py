@@ -56,12 +56,12 @@ class Frag(Grenade):
 
 class BoxRifleCartridges(Ammo):
     """
-    a small box of rifle cartridges
+    a small box of rifle shells
     ---
-    A small box containing 20 Winchester Short Magnum cartridges. These should work nicely in
+    A small box containing 20 Winchester Short Magnum shells. These should work nicely in
     a Winchester Model 70.
     """
-    shortname = "Rifle Ammo Box"
+    shortname = "Box Rifle Shells"
     adjectives = 'winchester short magnum'
     nouns = 'cartridges shells box'
     # --- ammo
@@ -93,7 +93,7 @@ class Radio(Portable):
     shortname = "Radio"
     adjectives = 'small shortwave'
     nouns = 'radio'
-    icon = 'fa-calendar-o'
+    icon = 'icon-radio'
 
     def use(self, command):
         pass
@@ -108,11 +108,10 @@ class PowerMoves(Portable):
     shortname = 'Power Moves'
     adjectives = 'power'
     nouns = 'moves book'
-    icon = 'fa-book'
+    icon = 'icon-book2'
 
     def use(self, command):
         pass
-
 
 
 class Tshirt(Equipable):
@@ -125,7 +124,7 @@ class Tshirt(Equipable):
     shortname = 'Startup T-shirt'
     adjectives = 'startup'
     nouns = 'shirt t-shirt tshirt'
-    icon = 'fa-tags'
+    icon = 'icon-tshirt'
     # ---
     fits = (EQ_PARTS.BODY,)
 
@@ -139,7 +138,7 @@ class RippedJeans(Equipable):
     shortname = 'Ripped Jeans'
     adjectives = 'ripped'
     nouns = 'jeans pants'
-    icon = 'fa-tags'
+    icon = 'icon-binoculars2'
     # ---
     fits = (EQ_PARTS.LEGS,)
 
@@ -152,7 +151,7 @@ class LeatherBoots(Equipable):
     shortname = 'Leather Boots'
     adjectives = 'leather'
     nouns = 'boot'
-    icon = 'fa-tags'
+    icon = 'icon-steps'
     # ---
     fits = (EQ_PARTS.FEET,)
 
@@ -165,7 +164,7 @@ class MotorcycleHelmet(Equipable):
     shortname = 'Motorcycle Helmet'
     adjectives = 'motorcycle'
     nouns = 'helmet'
-    icon = 'fa-tags'
+    icon = 'icon-tshirt'
     # ---
     fits = (EQ_PARTS.HEAD,)
 
@@ -178,7 +177,7 @@ class CivilWarTrenchcoat(Equipable):
     shortname = 'Cival War Trenchcoat'
     adjectives = 'civil war trench blue'
     nouns = 'trenchcoat coat'
-    icon = 'fa-tags'
+    icon = 'icon-tshirt'
     # ---
     fits = (EQ_PARTS.SHOULDERS,)
 
@@ -191,7 +190,7 @@ class VibramFivefinger(Equipable):
     shortname = 'Single Vibram Shoe'
     adjectives = 'green vibram fivefingers'
     nouns = 'shoe'
-    icon = 'fa-tags'
+    icon = 'icon-steps'
     # ---
     fits = (EQ_PARTS.FEET,)
 
@@ -205,7 +204,7 @@ class ClifBar(Portable):
     shortname = 'Clif Bar&trade;'
     adjectives = 'clif'
     nouns = 'bar'
-    icon = 'fa-cutlery'
+    icon = 'icon-food'
 
 class Crate(Box):
     """
@@ -217,5 +216,5 @@ class Crate(Box):
     shortname = 'Crate'
     adjectives = 'shockingly generic'
     nouns = 'crate'
-    icon = 'fa-dropbox'
+    icon = 'icon-cube4'
     contents = [PowerMoves] * 10 + [ClifBar] * 2
