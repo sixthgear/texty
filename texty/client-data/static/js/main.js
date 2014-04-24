@@ -65,7 +65,10 @@ function init() {
                 var c = new List(data.type);
                 c.items = data.items; // {text: data.text, icon: data.icon};
                 for (item in c.items) {
-                    if (c.items[item].icon.indexOf('fa-')==0)
+
+                    if (!c.items[item].icon)
+                        c.items[item].icon = 'icon';
+                    else if (c.items[item].icon.indexOf('fa-')==0)
                         c.items[item].icon = 'fa '   + c.items[item].icon;
                     else if (c.items[item].icon.indexOf('icon-')==0)
                         c.items[item].icon = 'icon ' + c.items[item].icon;

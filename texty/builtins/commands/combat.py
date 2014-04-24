@@ -146,20 +146,11 @@ def unload(cmd, verb, object, prep, complement):
 # @syntax ("kill")
 # @syntax ("kill CHARACTER")
 # @syntax ("kill CHARACTER [with] MY.WEAPON")
-@command  ("kill", "attack")
+@command  ("kill", "attack", "shoot", "shoot", "fire")
 def kill(cmd, verb, object, prep, complement):
     """
     """
-    raise TextyException('Quit breaking things kaptin.')
-    pass
-
-
-# @syntax ("shoot [at] R.OBJECT")
-@command  ("shoot", "fire")
-def kill(cmd, verb, object, prep, complement):
-    """
-    Shoot a ranged weapon.
-    """
+    raise TextyException('Unfortunately, you appear to be a pacifist.')
     pass
 
 
@@ -169,6 +160,7 @@ def hit(cmd, verb, object, prep, complement):
     """
     Use a melee weapon
     """
+    raise TextyException('Unfortunately, you appear to be a pacifist.')
     pass
 
 
@@ -178,6 +170,7 @@ def stop(cmd, verb, object, prep, complement):
     """
     Use a melee weapon
     """
+    raise TextyException('OK.')
     pass
 
 

@@ -83,6 +83,10 @@ def obj(obj, template='{} is here.'):
     Serialize an object.
     """
     data = {}
+
+    if hasattr(obj, 'amount') and obj.amount != 1:
+        template = template.replace('is', 'are')
+
     data['icon'] = obj.icon
     data['text'] = template.format('<b>{name}</b>'.format(name=obj.name))
     return data
@@ -93,6 +97,7 @@ def list(container, template='{} is here', exclude=None):
     """
     data = {'type': 'object'}
     data['items'] = []
+
     for x in container:
         if exclude and x in exclude: continue
         if x.is_a('character'):
@@ -100,6 +105,10 @@ def list(container, template='{} is here', exclude=None):
         else:
             item = obj(x, template)
         data['items'].append(item)
+
+    if not len(container):
+        data['items'] = [{'text': 'It\'s empty.'}]
+
     return data
 
 def full_character(player):

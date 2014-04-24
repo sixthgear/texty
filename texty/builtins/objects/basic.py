@@ -115,6 +115,8 @@ class Ammo(Portable):
     def contents(self):
         a = BaseObject()
         s = 's' if self.amount != 1 else ''
+        a.amount = self.amount
+        a.icon = self.icon
         a.name = '{n} {item}{s}'.format(n=self.amount, item=self.item, s=s)
         return ObjectList([ a ])
 
