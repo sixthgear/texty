@@ -15,7 +15,7 @@ requirejs.config({
     }
 });
 
-require(['jquery', 'bootstrap', 'handlebars', 'handlebars-truncate', 'sampledata'], function($) {
+require(['jquery', 'bootstrap', 'handlebars', 'handlebars-truncate'], function($) {
     init();
     return {};
 });
@@ -111,8 +111,6 @@ function init() {
         "sidebar":      Handlebars.compile($("#sidebar-template").html())
     }
 
-    // load sample data
-    // sample();
     sidebar = new Sidebar();
     sidebar.name = "...";
     sidebar.occupation = "...";
