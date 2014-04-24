@@ -13,7 +13,7 @@ class VOCAB:
     nouns           =   set()
     adjectives      =   set()
     phrasals        =   set()
-    commands        =   {'say', 'yell', 'shout', 'tell', '"'}
+    commands        =   {'say', 'yell', 'shout', 'tell', '"', 'broadcast'}
 
     # set of reserved nouns
     reserved        =   {'me', 'room', 'myself', 'self', 'floor', 'ground'}

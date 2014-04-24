@@ -158,7 +158,7 @@ def give(cmd, verb, object, prep, complement):
         cmd.source.send(serialize.full_character(cmd.source))
 
         if y.obj.is_a('player'):
-            cmd.source.send(serialize.full_character(y.obj))
+            y.obj.send(serialize.full_character(y.obj))
 
         cmd.to_room('A:{} gives {} to {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)

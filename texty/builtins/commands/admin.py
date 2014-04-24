@@ -41,3 +41,12 @@ def reload(command, verb, object, prep, complement):
     command.response('objects: %d' % len(parser.object_table))
     # TODO: recreate existing objects
     return command.response('Done.')
+
+
+# @command ("broadcast")
+# def reload(command, verb, object, prep, complement, string):
+
+#     if not command.source.is_a('admin'):
+#         return
+
+
