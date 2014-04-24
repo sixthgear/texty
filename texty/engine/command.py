@@ -195,11 +195,19 @@ class Command(object):
         noun = node.get('noun')
         adjs = node.get('adjl')
 
+        if scope in (SCOPE.ANY, SCOPE.ROOM, SCOPE.CHAR) and noun in ('self', 'me', 'myself'):
+            return (self.source, scope, self.room)
+
+        if scope in (SCOPE.ANY, SCOPE.ROOM) and noun in ('floor', 'ground', 'room'):
+            return (self.room, scope, self.room)
         # search each scope
         for s in (compound_scopes.get(scope) or [scope]):
 
             if s == SCOPE.IN:
-                source = target.contents
+                if target.is_a('room'):
+                    source = target.objects
+                else:
+                    source = target.contents
             elif s == SCOPE.EQUIP:
                 source = target.equipment
             elif s == SCOPE.INV:

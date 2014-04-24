@@ -64,9 +64,9 @@ class TextyEngine(object):
             logging.info('%03d:    %s', i, o.__name__)
 
         # create vocab table formatting strings
-        cols = '| {:<10.10} | {:<6.6} | {:<14.14} | {:<12.12} | {:<10.10} | {:<10.10} |'
-        vert = '+-{:<10.10}-+-{:<6.6}-+-{:<14.14}-+-{:<12.12}-+-{:<10.10}-+-{:<10.10}-+'
-        rule = ['-'*20] * 6
+        cols = '| {:<10.10} | {:<14.14} | {:<12.12} | {:<10.10} | {:<10.10} |'
+        vert = '+-{:<10.10}-+-{:<14.14}-+-{:<12.12}-+-{:<10.10}-+-{:<10.10}-+'
+        rule = ['-'*20] * 5
 
         logging.info('')
         logging.info(vert.format(*rule))
@@ -74,7 +74,7 @@ class TextyEngine(object):
         logging.info(vert.format(*rule))
         table = itertools.zip_longest(
             sorted(parser.command_table),
-            sorted(VOCAB.phrasals),
+            # sorted(VOCAB.phrasals),
             sorted(VOCAB.adjectives | VOCAB.superlatives),
             sorted(VOCAB.nouns | VOCAB.reserved),
             sorted(VOCAB.prepositions),

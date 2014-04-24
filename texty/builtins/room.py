@@ -5,10 +5,13 @@ class Room(BaseObject):
     """
     Room object
     """
-    def __init__(self, id, title='', description=''):
+
+    attributes = 'room'
+
+    def __init__(self, id, name='', description=''):
         # basic information
         self.id = id
-        self.title = title
+        self.title = name
         self.intro = ''
         self.description = description
         # exits is a dict mapping from direction names to room references

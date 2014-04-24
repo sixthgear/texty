@@ -14,15 +14,20 @@ def get(cmd, verb, object, prep, complement):
     if verb and object and complement and prep in ('from', 'in', 'inside'):
         valid, msg, x, y = cmd.rules(
             (lambda _,y: y.resolve(),                    "You don't see {y} here."),
-            (lambda _,y: y.is_a('container'),            "{y} is not a container."),
+            (lambda _,y: y.is_any('container room'),     "{y} is not a container."),
             (lambda x,y: x.resolve(SCOPE.IN, y),         "You don't see {x} in {y}."),
             (lambda x,y: x.is_a('portable'),             "You can't remove {x} from {y}."),
             (lambda x,y: x.allows('get'),                "You can't remove {x} from {y}. {R}"),
             (lambda x,y: y.allows('get'),                "You can't remove {x} from {y}. {R}"),
             (lambda x,y: True,                           "You get {x} from {y}.")
         )
+
         # get an object from within another object
-        y.obj.contents.remove(x.obj)
+        if y.is_a('room'):
+            y.obj.objects.remove(x.obj)
+        else:
+            y.obj.contents.remove(x.obj)
+
         cmd.source.inventory.append(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} takes {} from {}.'.format(cmd.source.name, str(x), str(y)))

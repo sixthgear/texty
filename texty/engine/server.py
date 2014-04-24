@@ -106,7 +106,7 @@ class MUD(object):
         # truncate incoming data to 100 chars
         # remove all but whitelisted characters
         data = data[:100]
-        data = re.sub('[^\w\d\-\?,.!:; ]', '', data)
+        data = re.sub('[^\w\d\-\?,.!:;" ]', '', data)
         data = data.strip()
 
         # fire event

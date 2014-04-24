@@ -60,7 +60,7 @@ def room(room):
     """
     data = {}
     data['type'] = 'description'
-    data['intro'] = room.title
+    data['intro'] = room.name
     data['text'] = room.description
     return data
 

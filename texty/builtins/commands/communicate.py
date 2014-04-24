@@ -7,14 +7,15 @@ from texty.engine.command import command, syntax
 # @syntax ("say DIALOUGE... [to] CHARACTER")
 # @syntax ("say [to] CHARACTER DIALOUGE...")
 @command  ("say", "shout", "ask", "tell", "ask", "\"")
-def say(command, verb, object, prep, complement):
+def say(command, verb, object, prep, complement, string):
     """
     """
-    if len(command.arguments) == 0:
+
+    if not string:
         return command.response('Say what?')
-    message = ' '.join(command.arguments)
-    command.to_source('You say <span class="dialouge me">"%s"</span>' % message)
-    command.to_room('%s says <span class="dialouge">"%s"</span>' % (command.source, message))
+    string = string.replace('"', '').strip()
+    command.to_source('C: <b>You say</b> "%s"' % string)
+    command.to_room('C:<b>%s<b> says "%s"' % (command.source.name, string))
     return
 
 

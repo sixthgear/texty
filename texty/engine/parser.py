@@ -78,7 +78,7 @@ class Parser(object):
         mode = M.REGULAR
 
         # process each raw symbol in turn
-        for t in re.findall('\w+|[.,]', command.lower()):
+        for t in re.findall('\w+|[.,"]', command.lower()):
 
             # check for an optional phrasal preposition or particle following a verb
             if mode == M.VERB:
@@ -91,7 +91,7 @@ class Parser(object):
             # so once we are in string mode, keep consuming string tokens until the end
             if mode == M.STRING:
                 if tokens[-1:] and tokens[-1].typ == TOK.STRING:
-                    tokens[-1] += ' %s' % t
+                    tokens[-1].val += ' %s' % t
                 else:
                     tokens.append(Token(TOK.STRING, t))
                 continue
@@ -140,6 +140,7 @@ class Parser(object):
             tokens.append(Token(TOK.END, '.'))
 
         # return token stream
+        # print (tokens)
         return tokens
 
     def parse(self, command):

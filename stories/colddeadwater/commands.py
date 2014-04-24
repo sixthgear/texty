@@ -24,6 +24,9 @@ def wakeup(command, verb, object, prep, complement):
         I\'m glad you made it."' % p.first)
     p.send('I:"Bertram", you think to yourself. "I remember him."')
 
+    p.send("""I: You somehow discern that the currently working commands are: <br>
+        <i>LOOK, SAY, GET, PUT, GIVE, DROP, WEAR, WIELD, REMOVE, LOAD, UNLOAD, and directional commands</i>""")
+
 
 @command ("combust")
 def combust(command, verb, object, prep, complement):

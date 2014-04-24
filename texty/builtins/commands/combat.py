@@ -143,20 +143,11 @@ def unload(cmd, verb, object, prep, complement):
     return cmd.response("You unload <b>{x}</b> from <b>{y}</b>.".format(x=str(ammo.name), y=str(weapon.name)))
 
 
-# @syntax ("pull [PIN] [from] I.EXPLOSIVE")
-@command ("pull")
-def pull(command, verb, object, prep, complement):
-    """
-    Pulls a pin from an explosive.
-    """
-    pass
-
-
 # @syntax ("kill")
 # @syntax ("kill CHARACTER")
 # @syntax ("kill CHARACTER [with] MY.WEAPON")
 @command  ("kill", "attack")
-def kill(command, verb, object, prep, complement):
+def kill(cmd, verb, object, prep, complement):
     """
     """
     raise TextyException('Quit breaking things kaptin.')
@@ -165,7 +156,7 @@ def kill(command, verb, object, prep, complement):
 
 # @syntax ("shoot [at] R.OBJECT")
 @command  ("shoot", "fire")
-def kill(command, verb, object, prep, complement):
+def kill(cmd, verb, object, prep, complement):
     """
     Shoot a ranged weapon.
     """
@@ -174,11 +165,21 @@ def kill(command, verb, object, prep, complement):
 
 # @syntax ("hit R.OBJECT")
 @command  ("hit", "bash", "swing", "jab", "slash")
-def hit(command, verb, object, prep, complement):
+def hit(cmd, verb, object, prep, complement):
     """
     Use a melee weapon
     """
     pass
+
+
+# @syntax ("hit R.OBJECT")
+@command  ("stop", "cease fire", "hold fire")
+def stop(cmd, verb, object, prep, complement):
+    """
+    Use a melee weapon
+    """
+    pass
+
 
 
 # @syntax ("flee")
@@ -189,4 +190,14 @@ def flee(command, verb, object, prep, complement):
     """
     pass
 
+
+
+
+# @syntax ("pull [PIN] [from] I.EXPLOSIVE")
+@command ("pull")
+def pull(command, verb, object, prep, complement):
+    """
+    Pulls a pin from an explosive.
+    """
+    pass
 

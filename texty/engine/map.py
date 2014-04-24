@@ -77,7 +77,7 @@ class Map(object):
             room = row[0]
             if not room in self.rooms: continue
             if len(row) == 1: continue
-            self.rooms[room].title = row[1]
+            self.rooms[room].name = row[1]
             if len(row) == 2: continue
             self.rooms[room].description = row[2]
 
