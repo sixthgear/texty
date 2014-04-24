@@ -1,7 +1,7 @@
 """
 NPCs
 """
-from texty.builtins.characters import Character
+from texty.engine.character import Character
 
 class NPC(Character):
     """

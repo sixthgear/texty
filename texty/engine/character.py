@@ -1,10 +1,10 @@
-from texty.util.exceptions import TextyException
-from texty.builtins.objects import BaseObject
-from texty.builtins.characters import body
-from texty.util.enums import EQ_PARTS, CHAR_STATUS, CHAR_FLAG
-from texty.util import objectlist, english
-from texty.engine.command import Command
 from collections import OrderedDict
+from texty.builtins.characters import body
+from texty.engine.command import Command
+from texty.engine.obj import BaseObject
+from texty.util import objectlist, english
+from texty.util.enums import EQ_PARTS, CHAR_STATUS, CHAR_FLAG
+from texty.util.exceptions import TextyException
 
 class Character(BaseObject):
     """
@@ -46,6 +46,8 @@ class Character(BaseObject):
             obj = x()
             self.equipment.append(obj)
             self.eq_map[eq] = obj
+
+        self.attributes = self.__class__.attributes.copy()
 
     @property
     def icon(self):

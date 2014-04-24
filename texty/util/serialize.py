@@ -106,9 +106,6 @@ def list(container, template='{} is here', exclude=None):
             item = obj(x, template)
         data['items'].append(item)
 
-    if not len(container):
-        data['items'] = [{'text': 'It\'s empty.'}]
-
     return data
 
 def full_character(player):

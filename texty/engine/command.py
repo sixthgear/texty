@@ -1,10 +1,11 @@
 from texty.util.exceptions import TextyException
-from texty.builtins.objects import obj
+from texty.engine import obj
 from texty.engine.parser import parser
 from texty.util.parsertools import VOCAB
 from texty.util.enums import SCOPE
 
 from pprint import pprint
+import traceback
 import logging
 import re
 
@@ -102,7 +103,9 @@ class Command(object):
 
         # no callable returned by parser
         if not self.fn:
-            return None
+            if self.ast:
+                self.response('You aren\'t sure how to {}.'.format(self.ast.get('verb')))
+            return
 
         # TODO: perform noun preresolution from syntax table
         # execute the callable
@@ -110,6 +113,10 @@ class Command(object):
             response = self.fn(self, **self.ast) or None
         except TextyException as e:
             return self.response(e.message)
+        except Exception as e:
+            logging.error(e)
+            logging.error(traceback.format_exc())
+            return self.response('You broke something, jerk.')
 
         # flush the do_next queue and execute commands
         for command in self.do_next:

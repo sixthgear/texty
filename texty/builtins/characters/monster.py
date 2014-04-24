@@ -1,7 +1,7 @@
 """
 MONSTERS
 """
-from texty.builtins.characters import Character
+from texty.engine.character import Character
 
 class Monster(Character):
     """

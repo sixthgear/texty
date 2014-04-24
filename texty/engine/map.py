@@ -1,4 +1,4 @@
-from texty.builtins.room import Room
+from texty.engine.room import Room
 from texty.util.enums import DIRECTIONS
 import csv
 import re

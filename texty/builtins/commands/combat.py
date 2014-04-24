@@ -170,9 +170,8 @@ def stop(cmd, verb, object, prep, complement):
     """
     Use a melee weapon
     """
-    raise TextyException('OK.')
+    raise TextyException('OK!')
     pass
-
 
 
 # @syntax ("flee")
@@ -182,8 +181,6 @@ def flee(command, verb, object, prep, complement):
     """
     """
     pass
-
-
 
 
 # @syntax ("pull [PIN] [from] I.EXPLOSIVE")

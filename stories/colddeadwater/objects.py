@@ -170,11 +170,11 @@ class MotorcycleHelmet(Equipable):
 
 class CivilWarTrenchcoat(Equipable):
     """
-    a blue civil-war-era trenchcoat
+    a blue civil war era trenchcoat
     ---
     Its blue and old.
     """
-    shortname = 'Cival War Trenchcoat'
+    shortname = 'Civil War Trenchcoat'
     adjectives = 'civil war trench blue'
     nouns = 'trenchcoat coat'
     icon = 'icon-tshirt'

@@ -11,8 +11,8 @@ from texty.util.serialize import dispatch
 
 from texty.builtins import commands
 from texty.builtins import characters
-from texty.builtins import story
-from texty.builtins.objects import obj
+from texty.engine import story
+from texty.engine import obj
 
 import itertools
 import collections
@@ -86,7 +86,7 @@ class TextyEngine(object):
         logging.info(vert.format(*rule))
 
 
-    def on_connect(self, connection):
+    def on_connect(self, connection, token):
         """
         Server reported a new connection.
         """
@@ -104,6 +104,10 @@ class TextyEngine(object):
 
         # assign it to the list
         self.players[connection.id] = player
+
+        print (token)
+        if token == 37773:
+            player.attributes.add('admin')
 
         # add players nouns to the vocab
         VOCAB.characters.update(player.nouns)

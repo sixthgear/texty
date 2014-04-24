@@ -23,15 +23,18 @@ require(['jquery', 'bootstrap', 'handlebars', 'handlebars-truncate'], function($
 function init() {
 
     // create global websocket
-    // var host = "ws://ironman.quitjobmakegames.com:4000/websocket";
-    // var host = "ws://texty.local:4000/websocket";
-    var host =  "ws://" + window.location.hostname + ":4000/websocket";
+    var id = 0;
+    var host =  "ws://" + window.location.hostname + ":4000/websocket/" + id;
     websocket = new WebSocket(host);
+
     websocket.onopen = function(evt) {
         // this.send('look');
         console.log(evt)
     };
-    websocket.onclose = function(evt) { console.log(evt) };
+
+    websocket.onclose = function(evt) {
+        console.log(evt)
+    };
 
     websocket.onmessage = function(evt) {
         // console.log(evt.data);
@@ -80,7 +83,9 @@ function init() {
         window.scrollTo(0,document.body.scrollHeight);
     };
 
-    websocket.onerror = function(evt) { console.log(evt) };
+    websocket.onerror = function(evt) {
+        console.log(evt)
+    };
 
     // set up handler to write to websocket when enter is pressed
     $(".command-input input").keydown(function(e){

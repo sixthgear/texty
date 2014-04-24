@@ -1,5 +1,5 @@
 from texty.engine.command import command, syntax
-from texty.builtins.story import Story
+from texty.engine.story import Story
 
 @command ("wakeup")
 def wakeup(command, verb, object, prep, complement):

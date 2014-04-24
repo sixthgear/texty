@@ -2,6 +2,8 @@ from texty.util.exceptions import TextyException
 from texty.util.parsertools import Token, VOCAB
 from texty.util.enums import TOK
 
+import traceback
+import logging
 import collections
 import re
 
@@ -32,6 +34,8 @@ class Parser(object):
         """
         Register a command in the command table.
         """
+        print('registering ', name, '->', fn)
+
         name = name or fn.__name__
         words = name.lower().split()
         if len(words) == 1:
@@ -149,6 +153,9 @@ class Parser(object):
         """
         # lex the command
         tokens = self.lex(command)
+
+        if not tokens:
+            return None, None
 
         # create token iterator
         iterator = iter(tokens)
@@ -397,11 +404,17 @@ class Parser(object):
 
         try:
             command_ast = parse_command()
-            command_fn = self.command_table[command_ast['verb']]
+            command_fn = self.command_table.get(command_ast['verb'])
             return command_fn, command_ast
 
         except TextyException as e:
             return self.error, {'message': e.message} #[verb]
+        except Exception as e:
+            logging.error(tokens)
+            logging.error('------------------------------')
+            logging.error(e)
+            logging.error(traceback.format_exc())
+            return self.error, {'message': 'You broke something, jerk.'}
 
     def error(self, command, message):
         """

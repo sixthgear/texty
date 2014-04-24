@@ -1,4 +1,4 @@
-from texty.builtins.story import Story
+from texty.engine.story import Story
 
 def hello(command, verb, object, prep, complement):
     Story.get().login_prompt(command.source)

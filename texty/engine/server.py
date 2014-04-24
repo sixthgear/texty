@@ -1,4 +1,4 @@
-from texty.builtins import story
+from texty.engine import story
 from tornado import web
 from tornado import websocket
 from tornado import ioloop
@@ -25,8 +25,8 @@ class Connection(websocket.WebSocketHandler):
     """
     This simple handler wraps the tornado WebSocketHandler and hands off messages to our MUD server.
     """
-    def open(self):
-        self.application.MUD.connect(self)
+    def open(self, token):
+        self.application.MUD.connect(self, int(token))
 
     def on_message(self, data):
         self.application.MUD.data(self, data)
@@ -51,7 +51,7 @@ class MUD(object):
     Main server class that wraps all tornado websocket communcation.
     """
     # event handlers
-    def on_connect(self, connection): pass
+    def on_connect(self, connection, token): pass
     def on_disconnect(self, connection): pass
     def on_read(self, connection, data): pass
 
@@ -62,7 +62,7 @@ class MUD(object):
         # tornado objects
         self.app = web.Application([
             (r'/', HTMLClientHandler),
-            (r'/websocket', Connection),
+            (r'/websocket/(.*)', Connection),
             (r'/static/(.*)', web.StaticFileHandler, {'path': 'texty/client-data/static/'})
         ])
         # add a reference to this object so we can access it from handlers
@@ -73,10 +73,11 @@ class MUD(object):
         Start the server.
         """
         self.app.listen(port)
+
     def stop(self):
         pass
 
-    def connect(self, connection):
+    def connect(self, connection, token=None):
         """
         Player has connected.
         """
@@ -86,7 +87,7 @@ class MUD(object):
         self.connections[id] = connection
         self.connections[id].id = id
         # fire event
-        self.on_connect(connection)
+        self.on_connect(connection, token)
 
     def disconnect(self, connection):
         """

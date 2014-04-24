@@ -2,7 +2,7 @@ from texty.util import english
 from texty.util import objectlist
 from texty.util import serialize
 from texty.util.files import construct_name, construct_occupation
-from texty.builtins.story import Story
+from texty.engine.story import Story
 
 from colddeadwater.objects import *
 from colddeadwater import commands

@@ -1,7 +1,7 @@
 """
 Body Parts
 """
-from texty.builtins.objects import BaseObject
+from texty.engine.obj import BaseObject
 from texty.util.enums import EQ_PARTS
 
 

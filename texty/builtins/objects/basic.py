@@ -1,7 +1,7 @@
 """
 Basic Objects to inherit from.
 """
-from texty.builtins.objects import BaseObject
+from texty.engine.obj import BaseObject
 from texty.util.objectlist import ObjectList
 from texty.util.exceptions import TextyException
 

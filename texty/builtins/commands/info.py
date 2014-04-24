@@ -28,7 +28,11 @@ def look(cmd, verb, object, prep, complement):
             (lambda x,_: True,                                "You look inside {x}.")
         )
         cmd.response(msg)
-        cmd.to_source(serialize.list(x.obj.contents, '{} is inside.'))
+        data = serialize.list(x.obj.contents, '{} is inside.')
+        if not data['items']:
+            data['items'] = [{'text': 'It\'s empty.'}]
+        cmd.to_source(data)
+
         return
 
     # command form B. VERB OBJECT.
@@ -42,8 +46,11 @@ def look(cmd, verb, object, prep, complement):
 
         cmd.to_source({'type': 'object', 'items': [{'icon': x.obj.icon, 'text': x.obj.description}]})
 
-        if x.is_any('container ammo loadable'):
-            cmd.to_source(serialize.list(x.obj.contents, '{} is inside.'))
+        if x.is_any('ammo loadable'):
+            data = serialize.list(x.obj.contents, '{} is inside.')
+            if not data['items']:
+                data['items'] = [{'text': 'It\'s empty.'}]
+            cmd.to_source(data)
 
         if x.is_a('character'):
             cmd.to_source(serialize.list(x.obj.equipment, 'He is wearing {}.'))

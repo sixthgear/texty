@@ -1,4 +1,4 @@
-from texty.builtins.characters import Character
+from texty.engine.character import Character
 from texty.builtins.characters import body
 from texty.util.enums import EQ_PARTS, CHAR_STATUS, CHAR_FLAG
 from texty.util import objectlist
