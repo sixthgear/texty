@@ -83,6 +83,7 @@ class Rifle(RangedWeapon):
 
 class SubMachineGun(RangedWeapon):
     nouns = 'smg machinegun'
+    adjectives = 'submachine'
 
 class Shotgun(RangedWeapon):
     nouns = 'shotgun'
