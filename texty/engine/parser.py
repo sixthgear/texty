@@ -1,7 +1,7 @@
 from texty.util.exceptions import TextyException
 from texty.util.parsertools import Token, VOCAB
 from texty.util.enums import TOK
-
+from texty.util.objectlist import ObjectList
 import traceback
 import logging
 import collections
@@ -27,15 +27,13 @@ class Parser(object):
         # a command eg: (Verb, Noun, Prep, Noun) or (load WEAPON with AMMO)
         self.syntax_table = list()
         # the object table is a simple list of all objects registered in the game.
-        self.object_table = list()
+        self.object_table = ObjectList()
         self.attribute_table = set()
 
     def register_command(self, fn, name=None):
         """
         Register a command in the command table.
         """
-        print('registering ', name, '->', fn)
-
         name = name or fn.__name__
         words = name.lower().split()
         if len(words) == 1:
@@ -159,23 +157,25 @@ class Parser(object):
 
         # create token iterator
         iterator = iter(tokens)
-        self.token = next(iterator, None)
-        self.stack = []
+        token = next(iterator, None)
+        stack = []
 
         def accept(rule):
             """
             Helper function to see if the token matches the given terminal or non-terminal,
             If yes, advance the token iterator if the argument was a terminal.
             """
+            nonlocal token
+
             if isinstance(rule, collections.Callable):
                 a, b = rule()
                 if a:
-                    self.stack.append(b)
+                    stack.append(b)
                 return a
 
-            elif self.token.typ == rule:
-                self.stack.append(self.token.val)
-                self.token = next(iterator, None)
+            elif token.typ == rule:
+                stack.append(token.val)
+                token = next(iterator, None)
                 return True
 
             return False
@@ -185,13 +185,15 @@ class Parser(object):
             Helper function to do the same thing as accept, but raise a TextyException if the
             match does not succeed.
             """
+            nonlocal token
+
             if accept(rule): # self.token and
                 return True
 
             if callable(rule):
-                raise TextyException('Expected %s, got %s.' % (rule.__name__.upper(), self.token))
+                raise TextyException('Expected %s, got %s.' % (rule.__name__.upper(), token))
             else:
-                raise TextyException('Expected %s, got %s.' % (rule.name, self.token))
+                raise TextyException('Expected %s, got %s.' % (rule.name, token))
 
         def parse_command():
             """
@@ -209,32 +211,32 @@ class Parser(object):
             }
 
             if expect(verb):
-                cc['verb']                  = self.stack.pop()
+                cc['verb']                  = stack.pop()
 
                 if accept(TOK.END):
                     return cc
 
                 if accept(TOK.STRING) and expect(TOK.END):
-                    _                       = self.stack.pop()
-                    cc['string']            = self.stack.pop()
+                    _                       = stack.pop()
+                    cc['string']            = stack.pop()
                     return cc
 
                 if accept(TOK.PREP) and expect(nounphrase) and expect(TOK.END):
-                    _                       = self.stack.pop()
-                    cc['object']            = self.stack.pop()
-                    cc['prep']              = self.stack.pop()
+                    _                       = stack.pop()
+                    cc['object']            = stack.pop()
+                    cc['prep']              = stack.pop()
                     return cc
 
                 if expect(nounphrase):
-                    cc['object']            = self.stack.pop()
+                    cc['object']            = stack.pop()
 
                     if accept(TOK.END):
                         return cc
 
                     if expect(TOK.PREP) and expect(nounphrase) and expect(TOK.END):
-                        _                   = self.stack.pop()
-                        cc['complement']    = self.stack.pop()
-                        cc['prep']          = self.stack.pop()
+                        _                   = stack.pop()
+                        cc['complement']    = stack.pop()
+                        cc['prep']          = stack.pop()
                         return cc
 
         def verb():
@@ -243,10 +245,10 @@ class Parser(object):
             Verb -> verb phrasal
             """
             if accept(TOK.VERB):
-                verb                        = self.stack.pop()
+                verb                        = stack.pop()
 
                 if accept(TOK.PHRASAL):
-                    verb             += ' ' + self.stack.pop()
+                    verb             += ' ' + stack.pop()
                     return True, verb
 
                 return True, verb
@@ -271,24 +273,24 @@ class Parser(object):
             }
 
             if accept(determiner):
-                np.update(self.stack.pop())
+                np.update(stack.pop())
 
                 if accept(adjlist) and expect(noun):
-                    np['noun']              = self.stack.pop()
-                    np['adjl']              = self.stack.pop()
+                    np['noun']              = stack.pop()
+                    np['adjl']              = stack.pop()
                     return True, np
 
                 if expect(noun):
-                    np['noun']              = self.stack.pop()
+                    np['noun']              = stack.pop()
                     return True, np
 
             if accept(adjlist) and expect(noun):
-                np['noun']                  = self.stack.pop()
-                np['adjl']                  = self.stack.pop()
+                np['noun']                  = stack.pop()
+                np['adjl']                  = stack.pop()
                 return True, np
 
             if accept(noun):
-                np['noun']                  = self.stack.pop()
+                np['noun']                  = stack.pop()
                 return True, np
 
             return False, None # not a nounphrase
@@ -300,10 +302,10 @@ class Parser(object):
             Noun -> noun
             """
             if accept(TOK.NOUN):
-                n = self.stack.pop()
+                n = stack.pop()
 
                 if accept(TOK.OF) and expect(TOK.NOUN):
-                    return True, (n, self.stack.pop(),)
+                    return True, (n, stack.pop(),)
 
                 return True, n
 
@@ -318,13 +320,13 @@ class Parser(object):
             adjl = []
 
             if accept(adjective):
-                adjl.append(self.stack.pop())
+                adjl.append(stack.pop())
 
                 if accept(TOK.COMMA) and expect(adjlist):
-                    return True, adjl + self.stack.pop()
+                    return True, adjl + stack.pop()
 
                 if accept(adjlist):
-                    return True, adjl + self.stack.pop()
+                    return True, adjl + stack.pop()
 
                 return True, adjl
 
@@ -336,15 +338,15 @@ class Parser(object):
             Adjective -> adj
             """
             if accept(TOK.SUP):
-                a = self.stack.pop()
+                a = stack.pop()
 
                 if accept(TOK.OF) and expect(TOK.SPEC):
-                    return True, (a, self.stack.pop())
+                    return True, (a, stack.pop())
 
                 return True, a
 
             if accept(TOK.ADJ):
-                return True, self.stack.pop()
+                return True, stack.pop()
 
             return False, None
 
@@ -362,40 +364,40 @@ class Parser(object):
             }
 
             if accept(TOK.INDEF):
-                d['indef']                  = self.stack.pop()
+                d['indef']                  = stack.pop()
                 return True, d
 
             if accept(TOK.SPEC):
-                d['spec']                   = self.stack.pop()
+                d['spec']                   = stack.pop()
 
                 if accept(TOK.ORD):
-                    d['ord']                = self.stack.pop()
+                    d['ord']                = stack.pop()
                     return True, d
 
                 if accept(TOK.QUANT):
-                    d['quant']              = self.stack.pop()
+                    d['quant']              = stack.pop()
                     return True, d
 
                 return True, d
 
             if accept(TOK.QUANT):
-                d['quant']                  = self.stack.pop()
+                d['quant']                  = stack.pop()
 
                 if accept(TOK.SPEC):
-                    d['spec']               = self.stack.pop()
+                    d['spec']               = stack.pop()
                     return True, d
 
                 if accept(TOK.OF) and expect(TOK.SPEC):
-                    d['spec']               = self.stack.pop()
+                    d['spec']               = stack.pop()
                     return True, d
 
                 return True, d
 
             if accept(TOK.ORD):
-                d['ord']                    = self.stack.pop()
+                d['ord']                    = stack.pop()
 
                 if accept(TOK.OF) and expect(TOK.SPEC):
-                    d['spec']               = self.stack.pop()
+                    d['spec']               = stack.pop()
                     return True, d
 
                 return True, d

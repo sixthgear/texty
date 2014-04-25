@@ -79,6 +79,8 @@ class Command(object):
     TODO: this should give a reference to the Map object somehow.
     """
 
+    UNKNOWN = "You aren't sure how to {verb}."
+
     def __init__(self, source, command, room=None, echo=True):
         self.source = source
         self.command = command
@@ -104,7 +106,7 @@ class Command(object):
         # no callable returned by parser
         if not self.fn:
             if self.ast:
-                self.response('You aren\'t sure how to {}.'.format(self.ast.get('verb')))
+                self.response(self.UNKNOWN.format(**self.ast))
             return
 
         # TODO: perform noun preresolution from syntax table
@@ -258,6 +260,26 @@ class command(object):
 
         wrapper.__name__ = fn.__name__
         return wrapper
+
+
+
+def admin(fn):
+    """
+    A decorator for supplying admin command definitions and aliases
+    """
+    # nonlocal x = 0
+
+    def decorator(cmd, *args, **kwargs):
+
+
+        # print('calling', cmd, kwargs)
+
+        if not cmd.source.is_a('admin'):
+            raise TextyException(Command.UNKNOWN.format(**kwargs))
+
+        return fn(cmd, *args, **kwargs)
+
+    return decorator
 
 
 class syntax(object):

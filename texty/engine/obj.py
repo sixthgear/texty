@@ -35,7 +35,6 @@ class MetaObject(type):
         else:
             attrs['attributes'] = set()
 
-
         # Combine attributes from parent classes
         for b in bases:
             if hasattr(b, 'nouns'):
@@ -53,6 +52,8 @@ class MetaObject(type):
             attrs['name'] = doc[0].strip()
             attrs['description'] = str.join('', doc[1:]).strip()
 
+        if attrs.get('name') and not attrs.get('shortname'):
+            attrs['shortname'] = attrs.get('name').split()[0]
 
         # Create the class and add it to the registry
         # TODO: don't add abstract clases to the registry!

@@ -75,7 +75,7 @@ class Magazine9mm(Ammo):
     ---
     A 30-round magazine. This should fit nicely in a MP5.
     """
-    shortname = "9mm Magazine"
+    shortname = '9mm Magazine'
     adjectives = '9mm'
     nouns = 'magazine mag'
     # --- amo
@@ -90,7 +90,7 @@ class Radio(Portable):
     A small, battery operated, shortwave radio. This might be useful for communicating
     with other survivors.
     """
-    shortname = "Radio"
+    shortname = 'Radio'
     adjectives = 'small shortwave'
     nouns = 'radio'
     icon = 'icon-radio'
@@ -138,7 +138,7 @@ class RippedJeans(Equipable):
     shortname = 'Ripped Jeans'
     adjectives = 'ripped'
     nouns = 'jeans pants'
-    icon = 'icon-binoculars2'
+    icon = 'icon-hanger'
     # ---
     fits = (EQ_PARTS.LEGS,)
 
@@ -151,7 +151,7 @@ class LeatherBoots(Equipable):
     shortname = 'Leather Boots'
     adjectives = 'leather'
     nouns = 'boot'
-    icon = 'icon-steps'
+    icon = 'icon-hanger'
     # ---
     fits = (EQ_PARTS.FEET,)
 
@@ -164,7 +164,7 @@ class MotorcycleHelmet(Equipable):
     shortname = 'Motorcycle Helmet'
     adjectives = 'motorcycle'
     nouns = 'helmet'
-    icon = 'icon-tshirt'
+    icon = 'icon-hanger'
     # ---
     fits = (EQ_PARTS.HEAD,)
 
@@ -190,11 +190,11 @@ class VibramFivefinger(Equipable):
     shortname = 'Single Vibram Shoe'
     adjectives = 'green vibram fivefingers'
     nouns = 'shoe'
-    icon = 'icon-steps'
+    icon = 'icon-hanger'
     # ---
     fits = (EQ_PARTS.FEET,)
 
-class ClifBar(Portable):
+class ClifBar(Food):
     """
     an orginal Clif Bar&trade;
     ---
@@ -216,5 +216,5 @@ class Crate(Box):
     shortname = 'Crate'
     adjectives = 'shockingly generic'
     nouns = 'crate'
-    icon = 'icon-cube4'
+    icon = 'icon-box2'
     contents = [PowerMoves] * 10 + [ClifBar] * 2

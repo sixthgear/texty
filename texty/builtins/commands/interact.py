@@ -76,7 +76,7 @@ def drop(cmd, verb, object, prep, complement):
     elif verb and object:
         valid, msg, x, _ = cmd.rules(
             (lambda x,_: x.resolve(SCOPE.INV),          "You don't have {x}."),
-            (lambda x,_: x.is_a('portable'),            "You can't drop {x}."),
+            # (lambda x,_: x.is_a('portable'),            "You can't drop {x}."),
             (lambda x,_: x.allows('drop'),              "You can't drop {x}. {R}"),
             (lambda x,_: True,                          "You drop {x}.")
         )
@@ -274,10 +274,45 @@ def unequip(cmd, verb, object, prep, complement):
 # @syntax ("use USABLE")
 # @syntax ("use USABLE [with] OBJECT")
 # @syntax ("use OBJECT [with] USABLE")
+@command("use")
 def use(cmd, verb, object, prep, complement):
     """
     """
     pass
+
+
+@command("eat")
+def eat(cmd, verb, object, prep, complement):
+    """
+    """
+    # command form D. VERB OBJECT PREP COMPLEMENT.
+    if verb and object and complement:
+        raise TextyException("That doesn't make sense.")
+
+    # command form C. VERB PREP OBJECT.
+    elif verb and object and prep:
+        raise TextyException("That doesn't make sense.")
+
+    # command form B. VERB OBJECT.
+    elif verb and object:
+        valid, msg, x, _ = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.INV),          "You don't have {x}."),
+            (lambda x,_: x.is_a('food'),                "{x} is not edible."),
+            (lambda x,_: x.allows('eats'),              "You can't eat {x}. {R}"),
+            (lambda x,_: True,                          "You eat {x}.")
+        )
+        # drop an object in the room
+        x.obj.eat()
+        cmd.source.inventory.remove(x.obj)
+        cmd.source.send(serialize.full_character(cmd.source))
+        cmd.to_room('A:{} eats {}.'.format(cmd.source.name, str(x)))
+        return cmd.response(msg)
+
+    # command form A. VERB.
+    elif verb:
+        raise TextyException("What would you like to eat?")
+
+    raise TextyException("That doesn't make ANY sense.")
 
 
 

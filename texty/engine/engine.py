@@ -1,21 +1,15 @@
-# from tornado.platform.asyncio import AsyncIOMainLoop
-# import asyncio
-
-from tornado import ioloop
-from tornado import escape
-
+from texty.builtins import characters
+from texty.builtins import commands
+from texty.engine import obj
 from texty.engine import server
+from texty.engine import story
 from texty.engine.parser import parser
 from texty.util.parsertools import VOCAB
 from texty.util.serialize import dispatch
-
-from texty.builtins import commands
-from texty.builtins import characters
-from texty.engine import story
-from texty.engine import obj
-
-import itertools
+from tornado import escape
+from tornado import ioloop
 import collections
+import itertools
 import logging
 
 
@@ -66,7 +60,7 @@ class TextyEngine(object):
         # create vocab table formatting strings
         cols = '| {:<10.10} | {:<14.14} | {:<12.12} | {:<10.10} | {:<10.10} |'
         vert = '+-{:<10.10}-+-{:<14.14}-+-{:<12.12}-+-{:<10.10}-+-{:<10.10}-+'
-        rule = ['-'*20] * 5
+        rule = ['-' * 20] * 5
 
         logging.info('')
         logging.info(vert.format(*rule))
@@ -105,17 +99,13 @@ class TextyEngine(object):
         # assign it to the list
         self.players[connection.id] = player
 
-        print (token)
-        if token == 37773:
-            player.attributes.add('admin')
+        logging.info('TOKEN: %s' % token)
 
         # add players nouns to the vocab
         VOCAB.characters.update(player.nouns)
 
         # notify the player
         player.on_connect()
-
-
 
         # TODO: reconnect old players
         # player.on_reconnect()
@@ -174,8 +164,6 @@ class TextyEngine(object):
         logging.info('Ready to rock on %s:%d.' % (address, port))
         self.timer.start()
         ioloop.IOLoop.instance().start()
-        # AsyncIOMainLoop().install()
-        # asyncio.get_event_loop().run_forever()
         # NEVER REACHED
 
 
@@ -192,6 +180,8 @@ class TextyEngine(object):
 
 
     def shutdown(self):
+        """
+        """
         logging.info('Shutting down.')
         self.server.broadcast('B:Server is shutting down.')
         self.server.stop()

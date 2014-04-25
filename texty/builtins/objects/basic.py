@@ -22,6 +22,13 @@ class Box(Portable, Container):
     nouns = 'box'
     icon = 'fa-briefcase'
 
+class Food(Portable):
+
+    attributes = 'food'
+
+    def eat(self):
+        pass
+
 class Equipable(Portable):
     attributes = 'equipable'
     fits = ()

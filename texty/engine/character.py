@@ -52,9 +52,9 @@ class Character(BaseObject):
     @property
     def icon(self):
         if self.gender in ('M', 'N'):
-            return 'fa-male'
+            return 'icon-man'
         elif self.gender == 'F':
-            return 'fa-female'
+            return 'icon-woman'
         else:
             return ''
 
