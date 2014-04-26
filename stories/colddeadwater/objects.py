@@ -26,7 +26,6 @@ class MP5(SubMachineGun):
     adjectives = 'small black lethal heckler koch'
     nouns = 'mp5 mp5k'
     # -- ammo
-    capacity = 30
     rate = 13
     range = 50
     fits = (EQ_PARTS.L_HAND, EQ_PARTS.R_HAND)
@@ -217,7 +216,7 @@ class ClifBar(Food):
     shortname = 'Clif Bar&trade;'
     adjectives = 'clif'
     nouns = 'bar'
-    icon = 'icon-food'
+    icon = 'icon-ticket'
 
 
 class Burrito(Food):
@@ -227,8 +226,8 @@ class Burrito(Food):
     It looks fucking delicious.
     """
     shortname = 'Burrito'
-    adjectives = ''
-    nouns = 'mission burrito'
+    adjectives = 'mission mission-style'
+    nouns = 'burrito'
     icon = 'icon-food'
 
 

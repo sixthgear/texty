@@ -59,7 +59,9 @@ class RangedWeapon(Weapon):
             raise TextyException('{} doesn\'t fit in {}.'.format(ammo.name, self.name))
         if self.ammo:
             raise TextyException('{} is already loaded.'.format(self.name))
+
         self.ammo = ammo
+
         return True
 
     def unload(self):

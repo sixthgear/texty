@@ -10,9 +10,11 @@ body {
   body h1, body h2, body h3, body h4, body h5, body h6, body b {
     color: white;
     font-weight: bold; }
-  body i.fa {
+  body i.fa, body i.icon {
     width: 1em;
     text-align: center; }
+    body i.fa.icon-skull, body i.fa.icon-skull2, body i.fa.icon-skull3, body i.fa.icon-skeletor, body i.icon.icon-skull, body i.icon.icon-skull2, body i.icon.icon-skull3, body i.icon.icon-skeletor {
+      color: #8b5053; }
   body label {
     margin: 0;
     padding: 0; }

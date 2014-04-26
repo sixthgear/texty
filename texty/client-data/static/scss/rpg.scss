@@ -77,9 +77,13 @@ body {
         font-weight: bold;
     }
 
-    i.fa {
+    i.fa, i.icon {
         width: 1em;
         text-align: center;
+
+        &.icon-skull, &.icon-skull2, &.icon-skull3, &.icon-skeletor {
+            color: #8b5053;
+        }
     }
 
     label {

@@ -10,7 +10,7 @@ from texty.util import serialize
 # @syntax ("load MY.WEAPON")
 # @syntax ("load I.AMMO [in] MY.WEAPON", "use, put")
 # @syntax ("load MY.WEAPON [with] I.AMMO", "use")
-@command ("load", "l")
+@command ("load", "reload", "r")
 def load(cmd, verb, object, prep, complement):
     """
     Load a weapon with ammunition.
