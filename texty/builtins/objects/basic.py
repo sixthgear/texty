@@ -126,6 +126,7 @@ class Ammo(Portable):
         a = BaseObject()
         s = 's' if self.amount != 1 else ''
         a.amount = self.amount
+        a.plural = True
         a.icon = self.icon
         a.name = '{n} {item}{s}'.format(n=self.amount, item=self.item, s=s)
         return ObjectList([ a ])

@@ -74,6 +74,11 @@ class BaseObject(metaclass=MetaObject):
     nouns = set()
     attributes = set(['object'])
     adjectives = set()
+    plural = False
+
+    @property
+    def display(self):
+        return self.name
 
     def __repr__(self):
         return '<%s:%s>' % (self.__class__.__name__, self.name)

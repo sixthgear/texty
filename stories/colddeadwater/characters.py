@@ -47,7 +47,6 @@ class DForsyth(NPC):
     }
 
 
-
 class Fenton(NPC):
     """
     Fenton

@@ -1,5 +1,6 @@
 @import url(http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic);
 @import url(http://fonts.googleapis.com/css?family=Sniglet);
+@import url(texty.css);
 html, body, .col-md-4 {
   height: 100%; }
 

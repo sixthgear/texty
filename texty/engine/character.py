@@ -61,6 +61,13 @@ class Character(BaseObject):
             return ''
 
     @property
+    def display(self):
+        if self.occupation:
+            return '{x.first} the {x.occupation}'.format(x=self)
+        else:
+            return '{x.name}'.format(x=self)
+
+    @property
     def first(self):
         return self.name.split()[0].capitalize()
 

@@ -3,6 +3,7 @@ Information commands.
 """
 from texty.engine.command import command, syntax, SCOPE, TextyException
 from texty.util import serialize
+from texty.util.english import STR
 
 @command('info')
 def info(cmd, verb, object, prep, complement):
@@ -28,7 +29,7 @@ def look(cmd, verb, object, prep, complement):
             (lambda x,_: True,                                "You look inside {x}.")
         )
         cmd.response(msg)
-        data = serialize.list(x.obj.contents, '{} is inside.')
+        data = serialize.list(x.obj.contents, STR.INFO.inside)
         if not data['items']:
             data['items'] = [{'text': 'It\'s empty.'}]
         cmd.to_source(data)
@@ -47,7 +48,7 @@ def look(cmd, verb, object, prep, complement):
         cmd.to_source({'type': 'object', 'items': [{'icon': x.obj.icon, 'text': x.obj.description}]})
 
         if x.is_any('ammo loadable'):
-            data = serialize.list(x.obj.contents, '{} is inside.')
+            data = serialize.list(x.obj.contents, STR.INFO.inside)
             if not data['items']:
                 data['items'] = [{'text': 'It\'s empty.'}]
             cmd.to_source(data)
@@ -62,7 +63,7 @@ def look(cmd, verb, object, prep, complement):
         cmd.response('You examine your surroundings.')
         cmd.to_source(serialize.room(cmd.room))
         cmd.to_source('X:Exits: {}'.format(', '.join([x.name for x in cmd.room.exits])))
-        cmd.to_source(serialize.list(cmd.room.contents, '{} is here.', exclude=[cmd.source]))
+        cmd.to_source(serialize.list(cmd.room.contents, STR.INFO.here, exclude=[cmd.source]))
         return
 
     raise TextyException("That doesn't make ANY sense.")

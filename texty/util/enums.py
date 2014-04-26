@@ -99,12 +99,3 @@ class TOK(enum.Enum):
     END                         = next(iota)
 
 
-iota = itertools.count()
-class PRONOUN_TYPES(enum.Enum):
-    """
-    Types of pronouns.
-    """
-    SUB                         = next(iota)
-    OBJ                         = next(iota)
-    POS                         = next(iota)
-    REF                         = next(iota)

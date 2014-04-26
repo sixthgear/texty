@@ -74,21 +74,23 @@ class ColdDeadWater(Story):
         d  = list()
         d += [MP5] * 10
         d += [Model70] * 10
-        d += [Magazine9mm] * 30
+        d += [Magazine9mm] * 40
         d += [BoxRifleCartridges] * 30
         d += [Crowbar] * 20
         d += [Frag] * 20
         d += [Radio] * 10
-        d += [ClifBar] * 40
+        d += [ClifBar] * 20
+        d += [Burrito] * 20
         d += [CivilWarTrenchcoat] * 5
         d += [LeatherBoots] * 5
         d += [MotorcycleHelmet] * 5
         d += [RippedJeans] * 10
         d += [Tshirt] * 15
+        d += [FreeBSDshirt] * 5
         d += [VibramFivefinger] * 2
-        d += [Crate] * 10
+        d += [Crate] * 5
 
-        for i in range(200):
+        for i in range(120):
             room = random.choice(list(self.map.rooms.values()))
             room.objects.append(random.choice(d)())
 
