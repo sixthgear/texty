@@ -8,8 +8,8 @@ class Model70(Rifle):
     This old rifle looks a little beat up, but you bet that it probably still works.
     """
     shortname = "Winchester Rifle"
-    adjectives = 'old m70 winchester'
-    nouns = 'rifle'
+    adjectives = 'old winchester bolt action'
+    nouns = 'rifle m70'
     # -- ammo
     capacity = 5 # rounds
     rate = 1 # per second
@@ -23,7 +23,7 @@ class MP5(SubMachineGun):
     Small, black and lethal.
     """
     shortname = "MP5 SMG"
-    adjectives = 'small black lethal'
+    adjectives = 'small black lethal heckler koch'
     nouns = 'mp5 mp5k'
     # -- ammo
     capacity = 30
@@ -128,6 +128,19 @@ class Tshirt(Equipable):
     # ---
     fits = (EQ_PARTS.BODY,)
 
+class FreeBSDshirt(Tshirt):
+    """
+    a FreeBSD t-shirt
+    ---
+    It has the FreeBSD Daemon on the front!
+    """
+    shortname = 'FreeBSD T-shirt'
+    adjectives = 'freebsd'
+    nouns = ''
+    icon = 'icon-tshirt'
+    # ---
+
+
 class RippedJeans(Equipable):
     """
     a pair of unintentionally ripped jeans
@@ -205,6 +218,19 @@ class ClifBar(Food):
     adjectives = 'clif'
     nouns = 'bar'
     icon = 'icon-food'
+
+
+class Burrito(Food):
+    """
+    a mission-style burrito
+    ---
+    It looks fucking delicious.
+    """
+    shortname = 'Burrito'
+    adjectives = ''
+    nouns = 'mission burrito'
+    icon = 'icon-food'
+
 
 class Crate(Box):
     """

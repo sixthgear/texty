@@ -14,7 +14,7 @@ class Character(BaseObject):
     name            = 'Mr. Character'
     gender          = 'N'
     occupation      = ''
-    description     = '{he} looks about as ready to kill you as anyone else here.'
+    description     = '{He} looks about as ready to kill you as anyone else here.'
     attributes      = 'character'
     # stats
     hp              = 100
@@ -22,13 +22,14 @@ class Character(BaseObject):
     # simple lists provide templates to instantiate
     inventory       = []
     equipment       = {}
+    activity        = ''
 
     def __init__(self, name=None, room=None):
 
         # copy data from class on init. This lets us reset the character to
         # initial values if required by calling __init__ again.
         self.name = name or self.__class__.name
-        self.description = english.resolve_single(self.__class__.description, self)
+        self.description = english.resolve_single(self, self.__class__.description)
         self.hp = self.__class__.hp
         self.room = room
         self.status = CHAR_STATUS.NORMAL
@@ -48,6 +49,7 @@ class Character(BaseObject):
             self.eq_map[eq] = obj
 
         self.attributes = self.__class__.attributes.copy()
+        self.activity = self.__class__.activity
 
     @property
     def icon(self):

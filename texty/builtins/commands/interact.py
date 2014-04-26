@@ -82,7 +82,13 @@ def drop(cmd, verb, object, prep, complement):
         )
         # drop an object in the room
         cmd.source.inventory.remove(x.obj)
-        cmd.room.objects.append(x.obj)
+
+        if x.obj.is_a('character'):
+            cmd.room.characters.append(x.obj)
+        else:
+            cmd.room.objects.append(x.obj)
+            cmd.room.sort()
+
         cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_room('A:{} drops {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
@@ -104,7 +110,7 @@ def put(cmd, verb, object, prep, complement):
     if (verb and object and complement and prep in ('in', 'into', 'inside')) or (verb and object and not prep):
         valid, msg, x, y = cmd.rules(
             (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
-            (lambda x,_: x.is_any('portable'),           "You can't move {x}."),
+            # (lambda x,_: x.is_any('portable'),           "You can't move {x}."),
             (lambda x,y: y.provided(),                   "What do you want to put {x} in?"),
             (lambda _,y: y.resolve(),                    "You don't see {y}."),
             (lambda _,y: y.is_any('container loadable'), "{y} is not a container."),
@@ -145,7 +151,7 @@ def give(cmd, verb, object, prep, complement):
     if (verb and object and complement and prep in ('to')) or (verb and object and not prep):
         valid, msg, x, y = cmd.rules(
             (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
-            (lambda x,_: x.is_a('portable'),             "You can't move {x}."),
+            # (lambda x,_: x.is_a('portable'),             "You can't move {x}."),
             (lambda x,y: y.provided(),                   "Who do you want to give {x} to?"),
             (lambda _,y: y.resolve(SCOPE.ROOM),          "You don't see {y} around."),
             (lambda _,y: y.is_a('character'),            "{y} is not a person."),

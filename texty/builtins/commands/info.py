@@ -53,7 +53,7 @@ def look(cmd, verb, object, prep, complement):
             cmd.to_source(data)
 
         if x.is_a('character'):
-            cmd.to_source(serialize.list(x.obj.equipment, 'He is wearing {}.'))
+            cmd.to_source(serialize.eq(x.obj, source=cmd.source))
 
         return
 

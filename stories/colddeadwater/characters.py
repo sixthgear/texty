@@ -1,4 +1,6 @@
 from texty.builtins.characters import NPC
+from texty.util.enums import EQ_PARTS
+from . objects import FreeBSDshirt, RippedJeans, Burrito
 
 class Bertram(NPC):
     """
@@ -9,6 +11,7 @@ class Bertram(NPC):
     occupation = 'Medic'
     nouns = 'bertram medic man'
     adjectives = 'thin wiry kind'
+    gender = 'M'
 
 
 class Tank(NPC):
@@ -22,6 +25,27 @@ class Tank(NPC):
     occupation = 'Weapons Keeper'
     nouns = 'tank man'
     adjectives = 'massive hulking'
+    gender = 'M'
+
+
+class DForsyth(NPC):
+    """
+    David Forsyth
+    ---
+    Holy shit, the renowned author of "Power Moves" is standing here, not taking Uber. He looks
+    like he doesn't give a shit about zombies, the apocalypse, or anything. What a pro.
+    """
+    occupation = '10x Programmer'
+    nouns = 'dforsyth david forsythe programmer'
+    gender = 'M'
+    activity = 'not taking Uber'
+
+    equipment = {
+        EQ_PARTS.BODY:      FreeBSDshirt,
+        EQ_PARTS.LEGS:      RippedJeans,
+        EQ_PARTS.L_HAND:    Burrito,
+    }
+
 
 
 class Fenton(NPC):

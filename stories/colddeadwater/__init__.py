@@ -51,6 +51,7 @@ class ColdDeadWater(Story):
         """
         # create starting area NPCs
         characters.Bertram().move_to(self.starting_room)
+        characters.DForsyth().move_to(self.starting_room)
         characters.Tank().move_to(self.map.rooms['A4'])
 
         # distribute starting area equipment
@@ -99,7 +100,7 @@ class ColdDeadWater(Story):
                 z.move_to(room)
 
         for room in self.map.rooms.values():
-            room.objects.sort(key=lambda i: (i.icon, i.shortname))
+            room.sort()
 
 
     def on_player_connect(self, player):
@@ -111,7 +112,7 @@ class ColdDeadWater(Story):
         player.name = construct_name(player.gender)
         player.occupation = construct_occupation()
         player.nouns.update(set(player.name.lower().split()))
-        player.description = english.resolve_single(player.__class__.description, player)
+        player.description = english.resolve_single(player, player.__class__.description)
 
         player.do('wakeup')
 

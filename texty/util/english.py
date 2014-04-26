@@ -25,12 +25,13 @@ def pn_ref(char): return PRONOUN.TABLE[char.gender][PRONOUN_TYPES.REF.value]
 def pn_plural_s(char): return '' if char.gender == 'Y' else 's'
 def pn_plural_es(char): return '' if char.gender == 'Y' else 'es'
 
-def resolve_single(string, subject, source=None):
+def resolve_single(subject, string, source=None):
     """
     """
     return string.format(
         name = subject.name,
         names = subject.name + "'s",
+        He = pn_sub(subject).title(),
         he = pn_sub(subject),
         him = pn_obj(subject),
         his = pn_pos(subject),

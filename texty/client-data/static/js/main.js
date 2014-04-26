@@ -22,22 +22,23 @@ require(['jquery', 'bootstrap', 'handlebars', 'handlebars-truncate'], function($
 
 function init() {
 
-    // create global websocket
     var id = 0;
+    var history = [];
+    var forward = [];
     var host =  "ws://" + window.location.hostname + ":4000/websocket/" + id;
+
+    // create global websocket
     websocket = new WebSocket(host);
 
     websocket.onopen = function(evt) {
-        // this.send('look');
-        console.log(evt)
+        // console.log(evt)
     };
 
     websocket.onclose = function(evt) {
-        console.log(evt)
+        // console.log(evt)
     };
 
     websocket.onmessage = function(evt) {
-        // console.log(evt.data);
 
         var data = JSON.parse(evt.data);
         console.log(data);
@@ -98,9 +99,38 @@ function init() {
                 break;
             case 13:
                 var command = this.value.trim().substring(0,100);
-                if (command)
+                if (command) {
+                    history = history.concat(forward);
+                    forward = [];
+                    history.push(command);
                     websocket.send(command);
+                }
                 this.value = "";
+                break;
+            case 38: // up
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (this.value && history.length)
+                    forward.push(this.value);
+
+                if (history.length)
+                    $(this).val("").val(history.pop());
+
+
+                break;
+            case 40: // down
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (this.value)
+                    history.push(this.value);
+
+                if (forward.length)
+                    $(this).val("").val(forward.pop());
+                else
+                    $(this).val("");
+
                 break;
         }
     }).focus();

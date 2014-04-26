@@ -29,6 +29,9 @@ class Room(BaseObject):
             if c == source: continue
             c.send(message)
 
+    def sort(self):
+        self.objects.sort(key=lambda i: (i.icon, i.shortname))
+
     def __repr__(self):
         return self.id
 

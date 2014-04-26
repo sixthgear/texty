@@ -44,7 +44,7 @@ class Story(object):
             logging.info('Story "%s" %s loaded.' % (cls.loaded_story.__name__, cls.loaded_story.__version__))
             return cls.loaded_story
 
-        except (ImportError, AttributeError):
+        except ImportError: # , AttributeError
             print('Couldn\'t find story %s' % story, file=sys.stderr)
             sys.exit()
 
