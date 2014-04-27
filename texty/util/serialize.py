@@ -14,7 +14,6 @@ def dispatch(data):
         'C:':  ('conversation', 'fa-quote-left'),
         'I:':  ('info', 'icon-eye'),
         'X:':  ('info', 'icon-exit'),
-        None:  ('action', '')
     }
 
     if isinstance(data, dict):
@@ -24,10 +23,6 @@ def dispatch(data):
         return {}
 
     new = {}
-
-
-    print (data)
-    print (shortcuts)
 
     # list
     if data.startswith(tuple(shortcuts)):
