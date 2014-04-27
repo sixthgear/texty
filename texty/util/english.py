@@ -7,8 +7,8 @@ class STR:
 
     class INFO:
         # activity        = "<b>{x.display}</b> {x.occupation} {are} {x.activity} here."
-        here            = "<b>{sub.display}</b> {are} here."
-        inside          = "<b>{sub.display}</b> {are} inside."
+        here            = "<b>{sub.display}</b> {is} here."
+        inside          = "<b>{sub.display}</b> {is} inside."
         wearing         = "{He} {is} wearing <b>{x.name}</b> on {his} {y}."
         holding         = "{He} {is} holding <b>{x.name}</b> in {his} {y}."
         inv             = "{He} {has} {x}."
@@ -46,7 +46,7 @@ class STR:
     class FIGHT:
         ammo            = "{You} {have} {amount} {rounds} remaining in {your} {weapon}."
         empty           = "{Your} {weapon} is now empty."
-        ready           = "{Name} read{ies} {his} {weapon}."
+        ready           = "{Name} read{ies} {his} <b>{weapon}</b> and prepare{s} for a fight."
         relax           = "{Name} relax{es} {his} {weapon}."
         aim             = "{Name} point{s} {his} {weapon} at {you} to {direction}."
         fire_A          = "{Name} fire{s} {amount} {rounds} from {his} {weapon}."
@@ -80,10 +80,10 @@ class STR:
 
         trans = {
             # name
-            'name':                 PN.sub('Y') if gender == 'Y' else subject.name,
-            'names':                PN.pos('Y') if gender == 'Y' else subject.name + "'s",
-            'Name':                 PN.sub('Y').title() if gender == 'Y' else subject.name,
-            'Names':                PN.pos('Y').title() if gender == 'Y' else subject.name + "'s",
+            'name':                 PN.sub('Y') if gender == 'Y' else subject.display,
+            'names':                PN.pos('Y') if gender == 'Y' else subject.display + "'s",
+            'Name':                 PN.sub('Y').title() if gender == 'Y' else subject.display,
+            'Names':                PN.pos('Y').title() if gender == 'Y' else subject.display + "'s",
             # subjective
             'You':                  PN.sub(gender).title(),
             'you':                  PN.sub(gender),
@@ -172,7 +172,7 @@ class PN:
 
     @classmethod
     def plural_ies(cls, gender):
-        return 's' if gender == 'Y' else 'ies'
+        return 'y' if gender == 'Y' else 'ies'
 
     @classmethod
     def plural_es(cls, gender):

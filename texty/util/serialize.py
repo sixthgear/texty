@@ -1,11 +1,21 @@
 from collections import OrderedDict
 from texty.util.enums import EQ_PARTS
 from texty.util.english import STR
+import re
 """
 Tools for producing JSON serializable dicts for sending to the client.
 """
 
 def dispatch(data):
+
+    shortcuts = {
+        'M:':  ('action', 'icon-steps'),
+        'A:':  ('action', 'fa-bolt'),
+        'C:':  ('conversation', 'fa-quote-left'),
+        'I:':  ('info', 'icon-eye'),
+        'X:':  ('info', 'icon-exit'),
+        None:  ('action', '')
+    }
 
     if isinstance(data, dict):
         return data
@@ -13,49 +23,19 @@ def dispatch(data):
     if not isinstance(data, str):
         return {}
 
+    new = {}
+
+    # list
+    if data.startswith(tuple(shortcuts)):
+        new['type'], icon = shortcuts[data[:2]]
+        new['items'] = [{'icon': icon, 'text': data[2:]}]
+
     # broadcast
-    if data.startswith('B:'):
-        data = {
-            'type': 'broadcast',
-            'text': data[2:]
-        }
-    # conversation
-    elif data.startswith('C:'):
-        data = {
-            'type': 'conversation',
-            'items': [ {'icon': 'fa-quote-left', 'text': data[2:]}, ]
-        }
-    # action
-    elif data.startswith('A:'):
-        data = {
-            'type': 'action',
-            'items': [ {'icon': 'fa-bolt', 'text': data[2:]}, ]
-        }
+    elif data.startswith('B:'):
+        new['type'] = 'broadcast'
+        new['text'] = data[2:]
 
-    elif data.startswith('MV:'):
-        data = {
-            'type': 'action',
-            'items': [ {'icon': 'icon-steps', 'text': data[3:]}, ]
-        }
-    # info
-    elif data.startswith('I:'):
-        data = {
-            'type': 'info',
-            'items': [ {'icon': 'icon-eye', 'text': data[2:]},]
-        }
-    elif data.startswith('X:'):
-        data = {
-            'type': 'info',
-            'items': [ {'icon': 'icon-exit', 'text': data[2:]},]
-        }
-    # other
-    else:
-        data = {
-            'type': 'action',
-            'items': [ {'text': data} ]
-        }
-
-    return data
+    return new
 
 
 def room(room):
@@ -83,12 +63,12 @@ def obj(obj, template=STR.INFO.here):
     """
     data = {}
     if hasattr(obj, 'plural') and obj.plural:
-        are = 'are'
+        data['text'] = template.format(sub=obj, **{'is': 'are'})
+        data['icon'] = obj.icon
     else:
-        are = 'is'
+        data['text'] = template.format(sub=obj, **{'is': 'is'})
+        data['icon'] = obj.icon
 
-    data['icon'] = obj.icon
-    data['text'] = template.format(sub=obj, are=are)
     return data
 
 def list(container, template=STR.INFO.here, exclude=None):

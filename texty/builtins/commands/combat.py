@@ -3,7 +3,9 @@ Combat commands.
 """
 from texty.engine.command import SCOPE, command, syntax
 from texty.util.exceptions import TextyException
+from texty.util.enums import EQ_PARTS, CHAR_STATUS
 from texty.util import serialize
+from texty.util.english import STR
 
 # @syntax ("load")
 # @syntax ("load I.AMMO")
@@ -143,15 +145,47 @@ def unload(cmd, verb, object, prep, complement):
     return cmd.response("You unload <b>{x}</b> from <b>{y}</b>.".format(x=str(ammo.name), y=str(weapon.name)))
 
 
+@command  ("ready", "fight", "raise")
+def ready(cmd, verb, object, prep, complement):
+
+    weapons = [x.shortname for x in cmd.source.equipment if x.is_a('wieldable')]
+
+    if not weapons:
+        raise TextyException("You aren't holding a weapon to ready.")
+
+    weapon = str.join('</b> and <b>', weapons)
+
+    cmd.source.status = CHAR_STATUS.READY
+    cmd.to_room('A:' + STR.T(STR.FIGHT.ready, cmd.source, extra={'weapon': weapon}))
+    return cmd.response(STR.T(STR.FIGHT.ready, cmd.source, source=cmd.source, extra={'weapon': weapon}))
+
 # @syntax ("kill")
 # @syntax ("kill CHARACTER")
 # @syntax ("kill CHARACTER [with] MY.WEAPON")
-@command  ("kill", "attack", "shoot", "shoot", "fire")
+@command  ("kill", "attack", "shoot", "fire at")
 def kill(cmd, verb, object, prep, complement):
     """
     """
-    raise TextyException('Unfortunately, you appear to be a pacifist.')
-    pass
+
+    if complement:
+        pass
+
+    elif prep:
+        pass
+
+    elif object:
+        pass
+
+    elif verb:
+        raise TextyException('Whom would you like to kill?')
+
+    else:
+        pass
+
+    if cmd.source.status != CHAR_STATUS.READY:
+        ready(cmd, verb, object, prep, complement)
+
+
 
 
 # @syntax ("hit R.OBJECT")

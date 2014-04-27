@@ -22,7 +22,7 @@ class MP5(SubMachineGun):
     ---
     Small, black and lethal.
     """
-    shortname = "MP5 SMG"
+    shortname = "H&K MP5 submachine gun"
     adjectives = 'small black lethal heckler koch'
     nouns = 'mp5 mp5k'
     # -- ammo

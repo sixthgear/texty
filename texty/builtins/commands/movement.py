@@ -42,11 +42,11 @@ def go(command, verb, object, prep, complement):
         room_to = '<b>%s</b> to <b>%s</b>' % (direction.name.lower(), new_room.name)
         room_from = '<b>%s</b> <b>%s</b>' % (old_room.name, opposites[direction])
         command.response('You head %s.' % room_to)
-        command.to_room('MV: <b>%s</b> heads %s.' % (command.source.name, room_to))
+        command.to_room('M: <b>%s</b> heads %s.' % (command.source.name, room_to))
         command.source.move_to(new_room)
         # send message to new room
         new_room.send(
-            'MV: <b>%s</b> arrives from %s.' % (command.source.name, room_from),
+            'M: <b>%s</b> arrives from %s.' % (command.source.name, room_from),
             source=command.source)
         command.enqueue('look')
         return

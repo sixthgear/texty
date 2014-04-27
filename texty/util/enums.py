@@ -8,6 +8,7 @@ class CHAR_STATUS(enum.Enum):
     """
     LIMBO                       = next(iota)
     NORMAL                      = next(iota)
+    READY                       = next(iota)
     FIGHTING                    = next(iota)
     RESTING                     = next(iota)
     SLEEPING                    = next(iota)

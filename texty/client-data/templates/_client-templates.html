@@ -137,7 +137,10 @@
 
     <ul class="status-list inventory">
     {{!#each inventory }}
-        <li class="{{! this.type }}">      <i class="icon {{! this.icon }}"></i>   {{{! this.name }}} <small>{{{! truncate this.description 30 }}}</small></li>
+        <li class="{{! this.type }}">
+        <i class="icon {{! this.icon }}"></i>   {{{! this.name }}}
+        <!-- <small>{{{! truncate this.description 30 }}}</small> -->
+        </li>
     {{!/each}}
     </ul>
 
