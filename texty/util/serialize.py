@@ -25,8 +25,12 @@ def dispatch(data):
 
     new = {}
 
+
+    print (data)
+    print (shortcuts)
+
     # list
-    if data.startswith(tuple(shortcuts.keys())):
+    if data.startswith(tuple(shortcuts)):
         new['type'], icon = shortcuts[data[:2]]
         new['items'] = [{'icon': icon, 'text': data[2:]}]
 
