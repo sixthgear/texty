@@ -26,7 +26,7 @@ def dispatch(data):
     new = {}
 
     # list
-    if data.startswith(tuple(shortcuts)):
+    if data.startswith(tuple(shortcuts.keys())):
         new['type'], icon = shortcuts[data[:2]]
         new['items'] = [{'icon': icon, 'text': data[2:]}]
 
@@ -34,6 +34,10 @@ def dispatch(data):
     elif data.startswith('B:'):
         new['type'] = 'broadcast'
         new['text'] = data[2:]
+
+    else:
+        new['type'] = 'action'
+        new['items'] = [{'icon': '', 'text': data[2:]}]
 
     return new
 
