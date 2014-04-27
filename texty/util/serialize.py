@@ -20,7 +20,7 @@ def dispatch(data):
     if isinstance(data, dict):
         return data
 
-    if not isinstance(data, str):
+    if not data or not isinstance(data, str):
         return {}
 
     new = {}
