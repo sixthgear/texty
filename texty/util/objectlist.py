@@ -40,11 +40,11 @@ class ObjectList(list):
         result = next(self.search(query, **kwargs), None)
         return result
 
-    def search(self, query=None, adjectives=None, attribute=None, condition=None):
-        results = self.__do_search(query, adjectives, attribute, condition)
+    def search(self, query=None, terms=None, attribute=None, condition=None):
+        results = self.__do_search(query, terms, attribute, condition)
         return results
 
-    def __do_search(self, query=None, adjectives=None, attribute=None, condition=None):
+    def __do_search(self, query=None, terms=None, attribute=None, condition=None):
         """
         Perform the keyword/attribute/condition lookup.
         This SUCKS in it's current form.
@@ -67,7 +67,7 @@ class ObjectList(list):
                 return False
 
             # print adjectives, i.adjectives
-            if adjectives and not set(adjectives).issubset(i.adjectives):
+            if terms and not set(terms).issubset(i.adjectives | i.nouns):
                 return False
 
             if attribute and attribute not in i.attributes:

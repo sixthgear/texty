@@ -86,9 +86,9 @@ class M1911(Pistol):
     ---
     A Colt M1911 semi-automatic pistol looks reliable.
     """
-    shortname       = "Colt M1911 Pistol"
-    adjectives      = 'colt'
-    nouns           = 'm1911 1911'
+    shortname       = 'Colt M1911 Pistol'
+    adjectives      = 'colt m1911 1911 semi automatic'
+    nouns           = 'colt m1911 1911'
     # -- equip
     fits            = (EQ_PARTS.L_HAND, EQ_PARTS.R_HAND)
     # -- specs
@@ -106,8 +106,8 @@ class BoxRifleCartridges(Ammo):
     a Winchester Model 70.
     """
     shortname       = 'Box of Rifle Shells'
-    adjectives      = 'short magnum'
-    nouns           = 'cartridges rifle shells box'
+    adjectives      = 'winchester short magnum rifle'
+    nouns           = 'cartridges shells box'
     # --- ammo
     fits            = (Model70,)
     capacity        = 20
@@ -120,8 +120,8 @@ class Box12Gauge(Ammo):
     A small box containing 25 shotgun shells. These should work nicely in a Remington 870.
     """
     shortname       = 'Box of Shotgun Shells'
-    adjectives      = '12 gauge'
-    nouns           = 'cartridges shotgun shells box'
+    adjectives      = 'remington 12 gauge shotgun'
+    nouns           = 'cartridges shells box'
     # --- ammo
     fits            = (Model870,)
     capacity        = 25
@@ -134,7 +134,7 @@ class Magazine9mm(Ammo):
     A 30-round magazine. This should fit nicely in a MP5.
     """
     shortname       = '9mm Magazine'
-    adjectives      = '9mm'
+    adjectives      = '9mm mp5 smg '
     nouns           = 'magazine mag'
     # --- ammo
     fits            = (MP5,)
@@ -148,8 +148,8 @@ class Magazine45ACP(Ammo):
     A 7-round box magazine designed to be used with the Colt M1911.
     """
     shortname       = '.45 ACP Magazine'
-    adjectives      = '45 acp colt'
-    nouns           = 'm1911 1911 pistol magazine mag'
+    adjectives      = '45 acp colt pistol m1911 1911'
+    nouns           = 'magazine mag'
     # --- ammo
     fits            = (M1911,)
     capacity        = 7
@@ -281,7 +281,7 @@ class PowerMoves(Portable):
     nouns           = 'power moves book'
     icon            = 'icon-book2'
 
-    def use(self, command):
+    def use(self, other=None):
         raise TextyException('You learn a new power move.')
 
 # --- FOOD --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---

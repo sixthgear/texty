@@ -72,7 +72,7 @@ def reload(cmd, verb, object, prep, complement):
 #         return
 
 
-@command ("create","mk")
+@command ("create", "make", "mk")
 @admin
 def create(cmd, verb, object, prep, complement, string=None):
     """
@@ -86,7 +86,7 @@ def create(cmd, verb, object, prep, complement, string=None):
 
     elif object:
 
-        obj_class = parser.object_table.first(object['noun'], adjectives=object['adjl'])
+        obj_class = parser.object_table.first(object['noun'], terms=object['terms'])
 
         if obj_class:
             obj = obj_class()

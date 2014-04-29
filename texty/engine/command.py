@@ -63,12 +63,12 @@ class ObjectASTProxy(object):
         elif self.ast_node:
             desc = {}
             desc['detr'] = 'a' # {indef}{spec} {quant}{ord}'.format(**self.ast_node),
-            desc['adjs'] = str.join(', ', self.ast_node.get('adjl'))
+            desc['terms'] = str.join(', ', self.ast_node.get('terms'))
             if isinstance(self.ast_node.get('noun'), str):
                 desc['noun'] = self.ast_node.get('noun')
             else:
                 desc['noun'] = str.join(' ', self.ast_node.get('noun'))
-            return '{detr} {adjs} {noun}'.format(**desc)
+            return '{detr} {terms} {noun}'.format(**desc)
         else:
             return ''
 
@@ -93,6 +93,7 @@ class Command(object):
 
     def parse(self):
         self.fn, self.ast = parser.parse(self.command)
+        pprint(self.ast)
 
     def run(self):
         """
@@ -205,7 +206,7 @@ class Command(object):
             target = self.source
 
         noun = node.get('noun')
-        adjs = node.get('adjl')
+        terms = node.get('terms')
 
         if scope in (SCOPE.ANY, SCOPE.ROOM, SCOPE.CHAR) and noun in ('self', 'me', 'myself'):
             return (self.source, scope, self.room)
@@ -233,7 +234,7 @@ class Command(object):
             else:
                 source = None
 
-            result = source.first(noun, adjectives=adjs, attribute=attr)
+            result = source.first(noun, terms=terms, attribute=attr)
 
             # return the resolved object and the scope it was found in
             if result:

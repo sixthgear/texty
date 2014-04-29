@@ -1,5 +1,5 @@
 from texty.util.exceptions import TextyException
-from texty.util.parsertools import Token, VOCAB
+from texty.util.parsertools import Token, VOCAB, lookahead
 from texty.util.enums import TOK
 from texty.util.objectlist import ObjectList
 import traceback
@@ -77,10 +77,15 @@ class Parser(object):
             VERB                =   1
             STRING              =   2
 
+
         mode = M.REGULAR
 
+
+
         # process each raw symbol in turn
-        for t in re.findall('\w+|[.,"]', command.lower()):
+        for t, next_t in lookahead(re.findall('\w+|[.,"]', command.lower())):
+
+            print (t, next_t)
 
             # check for an optional phrasal preposition or particle following a verb
             if mode == M.VERB:
@@ -91,19 +96,21 @@ class Parser(object):
 
             # the say command, among others, will accept a literal string of unparsed characters
             # so once we are in string mode, keep consuming string tokens until the end
-            if mode == M.STRING:
+            elif mode == M.STRING:
                 if tokens[-1:] and tokens[-1].typ == TOK.STRING:
                     tokens[-1].val += ' %s' % t
                 else:
                     tokens.append(Token(TOK.STRING, t))
                 continue
 
+            # regular mode
             if t == ',':
                 tokens.append(Token(TOK.COMMA, t))
             elif t == 'of':
                 tokens.append(Token(TOK.OF, t))
             elif t == '.':
-                tokens.append(Token(TOK.END, t))
+                pass # ignore
+                # tokens.append(Token(TOK.PERIOD, t))
             elif t == 'and':
                 tokens.append(Token(TOK.AND, t))
             elif t in VOCAB.commands:
@@ -112,10 +119,6 @@ class Parser(object):
             elif t in VOCAB.verbs:
                 tokens.append(Token(TOK.VERB, t))
                 mode = M.VERB
-            elif t in VOCAB.adjectives:
-                tokens.append(Token(TOK.ADJ, t))
-            elif t in VOCAB.superlatives:
-                tokens.append(Token(TOK.SUP, t))
             elif t in VOCAB.prepositions:
                 tokens.append(Token(TOK.PREP, t))
             elif t in VOCAB.indefinites:
@@ -126,16 +129,32 @@ class Parser(object):
                 tokens.append(Token(TOK.QUANT, t))
             elif t in VOCAB.ordinals:
                 tokens.append(Token(TOK.ORD, t))
-            elif t in VOCAB.characters:
+            elif t in VOCAB.characters or t in VOCAB.reserved:
                 tokens.append(Token(TOK.NOUN, t))
-            elif t in VOCAB.reserved:
-                tokens.append(Token(TOK.NOUN, t))
+            # superlatives are special adjectives
+            elif t in VOCAB.superlatives:
+                tokens.append(Token(TOK.SUP, t))
+            # ambiguous adjectives and nouns become a TERM
+            elif t in VOCAB.adjectives or (t in VOCAB.adjectives and t in VOCAB.nouns):
+                # transform last term into a noun for the parser
+                if next_t and (next_t in VOCAB.adjectives | VOCAB.nouns):
+                    tokens.append(Token(TOK.TERM, t))
+                else:
+                    tokens.append(Token(TOK.NOUN, t))
+
+            # elif t in VOCAB.adjectives:
+            #     tokens.append(Token(TOK.ADJ, t))
+
             elif t in VOCAB.nouns:
                 tokens.append(Token(TOK.NOUN, t))
+
             elif t.endswith('s') and t[:-1] in VOCAB.nouns:
-                tokens.append(Token(TOK.NOUN, t[:-1]))
+                tokens.append(Token(TOK.NOUN, t))
+
             else:
                 tokens.append(Token(TOK.UNKNOWN, t))
+
+
 
         # append end token if it doesn't exist
         if tokens and tokens[-1].typ != TOK.END:
@@ -160,40 +179,46 @@ class Parser(object):
         token = next(iterator, None)
         stack = []
 
-        def accept(rule):
+        def accept(*rules):
             """
             Helper function to see if the token matches the given terminal or non-terminal,
             If yes, advance the token iterator if the argument was a terminal.
             """
             nonlocal token
 
-            if isinstance(rule, collections.Callable):
-                a, b = rule()
-                if a:
-                    stack.append(b)
-                return a
 
-            elif token.typ == rule:
-                stack.append(token.val)
-                token = next(iterator, None)
-                return True
+            for rule in rules:
 
+                if isinstance(rule, collections.Callable):
+                    a, b = rule()
+                    if a:
+                        stack.append(b)
+                        return True
+                    # return a
+
+                elif token.typ == rule:
+                    stack.append(token.val)
+                    token = next(iterator, None)
+                    return True
+
+            # none of the rules matched
             return False
 
-        def expect(rule):
+        def expect(*rules):
             """
             Helper function to do the same thing as accept, but raise a TextyException if the
             match does not succeed.
             """
             nonlocal token
 
-            if accept(rule): # self.token and
+            if accept(*rules): # self.token and
                 return True
 
-            if callable(rule):
-                raise TextyException('Expected %s, got %s.' % (rule.__name__.upper(), token))
-            else:
-                raise TextyException('Expected %s, got %s.' % (rule.name, token))
+            for rule in rules:
+                if callable(rule):
+                    raise TextyException('Expected %s, got %s.' % (rule.__name__.upper(), token))
+                else:
+                    raise TextyException('Expected %s, got %s.' % (rule.name, token))
 
         def parse_command():
             """
@@ -258,14 +283,14 @@ class Parser(object):
 
         def nounphrase():
             """
-            NounPhrase -> Determiner AdjList Noun
+            NounPhrase -> Determiner TermList Noun
             NounPhrase -> Determiner Noun
-            NounPhrase -> AdjList Noun
+            NounPhrase -> TermList Noun
             NounPhrase -> Noun
             """
             np = {
                 'noun':                     None,
-                'adjl':                     [],
+                'terms':                    [],
                 'indef':                    None,
                 'spec':                     None,
                 'quant':                    None,
@@ -275,18 +300,18 @@ class Parser(object):
             if accept(determiner):
                 np.update(stack.pop())
 
-                if accept(adjlist) and expect(noun):
+                if accept(termlist) and expect(noun):
                     np['noun']              = stack.pop()
-                    np['adjl']              = stack.pop()
+                    np['terms']             = stack.pop()
                     return True, np
 
                 if expect(noun):
                     np['noun']              = stack.pop()
                     return True, np
 
-            if accept(adjlist) and expect(noun):
+            if accept(termlist) and expect(noun):
                 np['noun']                  = stack.pop()
-                np['adjl']                  = stack.pop()
+                np['terms']                 = stack.pop()
                 return True, np
 
             if accept(noun):
@@ -301,9 +326,10 @@ class Parser(object):
             Noun -> noun of noun
             Noun -> noun noun
             Noun -> noun
+            # removed:
+            ---- Noun -> noun noun ----
             """
             if accept(TOK.NOUN):
-
                 n = stack.pop()
 
                 if accept(TOK.NOUN):
@@ -316,39 +342,44 @@ class Parser(object):
 
             return False, None # not a noun
 
-        def adjlist():
+        def termlist():
             """
-            AdjList -> Adjective , AdjList
-            AdjList -> Adjective AdjList
-            AdjList -> Adjective
+            TermList -> Term , TermList
+            TermList -> Term TermList
+            TermList -> Term
             """
-            adjl = []
+            terms = []
 
-            if accept(adjective):
-                adjl.append(stack.pop())
+            if accept(term):
 
-                if accept(TOK.COMMA) and expect(adjlist):
-                    return True, adjl + stack.pop()
+                terms.append(stack.pop())
 
-                if accept(adjlist):
-                    return True, adjl + stack.pop()
+                if accept(TOK.COMMA) and expect(termlist):
+                    return True, terms + stack.pop()
 
-                return True, adjl
+                if accept(termlist):
+                    return True, terms + stack.pop()
+
+                return True, terms
 
             return False, None # not an adjlist
 
-        def adjective():
+        def term():
             """
-            Adjective -> sup | sup of spec
-            Adjective -> adj
+            Term -> sup | sup of spec
+            Term -> term
+            Term -> adj
             """
             if accept(TOK.SUP):
-                a = stack.pop()
+                t = stack.pop()
 
                 if accept(TOK.OF) and expect(TOK.SPEC):
-                    return True, (a, stack.pop())
+                    return True, (t, stack.pop())
 
-                return True, a
+                return True, t
+
+            if accept(TOK.TERM):
+                return True, stack.pop()
 
             if accept(TOK.ADJ):
                 return True, stack.pop()
@@ -409,11 +440,12 @@ class Parser(object):
 
             return False, None
 
+
         try:
             command_ast = parse_command()
             command_fn = self.command_table.get(command_ast['verb'])
+            print (tokens, )
             return command_fn, command_ast
-
         except TextyException as e:
             return self.error, {'message': e.message} #[verb]
         except Exception as e:

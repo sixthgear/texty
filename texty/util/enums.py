@@ -86,6 +86,7 @@ class TOK(enum.Enum):
     VERB                        = next(iota)
     NOUN                        = next(iota)
     ADJ                         = next(iota)
+    TERM                        = next(iota)
     SUP                         = next(iota)
     OF                          = next(iota)
     PHRASAL                     = next(iota)

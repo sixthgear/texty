@@ -1,5 +1,11 @@
+from itertools import tee, islice, zip_longest
 from texty.util.enums import TOK
 import collections
+
+def lookahead(some_iterable, window=1):
+    items, nexts = tee(some_iterable, 2)
+    nexts = islice(nexts, window, None)
+    return zip_longest(items, nexts)
 
 class VOCAB:
     """
@@ -50,3 +56,4 @@ class Token(object):
             return '%s: "%s"' % (self.typ.name, self.val)
         else:
             return self.typ
+

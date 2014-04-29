@@ -41,6 +41,7 @@ class Weapon(Equipable):
     weight = 5
 
 class RangedWeapon(Weapon):
+
     nouns = 'gun'
     attributes = 'loadable'
     capacity = 10 # rounds
@@ -84,8 +85,8 @@ class Rifle(RangedWeapon):
     nouns = 'rifle'
 
 class SubMachineGun(RangedWeapon):
+    adjectives = 'submachine sub'
     nouns = 'smg machinegun'
-    adjectives = 'submachine'
 
 class Shotgun(RangedWeapon):
     nouns = 'shotgun'
