@@ -30,13 +30,13 @@ class Tank(NPC):
 
 class DForsyth(NPC):
     """
-    David Forsyth
+    Davide Forsyth
     ---
     Holy shit, the renowned author of "Power Moves" is standing here, not taking Uber. He looks
     like he doesn't give a shit about zombies, the apocalypse, or anything. What a pro.
     """
     occupation = '10x Programmer'
-    nouns = 'dforsyth david forsythe programmer'
+    nouns = 'dforsyth davide forsyth programmer'
     gender = 'M'
     activity = 'not taking Uber'
 

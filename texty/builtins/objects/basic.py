@@ -90,6 +90,9 @@ class SubMachineGun(RangedWeapon):
 class Shotgun(RangedWeapon):
     nouns = 'shotgun'
 
+class Pistol(RangedWeapon):
+    nouns = 'pistol'
+
 class MeleeWeapon(Weapon):
     # nouns = 'melee'
     attributes = 'melee'

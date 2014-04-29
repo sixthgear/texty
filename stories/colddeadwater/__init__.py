@@ -57,11 +57,10 @@ class ColdDeadWater(Story):
         # distribute starting area equipment
         self.starting_room.objects += [
             Radio(),
+            Model870(),
             Model70(),
             MP5(),
-            BoxRifleCartridges(),
-            Magazine9mm(),
-            Magazine9mm(),
+            M1911(),
             Crowbar(),
             Crate(),
         ]
@@ -74,7 +73,11 @@ class ColdDeadWater(Story):
         d  = list()
         d += [MP5] * 10
         d += [Model70] * 10
+        d += [Model870] * 10
+        d += [M1911] * 10
         d += [Magazine9mm] * 40
+        d += [Magazine45ACP] * 40
+        d += [Box12Gauge] * 40
         d += [BoxRifleCartridges] * 30
         d += [Crowbar] * 20
         d += [Frag] * 20

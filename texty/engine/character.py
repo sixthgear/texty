@@ -29,7 +29,7 @@ class Character(BaseObject):
         # copy data from class on init. This lets us reset the character to
         # initial values if required by calling __init__ again.
         self.name = name or self.__class__.name
-        self.description = english.resolve_single(self, self.__class__.description)
+        self.description = english.STR.T(self.__class__.description, subject=self)
         self.hp = self.__class__.hp
         self.room = room
         self.status = CHAR_STATUS.NORMAL

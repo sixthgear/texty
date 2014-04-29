@@ -49,10 +49,21 @@ class ObjectList(list):
         Perform the keyword/attribute/condition lookup.
         This SUCKS in it's current form.
         """
+
+        if isinstance(query, str):
+            nouns = set((query,))
+        elif hasattr(query, '__iter__'):
+            nouns = set(query)
+        elif query == None:
+            nouns = None
+        else:
+            raise TypeError('ObjectList requires a string or iterable to search.')
+
+
         def search_objects(i):
 
             # found_noun = False
-            if query and query not in i.nouns:
+            if nouns and not nouns.issubset(i.nouns):
                 return False
 
             # print adjectives, i.adjectives

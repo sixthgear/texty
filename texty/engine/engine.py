@@ -64,15 +64,16 @@ class TextyEngine(object):
 
         logging.info('')
         logging.info(vert.format(*rule))
-        logging.info(cols.format('VERBS', 'PHRASE', 'ADJECTIVES', 'NOUNS', 'PREPS', 'ATTRIBUTES'))
+        logging.info(cols.format('VERBS', 'ADJECTIVES', 'NOUNS', 'PREPS', 'CONFLICTS'))
         logging.info(vert.format(*rule))
         table = itertools.zip_longest(
             sorted(parser.command_table),
-            # sorted(VOCAB.phrasals),
             sorted(VOCAB.adjectives | VOCAB.superlatives),
             sorted(VOCAB.nouns | VOCAB.reserved),
-            sorted(VOCAB.prepositions),
-            sorted(parser.attribute_table),
+            sorted(VOCAB.prepositions) + \
+                [rule[4], 'PHRASALS', rule[4]] + sorted(VOCAB.phrasals) + \
+                [rule[4], 'ATTRIBUTES', rule[4]] + sorted(parser.attribute_table),
+            sorted(VOCAB.adjectives & VOCAB.nouns),
             fillvalue=''
         )
         for c in table:
@@ -173,10 +174,13 @@ class TextyEngine(object):
         """
         # increment counter
         self.tick += 1
+
         # tick the story
         self.story.update(self.tick)
-        # tick the combat
-        ####
+
+        # tick the players
+        # for p in self.players:
+        #     p.update(self.tick)
 
 
     def shutdown(self):

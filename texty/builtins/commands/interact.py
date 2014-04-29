@@ -2,6 +2,7 @@
 Interaction commands.
 """
 from texty.engine.command import SCOPE, command, syntax
+from texty.builtins.commands.combat import load
 from texty.util.exceptions import TextyException
 from texty.util import serialize
 
@@ -189,7 +190,7 @@ def equip(cmd, verb, object, prep, complement):
     """
     # command form D. VERB OBJECT PREP COMPLEMENT.
 
-    if (verb and object and complement and prep in ('on', 'in')):
+    if (complement and prep in ('on', 'in')):
         valid, msg, x, y = cmd.rules(
             (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
             (lambda x,_: x.is_a('equipable'),            "You can't equip {x}."),
@@ -206,11 +207,11 @@ def equip(cmd, verb, object, prep, complement):
         return cmd.response(msg)
 
     # command form C. VERB PREP OBJECT.
-    elif verb and object and prep:
+    elif prep:
         raise TextyException("That doesn't make sense.")
 
     # command form B. VERB OBJECT.
-    if (verb and object):
+    elif (object):
         valid, msg, x, _ = cmd.rules(
             (lambda x,_: x.resolve(SCOPE.INV),           "You don't have {x}."),
             (lambda x,_: x.is_a('equipable'),            "You can't equip {x}."),
@@ -233,7 +234,7 @@ def equip(cmd, verb, object, prep, complement):
 @command ("unequip", "take off", "unwield", "remove")
 def unequip(cmd, verb, object, prep, complement):
     """
-    Equip things like a boss.
+    Unequip things like a boss.
     """
     # command form D. VERB OBJECT PREP COMPLEMENT.
 
@@ -284,7 +285,62 @@ def unequip(cmd, verb, object, prep, complement):
 def use(cmd, verb, object, prep, complement):
     """
     """
-    pass
+    if complement:
+        valid, msg, x, y = cmd.rules(
+            (lambda _,y: y.resolve(SCOPE.ANY),           "You don't see {y} here."),
+            (lambda x,_: x.resolve(SCOPE.ANY),           "You don't see {x} here."),
+            (lambda x,y: x.allows('use'),                "You can't use {x} with {y}. {R}"),
+            (lambda x,y: y.allows('use'),                "You can't use {y} with {x}. {R}"),
+            (lambda x,y: True,                           "You use {x} with {y}.")
+        )
+
+        if x.is_a('usable'):
+            x.obj.use(y.obj)
+            return
+
+        elif x.is_a('equipable') and x.is_a('bodypart'):
+            return equip(cmd, verb, object, prep, complement)
+
+        elif x.is_any('loadable ammo') and y.is_any('loadable ammo'):
+            return load(cmd, verb, object, prep, complement)
+
+        else:
+            return cmd.response("You aren't sure how to use {x} {prep} {y}.".format(x=str(x), y=str(y), prep=prep))
+
+    # command form C. VERB PREP OBJECT.
+    elif prep:
+        raise TextyException("That doesn't make sense.")
+
+    # command form B. VERB OBJECT.
+    if object:
+        valid, msg, x, _ = cmd.rules(
+            (lambda x,_: x.resolve(SCOPE.ANY),           "You don't see {x} here."),
+            (lambda x,_: x.allows('use'),                "You can't use {x}. {R}"),
+            (lambda x,_: True,                           "You use {x}.")
+        )
+
+        if x.is_a('usable'):
+            x.obj.use()
+            return
+
+        elif x.is_a('equipable'):
+            return equip(cmd, verb, object, None, None)
+
+        elif x.is_any('ammo'):
+            return load(cmd, verb, object, None, None)
+
+        elif x.is_a('food'):
+            return eat(cmd, verb, object, None, None)
+
+        else:
+            return cmd.response("You aren't sure how to use {x}.".format(x=str(x)))
+
+    # command form A. VERB.
+    elif verb:
+        raise TextyException("What would you like to {}?".format(verb))
+
+    raise TextyException("That doesn't make ANY sense.")
+
 
 
 @command("eat")

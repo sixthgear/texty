@@ -8,6 +8,21 @@ from collections import OrderedDict
 class Player(Character):
 
     attributes = 'player'
+    # hacky object list to allow noun resolution for body parts
+    body = objectlist((
+        body.Body(),
+        body.Legs(),
+        body.Feet(),
+        body.Head(),
+        body.Arms(),
+        body.Neck(),
+        body.Waist(),
+        body.Shoulders(),
+        body.FingerLeft(),
+        body.FingerRight(),
+        body.HandLeft(),
+        body.HandRight(),
+    ))
 
     def __init__(self, name, room=None, connection=None):
         super(Player, self).__init__(name, room)
@@ -20,25 +35,14 @@ class Player(Character):
         # for everyone!
         self.nouns = self.__class__.nouns.copy()
 
-        # hacky object list to allow noun resolution for body parts
-        self.body = objectlist((
-            body.Body(),
-            body.Legs(),
-            body.Feet(),
-            body.Head(),
-            body.Arms(),
-            body.Neck(),
-            body.Waist(),
-            body.Shoulders(),
-            body.FingerLeft(),
-            body.FingerRight(),
-            body.HandLeft(),
-            body.HandRight(),
-        ))
+    def on_connect(self):
+        pass
 
-    def on_connect(self): pass
-    def on_reconnect(self): pass
-    def on_disconnect(self): pass
+    def on_reconnect(self):
+        pass
+
+    def on_disconnect(self):
+        pass
 
     def send(self, message):
         """

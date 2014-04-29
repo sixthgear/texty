@@ -47,6 +47,6 @@ class Token(object):
 
     def __repr__(self):
         if self.val:
-            return '%s: "%s"' % (self.typ, self.val)
+            return '%s: "%s"' % (self.typ.name, self.val)
         else:
             return self.typ

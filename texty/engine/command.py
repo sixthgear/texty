@@ -57,14 +57,17 @@ class ObjectASTProxy(object):
         return self.obj.allows(what)
 
     def __str__(self):
+
         if self.obj:
             return self.obj.name
         elif self.ast_node:
-            desc = {
-                'detr': 'a', # {indef}{spec} {quant}{ord}'.format(**self.ast_node),
-                'adjs': str.join(', ', self.ast_node.get('adjl')),
-                'noun': self.ast_node.get('noun')
-            }
+            desc = {}
+            desc['detr'] = 'a' # {indef}{spec} {quant}{ord}'.format(**self.ast_node),
+            desc['adjs'] = str.join(', ', self.ast_node.get('adjl'))
+            if isinstance(self.ast_node.get('noun'), str):
+                desc['noun'] = self.ast_node.get('noun')
+            else:
+                desc['noun'] = str.join(' ', self.ast_node.get('noun'))
             return '{detr} {adjs} {noun}'.format(**desc)
         else:
             return ''

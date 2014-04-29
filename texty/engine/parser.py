@@ -299,10 +299,15 @@ class Parser(object):
         def noun():
             """
             Noun -> noun of noun
+            Noun -> noun noun
             Noun -> noun
             """
             if accept(TOK.NOUN):
+
                 n = stack.pop()
+
+                if accept(TOK.NOUN):
+                    return True, (n, stack.pop(),)
 
                 if accept(TOK.OF) and expect(TOK.NOUN):
                     return True, (n, stack.pop(),)
