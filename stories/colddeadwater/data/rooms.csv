@@ -1,3 +1,35 @@
+HQ1,Survivors Camp West,You are surrounded by tents.
+HQ2,Survivors Camp,"You are surrounded by tents. Mothers and children huddled around fires stare at you with lifeless eyes. There are more tents to the east and west, and headquarters is to the south."
+HQ3,Survivors Camp East,You are surrounded by tents.
+HQ4,Munitions Depot,"You are in the center of a cluster of three buildings. The arms locker is here, guarded by an extremely large man with almost no neck. The mechanical shop is also here, littered with old tires and scrap metal. Finally, and most importantly, the food store is  here. A massive steel door with a combination lock guards this building. To the north is the survivors camp, to the east is headquarters, and to the south is the training ground."
+HQ5,Headquarters,"You are at HQ, which is a nice way of saying the middle of the junkyard. Large sheet metal walls surround the encampment on all sides. A desk made of old tires and plywood is set up nearby. Up the path to the <em>east</em> is a lookout tower. To the <em>west</em> lies a group of ramshackle buildings used to store food and munitions. To the <em>south</em> is a large green medical tent. Finally, to the <em>north</em> is a group of tents housing survivors, those too weak to pick up a gun and fight."
+HQ6,Gate,"The encampment gate is here, with a lookout tower."
+HQ7,Training Ground,
+HQ8,Medical Tent,"You are in the medical tent. Filthy beds line the walls, most are occupied. It smells like death. You can see the tent door to the <em>north</em>, which is the only exit."
+HQ9,Junk Pile,
+,,
+BK1,Underground Hideout,
+BK2,Underground Bunker,
+BK3,Underground Bunker,
+BK4,Underground Bunker,
+BK5,Underground Bunker,
+BK6,Underground Bunker,
+,,
+,,
+OT1,Outside The Gate,
+OT2,Outside The East Wall,
+OT3,Outside The South Wall,
+OT4,Duck Pond,There's some cute ducks swimming happily here. You will never reach them or know happiness ever again. You wonder why you came to this place.
+OT5,Duck Pond,There's some cute ducks swimming happily here. You will never reach them or know happiness ever again. You wonder why you came to this place.
+OT6,Outside The South Wall,
+OT7,Outside The West Wall,
+OT8,Outside The West Wall,
+OT9,Rocky Path,
+OT10,Outside The West Wall,
+OT11,Rocky Path,
+OT12,Rocky Path,
+OT13,Rocky Path,
+OT14,Rocky Path,
 CT1,8th Avenue Roadblock,You feel hemmed in by the lonely skyscrapers surrounding you. There's a military roadblock here to the north cutting you off from the rest of the city.
 CT2,Sussex Drive Roadblock,You feel hemmed in by the lonely skyscrapers surrounding you. There's a military roadblock here to the north cutting you off from the rest of the city.
 CT3,Intersection of Sussex Drive and 7th Avenue,You feel hemmed in by the lonely skyscrapers surrounding you. Sussex drive continues to the east and west while 7th avenue begins to the south.
@@ -14,6 +46,8 @@ CT13,Outside the Main Street Apartments,You feel hemmed in by the lonely skyscra
 CT14,Intersection of Main Street and 11th Avenue,You feel hemmed in by the lonely skyscrapers surrounding you.
 CT15,Western Edge of Lamont Park,You are on the western fringe of Lamont Park. There's an open manhole leading into the municipal sewer system.
 CT16,Eastern Edge of Lamont Park,You are on the eastern fringe of Lamont Park. 
+,,
+,,
 AP1,Lobby of Main Street Apartments,"You are in the lobby of the Main Street Apartment Building. Makeshift beds line the walls, most are occupied and it smells like death. You spot Main Street through door to the north."
 AP2,First Floor,You are on the first floor of the apartments.
 AP3,First Floor,You are on the first floor of the apartments.
@@ -31,66 +65,122 @@ AP14,Third Floor,You are on the third floor of the apartments.
 AP15,Third Floor,You are on the third floor of the apartments.
 AP16,Third Floor,You are on the third floor of the apartments.
 AP17,Third Floor,You are on the third floor of the apartments.
-SW1,Sewers,You are wading through the sewers. You feel quite sick.
-SW2,Sewers,You are wading through the sewers. You feel quite sick.
-SW3,Sewers,You are wading through the sewers. You feel quite sick.
-SW4,Sewers,You are wading through the sewers. You feel quite sick.
-HQ1,Survivors Camp West,You are surrounded by tents.
-HQ2,Survivors Camp,"You are surrounded by tents. Mothers and children huddled around fires stare at you with lifeless eyes. There are more tents to the east and west, and headquarters is to the south."
-HQ3,Survivors Camp East,You are surrounded by tents.
-HQ4,Munitions Depot,"You are in the center of a cluster of three buildings. The arms locker is here, guarded by an extremely large man with almost no neck. The mechanical shop is also here, littered with old tires and scrap metal. Finally, and most importantly, the food store is  here. A massive steel door with a combination lock guards this building. To the north is the survivors camp, to the east is headquarters, and to the south is the training ground."
-HQ5,Headquarters,"You are at HQ, which is a nice way of saying the middle of the junkyard. Large sheet metal walls surround the encampment on all sides. A desk made of old tires and plywood is set up nearby. Up the path to the <em>east</em> is a lookout tower. To the <em>west</em> lies a group of ramshackle buildings used to store food and munitions. To the <em>south</em> is a large green medical tent. Finally, to the <em>north</em> is a group of tents housing survivors, those too weak to pick up a gun and fight."
-HQ6,Gate,"The encampment gate is here, with a lookout tower."
-HQ7,Training Ground,
-HQ8,Medical Tent,"You are in the medical tent. Filthy beds line the walls, most are occupied. It smells like death. You can see the tent door to the <em>north</em>, which is the only exit."
-HQ9,Junk Pile,
-,,
-BK1,Underground Bunker,
-BK2,Underground Bunker,
-BK3,Underground Bunker,
-BK4,Underground Bunker,
-BK5,Underground Bunker,
-BK6,Underground Hideout,
 ,,
 ,,
-OT1,Outside The Gate,
-OT2,Outside The East Wall,
-OT3,Outside The South Wall,
-OT4,Duck Pond,
-OT5,Duck Pond,
-OT6,Outside The South Wall,
-OT7,Outside The West Wall,
-OT8,Outside The West Wall,
-OT9,Rocky Path,
-OT10,Outside The West Wall,
-OT11,Rocky Path,
-OT12,Rocky Path,
-OT13,Rocky Path,
-OT14,Rocky Path,
+AQ10,Lobby of Sussex Apartments,
+AQ11,,
+AQ12,Apartment 101,
+AQ13,Apartment 102,
+AQ14,First Floor Hallway,
+AQ15,Apartment 103,
+AQ16,Apartment 104,
+AQ17,First Floor Stairwell,
+AQ20,Second Floor Stairwell,
+AQ21,Second Floor Hallway,
+AQ22,Apartment 203,
+AQ23,Apartment 204,
+AQ24,Second Floor Hallway,
+AQ25,Apartment 201,
+AQ26,Apartment 202,
+AQ30,Third Floor Stairwell,
+AQ31,Third Floor Hallway,
+AQ32,Apartment 303,
+AQ33,Apartment 304,
+AQ34,Third Floor Hallway,
+AQ35,Apartment 301,
+AQ36,Apartment 302,
+AQ40,Sussex Apartments Roof North,
+AQ41,Sussex Apartments Roof South,
 ,,
-HW1,Abandoned Highway,
-HW2,Abandoned Highway,
-HW3,Abandoned Highway,
-HW4,Abandoned Highway,
-HW5,Abandoned Highway,
-HW6,Abandoned Highway,
-HW7,Abandoned Highway,
-HW8,Abandoned Highway,
-HW9,Abandoned Highway,
-HW10,Abandoned Highway,
-HW11,Abandoned Highway,
-HW12,Abandoned Highway,
-HW13,Abandoned Highway,
-HW14,Abandoned Highway,
-HW15,Abandoned Highway,
-HW16,Abandoned Highway,
-HW17,Abandoned Highway,
-HW18,Abandoned Highway,
-HW19,Abandoned Highway,
-HW20,Utility Road,
-HW21,Utility Road,
-HW22,Utility Road,
-HW23,Utility Road,
-HW24,Hill Overlooking The Road,
-HW25,Abandoned Highway,
-HW26,Abandoned Highway,
+,,
+,,
+,,
+SW1,Putrid Sewers,You are wading through the sewers. You feel quite sick.
+SW2,Putrid Sewers,You are wading through the sewers. You feel quite sick.
+SW3,Putrid Sewers,You are wading through the sewers. You feel quite sick.
+SW4,Putrid Sewers,You are wading through the sewers. You feel quite sick.
+HW1,Abandoned Highway
+HW2,Abandoned Highway
+HW3,Abandoned Highway
+HW4,Abandoned Highway
+HW5,Abandoned Highway
+HW6,Abandoned Highway
+HW7,Abandoned Highway
+HW8,Abandoned Highway
+HW9,Abandoned Highway
+HW10,Abandoned Highway
+HW11,Abandoned Highway
+HW12,Abandoned Highway
+HW13,Abandoned Highway
+HW14,Abandoned Highway
+HW15,Abandoned Highway
+HW16,Abandoned Highway
+HW17,Abandoned Highway
+HW18,Abandoned Highway
+HW19,Abandoned Highway
+HW20,Utility Road
+HW21,Utility Road
+HW22,Utility Road
+HW23,Utility Road
+HW24,Hill Overlooking The Road
+HW25,Abandoned Highway
+HW26,Abandoned Highway
+,
+,
+FO1,Creepy Forest
+FO2,Creepy Forest
+FO3,Creepy Forest
+FO4,Creepy Forest
+FO5,Creepy Forest
+FO6,Creepy Forest
+FO7,Creepy Forest
+FO8,Creepy Forest
+FO9,Creepy Forest
+FO10,Creepy Forest
+FO17,Creepy Forest
+FO18,Creepy Forest
+FO19,Creepy Forest
+,
+,
+,
+SH1,Rotten Shack Entryway
+SH2,Rotten Shack Kitchen
+SH3,Rotten Shack Living Room
+SH4,Rotten Shack Dining Room
+SH5,Rotten Shack Upstairs Hallway
+SH6,Rotten Shack Bedroom
+SH7,Rotten Shack Bedroom
+,
+,
+PL1,Refinery
+PL2,Refinery
+PL3,Refinery
+PL4,Refinery
+PL5,Refinery
+PL6,Refinery
+PL7,Refinery
+PL8,Refinery
+PL9,Refinery
+PL10,Refinery
+PL11,Refinery
+PL12,Refinery
+PL13,Refinery
+PL14,Refinery
+PL15,Refinery
+PL16,Refinery
+PL17,Refinery
+PL18,Refinery
+PL19,Refinery
+PL20,Refinery
+PL21,Refinery
+PL22,Refinery
+PL23,Refinery
+PL24,Refinery
+PL25,Refinery
+PL26,Refinery
+PL27,Refinery
+PL28,Refinery
+PL29,Refinery
+PL30,Refinery
+PL31,Refinery
+PL32,Refinery

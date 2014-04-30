@@ -87,17 +87,17 @@ class Room(BaseObject):
     def exit_description(self):
 
         directions = {
-            DIR.WEST:   'to the west',
-            DIR.NORTH:  'to the north',
-            DIR.EAST:   'to the east',
-            DIR.SOUTH:  'to the south',
+            DIR.WEST:   'to the <i>west</i>',
+            DIR.NORTH:  'to the <i>north</i>',
+            DIR.EAST:   'to the <i>east</i>',
+            DIR.SOUTH:  'to the <i>south</i>',
             DIR.DOWN:   'below you',
             DIR.UP:     'above you',
         }
 
         exit_desc = []
         for d, exit in self.exits.items():
-            exit_desc.append("{} {}".format(exit.name, directions[d]))
+            exit_desc.append("the <b>{}</b> {}".format(exit.name.lower() or 'something', directions[d]))
 
         if len(exit_desc) == 1:
             return exit_desc[0]

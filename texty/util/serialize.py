@@ -48,7 +48,7 @@ def room(room):
     data = {}
     data['type'] = 'description'
     data['intro'] = room.name
-    data['text'] = room.description + ' ' + room.nearby
+    data['text'] = room.description or room.nearby
     return data
 
 def char(char, template=STR.INFO.here):
