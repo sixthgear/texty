@@ -71,6 +71,23 @@ def reload(cmd, verb, object, prep, complement):
 #     if not command.source.is_a('admin'):
 #         return
 
+@command ("warp", "goto")
+@admin
+def warp(cmd, verb, object, prep, complement, string=None):
+
+
+    if not string:
+        raise TextyException("Warp where?")
+
+    m = Story.get().map
+    room = m.rooms.get(string.upper())
+    if not room:
+        raise TextyException("Room ID {} not found.".format(string))
+
+    cmd.source.move_to(room)
+    cmd.enqueue('look')
+    return cmd.response('You warp to {}.'.format(room))
+    # room = cmd.
 
 @command ("create", "make", "mk")
 @admin

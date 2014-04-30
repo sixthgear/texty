@@ -82,7 +82,7 @@ class MP5(SubMachineGun):
 
 class M1911(Pistol):
     """
-    A Colt M1911 semi-automatic pistol
+    a Colt M1911 semi-automatic pistol
     ---
     A Colt M1911 semi-automatic pistol looks reliable.
     """

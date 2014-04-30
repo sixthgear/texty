@@ -45,7 +45,7 @@ class Room(BaseObject):
     def __init__(self, id, name='', description=''):
         # basic information
         self.id = id
-        self.title = name
+        self.name = name
         self.intro = ''
         self.description = description
         # exits is a dict mapping from direction names to room references
@@ -69,7 +69,7 @@ class Room(BaseObject):
         self.objects.sort(key=lambda i: (i.icon, i.shortname))
 
     def __repr__(self):
-        return self.id
+        return '%s:%s' % (self.id, self.name)
 
     @property
     def contents(self):

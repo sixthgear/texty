@@ -23,10 +23,14 @@ class ColdDeadWater(Story):
     __version__ = '0.0.1'
 
     options = {
-        'map_file':     './stories/colddeadwater/data/map-city.csv',
-        'room_file':    './stories/colddeadwater/data/map-nodes.csv',
-        'start_at':     'B1',
-        'armory_at':    'B2'
+
+        'excel_file':           './stories/colddeadwater/data/map.xlsx',
+        'map_file':             './stories/colddeadwater/data/map.csv',
+        'room_file':            './stories/colddeadwater/data/rooms.csv',
+
+        'safe_prefix':          'HQ',
+        'start_at':             'HQ8',
+        'armory_at':            'HQ4'
     }
 
     def clean(self):
@@ -102,12 +106,14 @@ class ColdDeadWater(Story):
         # distribute zombies
         for i in range(int(len(self.map.rooms) * 1.35)):
             room = random.choice(list(self.map.rooms.values()))
-            if not room.id.startswith('B'):
+            if not room.id.startswith(self.options.get('safe_prefix')):
                 z = enemies.Zombie()
                 z.move_to(room)
 
+        # make room items nice
         for room in self.map.rooms.values():
             room.sort()
+
 
 
     def on_player_connect(self, player):

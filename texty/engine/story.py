@@ -14,9 +14,26 @@ class Story(object):
     def __init__(self):
         # perform map loading
         self.map = Map()
-        self.map.load_data(
-            self.options.get('map_file'),
-            self.options.get('room_file'))
+
+        excel_file  = self.options.get('excel_file')
+        map_file    = self.options.get('map_file')
+        room_file   = self.options.get('room_file')
+
+
+        # if excel file defined use it to write out the csv files.
+        if excel_file:
+            try:
+                self.map.load_excel(excel_file, map_file, room_file)
+            except ImportError as e:
+                logging.info('No xlrd module found, loading from CSV.')
+            except FileNotFoundError as e:
+                logging.info('Excel file not found, loading from CSV.')
+            finally:
+                self.map.load_csv(map_file, room_file)
+
+        else:
+            self.map.load_csv(map_file, room_file)
+
         self.starting_room = self.map.rooms[self.options.get('start_at')]
         # call initialize
         self.initialize()
