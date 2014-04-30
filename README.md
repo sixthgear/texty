@@ -7,6 +7,7 @@ Requirements
 ------------
 
 - tornado
+- xlrd
 
 Usage
 -----
