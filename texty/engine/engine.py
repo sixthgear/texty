@@ -58,22 +58,22 @@ class TextyEngine(object):
             logging.info('%03d:    %s', i, o.__name__)
 
         # create vocab table formatting strings
-        cols = '| {:<10.10} | {:<14.14} | {:<12.12} | {:<10.10} | {:<10.10} |'
-        vert = '+-{:<10.10}-+-{:<14.14}-+-{:<12.12}-+-{:<10.10}-+-{:<10.10}-+'
-        rule = ['-' * 20] * 5
+        cols = '| {:<10.10} | {:<14.14} | {:<12.12} | {:<10.10} |' #  | {:<10.10} |'
+        vert = '+-{:<10.10}-+-{:<14.14}-+-{:<12.12}-+-{:<10.10}-+' # -+-{:<10.10}-+'
+        rule = ['-' * 20] * 4
 
         logging.info('')
         logging.info(vert.format(*rule))
-        logging.info(cols.format('VERBS', 'ADJECTIVES', 'NOUNS', 'PREPS', 'CONFLICTS'))
+        logging.info(cols.format('VERBS', 'ADJECTIVES', 'NOUNS', 'PREPS')) # , 'CONFLICTS'))
         logging.info(vert.format(*rule))
         table = itertools.zip_longest(
             sorted(parser.command_table),
             sorted(VOCAB.adjectives | VOCAB.superlatives),
             sorted(VOCAB.nouns | VOCAB.reserved),
             sorted(VOCAB.prepositions) + \
-                [rule[4], 'PHRASALS', rule[4]] + sorted(VOCAB.phrasals) + \
-                [rule[4], 'ATTRIBUTES', rule[4]] + sorted(parser.attribute_table),
-            sorted(VOCAB.adjectives & VOCAB.nouns),
+                [rule[0], 'PHRASALS', rule[0]] + sorted(VOCAB.phrasals) + \
+                [rule[0], 'ATTRIBUTES', rule[0]] + sorted(parser.attribute_table),
+            # sorted(VOCAB.adjectives & VOCAB.nouns),
             fillvalue=''
         )
         for c in table:

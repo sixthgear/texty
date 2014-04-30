@@ -15,7 +15,7 @@ CT14,Intersection of Main Street and 11th Avenue,You feel hemmed in by the lonel
 CT15,Western Edge of Lamont Park,You are on the western fringe of Lamont Park. There's an open manhole leading into the municipal sewer system.
 CT16,Eastern Edge of Lamont Park,You are on the eastern fringe of Lamont Park. 
 AP1,Lobby of Main Street Apartments,"You are in the lobby of the Main Street Apartment Building. Makeshift beds line the walls, most are occupied and it smells like death. You spot Main Street through door to the north."
-AP2,First Floor,"You are on the first floor of the apartments. The arms locker is here, guarded by an extremely large man with almost no neck."
+AP2,First Floor,You are on the first floor of the apartments.
 AP3,First Floor,You are on the first floor of the apartments.
 AP4,First Floor Stairwell,You are on the first floor of the apartments. A concrete stairwell heads up to the second floor.
 AP5,First Floor,You are on the first floor of the apartments.
@@ -55,30 +55,18 @@ BK6,Underground Hideout,
 ,,
 OT1,Outside The Gate,
 OT2,Outside The East Wall,
-OT3,Outside The East Wall,
-OT4,Outside The South Wall,
-OT5,Outside The South Wall,
+OT3,Outside The South Wall,
+OT4,Duck Pond,
+OT5,Duck Pond,
 OT6,Outside The South Wall,
 OT7,Outside The West Wall,
 OT8,Outside The West Wall,
-OT9,Outside The West Wall,
+OT9,Rocky Path,
 OT10,Outside The West Wall,
-OT11,Outside The West Wall,
-OT12,Outside The North Wall,
-OT13,Outside The North Wall,
-OT14,Outside The North Wall,
-OT15,Outside The East Wall,
-OT16,Outside The East Wall,
-OT17,Rocky Path,
-OT18,Rocky Path,
-OT19,Rocky Path,
-OT20,Duck Pond,
-OT21,Duck Pond,
-OT22,Duck Pond,
-OT23,Duck Pond,
-OT24,Rocky Path,
-OT25,Rocky Path,
-OT26,Rocky Path,
+OT11,Rocky Path,
+OT12,Rocky Path,
+OT13,Rocky Path,
+OT14,Rocky Path,
 ,,
 HW1,Abandoned Highway,
 HW2,Abandoned Highway,

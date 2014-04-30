@@ -1,8 +1,9 @@
 from texty.engine.room import Room, Edge
-from texty.util.enums import DIRECTIONS
+from texty.util.enums import DIRECTIONS as DIR
+import collections
 import csv
-import re
 import itertools
+import re
 
 class Map(object):
     """
@@ -15,7 +16,7 @@ class Map(object):
 
     def load_excel(self, xlsx_filename, map_filename, rooms_filename):
         """
-        Load map and room data from an Excel workbook.
+        Read map and room data from an Excel workbook and write them to csv files.
         Requires two sheets called "map" and "rooms"
         """
         import xlrd
@@ -55,12 +56,16 @@ class Map(object):
         """
         for row in room_iterator:
             # loop through room list, and attach titles and descriptions
-            if len(row) == 0: continue
+            if len(row) == 0:
+                continue
             room = row[0]
-            if not room in self.rooms: continue
-            if len(row) == 1: continue
+            if not room in self.rooms:
+                continue
+            if len(row) == 1:
+                continue
             self.rooms[room].name = row[1]
-            if len(row) == 2: continue
+            if len(row) == 2:
+                continue
             self.rooms[room].description = row[2]
 
 
@@ -68,55 +73,70 @@ class Map(object):
         """
         Load the map data from an iterator.
         """
+
         # store reference arrays to the last north and up cells
-        n = [None]
-        u = [None]
+        north = []
+        up = []
 
         for row in map_iterator:
             # store reference to the last west cell
-            w = None
+            west = None
 
-            for x, room in enumerate(row):
+            for x, room_id in enumerate(row):
+
                 # expand north and up lists if required
-                if len(n) <= x: n.append(None)
-                if len(u) <= x: u.append(None)
+                if len(north) <= x:
+                    north.append(None)
+
+                if len(up) <= x:
+                    up.append(None)
 
                 # test what kind of cell we are dealing with
-                if re.match(r'[A-Z]+\d+', room):
+                if re.match(r'[A-Z]+\d+', room_id):
+
                     # this is a room
                     # create it if it doesn't yet exist
-                    if not room in self.rooms:
-                        self.rooms[room] = Room(room)
-                    # check for exits
-                    if w:
-                        # west reference is set, so make exits
-                        self.rooms[room].exits[DIRECTIONS.WEST] = w
-                        w.exits[DIRECTIONS.EAST] = self.rooms[room]
-                    if u[x]:
-                        # up reference is set, so make exits
-                        self.rooms[room].exits[DIRECTIONS.UP] = u[x]
-                        u[x].exits[DIRECTIONS.DOWN] = self.rooms[room]
-                    elif n[x]:
-                        # north reference is set, so make exits
-                        self.rooms[room].exits[DIRECTIONS.NORTH] = n[x]
-                        n[x].exits[DIRECTIONS.SOUTH] = self.rooms[room]
-                    # set north and west references
-                    w = n[x] = u[x] = self.rooms[room]
+                    room = self.rooms.get(room_id, Room(room_id))
+                    self.rooms[room_id] = room
 
-                elif room == '.':
+                    # check for exit references
+                    # west reference is set, so make exits
+                    if west:
+                        room.exits[DIR.WEST]        = west
+                        west.exits[DIR.EAST]        = room
+
+                    # north reference is set, so make exits
+                    if north[x]:
+                        room.exits[DIR.NORTH]       = north[x]
+                        north[x].exits[DIR.SOUTH]   = room
+
+                    # up reference is set, so make exits
+                    elif up[x]:
+                        room.exits[DIR.UP]          = up[x]
+                        up[x].exits[DIR.DOWN]       = room
+
+                    # set north, west and up references to this room
+                    west        = room
+                    north[x]    = room
+                    up[x]       = room
+
+                elif room_id == '.' or room_id == '..':
                     # this is a horizontal link, so clear the up reference
-                    u[x] = None
+                    up[x]       = None
 
-                elif room == '%':
+                elif room_id == '%':
                     # TODO: one way, or door, needs logic here
-                    u[x] = None
+                    up[x]       = None
 
-                elif room == '|':
+                elif room_id == '|':
                     # this is a vertical link, so clear the north and west references
-                    n[x] = w = None
+                    north[x]    = None
+                    west        = None
 
                 else:
                     # this is a blank cell, so clear all references
-                    w = n[x] = u[x] = None
+                    west        = None
+                    north[x]    = None
+                    up[x]       = None
 
         # sweet, we have a map.

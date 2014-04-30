@@ -46,6 +46,9 @@ class STR:
     class FIGHT:
         ammo            = "{You} {have} {amount} {rounds} remaining in {your} {weapon}."
         empty           = "{Your} {weapon} is now empty."
+        pull_A          = "{Name} pull{s} the pin on {weapon}."
+        pull_B          = "{Name} light{s} the fuse on {weapon}."
+        pull_C          = "{Name} activate{s} the timer on {weapon}."
         ready           = "{Name} read{ies} {his} <b>{weapon}</b> and prepare{s} for a fight."
         relax           = "{Name} relax{es} {his} {weapon}."
         aim             = "{Name} point{s} {his} {weapon} at {you} to {direction}."

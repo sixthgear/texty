@@ -1,7 +1,7 @@
 from texty.util.objectlist import ObjectList
 from texty.engine.parser import parser
 
-class MetaObject(type):
+class ObjectMeta(type):
     """
     The almighty "Object Metaclass".
     Used to combine nouns, adjectives and attributes from parent classes.
@@ -11,47 +11,30 @@ class MetaObject(type):
     """
     def __new__(cls, name, bases, attrs):
 
-        parents = [b for b in bases if isinstance(b, MetaObject)]
+        parents = [b for b in bases if isinstance(b, ObjectMeta)]
+
+        # Don't do anything special unless this is a subclass BaseObject.
         if not parents:
-            # Don't do anything special unless this is a subclass BaseObject.
-            # Thanks Django!
             return type.__new__(cls, name, bases, attrs)
 
-        # Split nouns string into a list
-        if 'nouns' in attrs:
-            attrs['nouns'] = set(attrs['nouns'].split())
-        else:
-            attrs['nouns'] = set()
-
-        # Split adjectives string into a set
-        if 'adjectives' in attrs:
-            attrs['adjectives'] = set(attrs['adjectives'].split())
-        else:
-            attrs['adjectives'] = set()
-
-        # Split attribues string into a set
-        if 'attributes' in attrs:
-            attrs['attributes'] = set(attrs['attributes'].split())
-        else:
-            attrs['attributes'] = set()
+        # Split noun, adjective and attribute strings into sets
+        attrs['nouns']      = set(attrs.get('nouns', '').split())
+        attrs['adjectives'] = set(attrs.get('adjectives', '').split())
+        attrs['attributes'] = set(attrs.get('attributes', '').split())
 
         # Combine attributes from parent classes
         for b in bases:
-            if hasattr(b, 'nouns'):
-                attrs['nouns'].update(b.nouns)
+            attrs['nouns'].update(b.nouns)
+            attrs['adjectives'].update(b.adjectives)
+            attrs['attributes'].update(b.attributes)
 
-            if hasattr(b, 'attributes'):
-                attrs['attributes'].update(b.attributes)
-
-            if hasattr(b, 'adjectives'):
-                attrs['adjectives'].update(b.adjectives)
-
-        # use docstring for description if none defined
+        # use docstring for name and description if none defined
         if attrs.get('__doc__') and (not attrs.get('description') or not attrs.get('name')):
             doc = attrs.get('__doc__').strip().split('---')
             attrs['name'] = doc[0].strip()
             attrs['description'] = str.join('', doc[1:]).strip()
 
+        # derive shortname from name if none defined
         if attrs.get('name') and not attrs.get('shortname'):
             attrs['shortname'] = attrs.get('name').split()[0]
 
@@ -62,7 +45,7 @@ class MetaObject(type):
         return new_class
 
 
-class BaseObject(metaclass=MetaObject):
+class BaseObject(metaclass=ObjectMeta):
     """
     Base object
     """
@@ -72,8 +55,8 @@ class BaseObject(metaclass=MetaObject):
     icon = 'fa-briefcase'
 
     nouns = set()
-    attributes = set(['object'])
     adjectives = set()
+    attributes = {'object'}
     plural = False
 
     @property

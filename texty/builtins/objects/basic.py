@@ -9,50 +9,94 @@ class Container(BaseObject):
     """
     This object can hold other objects.
     """
-    attributes = 'container'
+    attributes  = 'container'
+    contents    = []
 
     def __init__(self):
+        # instantiate class templates for constants
         self.contents = ObjectList([x() for x in self.__class__.contents])
 
 class Portable(BaseObject):
-    attributes = 'portable'
-    weight = 1 # kg
+    """
+    This object can be carried.
+    """
+    attributes  = 'portable'
+    weight      = 1 # kg
 
 class Box(Portable, Container):
-    nouns = 'box'
-    icon = 'fa-briefcase'
+    """
+    """
+    nouns       = 'box'
+    icon        = 'fa-briefcase'
 
 class Food(Portable):
-
-    attributes = 'food'
+    """
+    This object can be eaten
+    """
+    attributes  = 'food'
 
     def eat(self):
         pass
 
 class Equipable(Portable):
-    attributes = 'equipable'
-    fits = ()
+    """
+    This object can be worn.
+    """
+    attributes  = 'equipable'
+    fits        = ()
 
 class Weapon(Equipable):
-    nouns = 'weapon'
-    attributes = 'wieldable'
-    rate = 1 # per second
-    range = 1 # feet
-    weight = 5
+    """
+    This object can be used to hurt things.
+    """
+    nouns       = 'weapon'
+    attributes  = 'wieldable'
+    # --
+    rate        = 1 # per second
+    range       = 1 # feet
+    weight      = 5
+
+class MeleeWeapon(Weapon):
+    """
+    This object can be used to hurt things from close-up.
+    """
+    attributes  = 'melee'
+    icon        = 'icon-screwdriver'
+    # --
+    rate        = 1 # per second
+    range       = 1 # feet
+    damage      = 100 # per hit
+
+class Explosive(Portable):
+    """
+    This object can be used to hurt things with explosive power.
+    """
+    nouns       = 'explosive'
+    attributes  = 'explosive'
+    icon        = 'icon-bomb'
+    # --
+    range       = 1 # feet
+    ordinance   = 10 # tons
+    timer       = 10 # seconds
+    weight      = 2
 
 class RangedWeapon(Weapon):
-
-    nouns = 'gun'
-    attributes = 'loadable'
-    capacity = 10 # rounds
-    range = 20 # feet
-    icon = 'icon-gun'
+    """
+    This object can be used to hurt things from a distance.
+    """
+    nouns       = 'gun'
+    attributes  = 'loadable'
+    icon        = 'icon-gun'
+    # --
+    capacity    = 10 # rounds
+    range       = 20 # feet
 
     def __init__(self):
         self.ammo = None
 
     def load(self, ammo):
         """
+        Put ammo in this thing.
         """
         if not ammo.is_a('ammo'):
             raise TextyException('{} is not ammunition.'.format(ammo.name))
@@ -67,6 +111,7 @@ class RangedWeapon(Weapon):
 
     def unload(self):
         """
+        Remove ammo from this thing.
         """
         if not self.ammo:
             raise TextyException('{} is empty.'.format(self.name))
@@ -75,58 +120,27 @@ class RangedWeapon(Weapon):
 
     @property
     def contents(self):
-        if self.ammo:
-            return self.ammo.contents
-        else:
-            return []
+        return getattr(self.ammo, 'contents', [])
 
-
-class Rifle(RangedWeapon):
-    nouns = 'rifle'
-
-class SubMachineGun(RangedWeapon):
-    adjectives = 'submachine sub'
-    nouns = 'smg machinegun'
-
-class Shotgun(RangedWeapon):
-    nouns = 'shotgun'
-
-class Pistol(RangedWeapon):
-    nouns = 'pistol'
-
-class MeleeWeapon(Weapon):
-    # nouns = 'melee'
-    attributes = 'melee'
-    rate = 1 # per second
-    range = 1 # feet
-    damage = 100 # per hit
-    icon = 'icon-screwdriver'
-
-class Explosive(Portable):
-    nouns = 'explosive'
-    attributes = 'explosive'
-    range = 1 # feet
-    ordinance = 10 # tons
-    timer = 10 # seconds
-    weight = 2
-    pull_message = "%s %s the pin on %s."
-    icon = 'icon-bomb'
-
-class Grenade(Explosive):
-    nouns = 'grenade'
 
 class Ammo(Portable):
-
-    nouns = 'ammo ammunition'
-    attributes = 'ammo'
-    item = 'ammo'
-    fits = () # tuple of weapons this ammo wil work with
-    damage = 100 # per hit
-    capacity = 10 # rounds
-    icon = 'icon-package'
+    """
+    This object can be put it weapons.
+    """
+    nouns       = 'ammo ammunition'
+    attributes  = 'ammo'
+    icon        = 'icon-package'
+    # --
+    item        = 'round'
+    fits        = () # tuple of weapons this ammo wil work with
+    damage      = 100 # per hit
+    capacity    = 10 # rounds
 
     @property
     def contents(self):
+        """
+        Fake contents.
+        """
         a = BaseObject()
         s = 's' if self.amount != 1 else ''
         a.amount = self.amount

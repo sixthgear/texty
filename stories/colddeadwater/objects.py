@@ -19,6 +19,9 @@ class Crowbar(MeleeWeapon):
 
 # --- EXPLOSIVE WEAPONS --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+class Grenade(Explosive):
+    nouns = 'grenade'
+
 class Frag(Grenade):
     """
     a fragmentation grenade
@@ -30,6 +33,19 @@ class Frag(Grenade):
     nouns           = 'frag grenade'
 
 # --- RANGED WEAPONS --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+class Rifle(RangedWeapon):
+    nouns = 'rifle'
+
+class SubMachineGun(RangedWeapon):
+    adjectives = 'submachine sub machine'
+    nouns = 'smg machinegun'
+
+class Shotgun(RangedWeapon):
+    nouns = 'shotgun'
+
+class Pistol(RangedWeapon):
+    nouns = 'pistol'
 
 class Model70(Rifle):
     """

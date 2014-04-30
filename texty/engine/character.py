@@ -14,15 +14,19 @@ class Character(BaseObject):
     name            = 'Mr. Character'
     gender          = 'N'
     occupation      = ''
+    activity        = ''
     description     = '{He} looks about as ready to kill you as anyone else here.'
     attributes      = 'character'
     # stats
     hp              = 100
     capacity        = 20
+    strength        = 0
+    dexterity       = 0
+    intelligence    = 0
     # simple lists provide templates to instantiate
     inventory       = []
     equipment       = {}
-    activity        = ''
+
 
     def __init__(self, name=None, room=None):
 
@@ -40,9 +44,10 @@ class Character(BaseObject):
         # equipment is the searchable object list containing everything the character is
         # currently wielding/wearing.
         self.equipment = objectlist()
-        self.eq_map = OrderedDict(((x, None) for x in EQ_PARTS))
 
         # eq_map is the mapping from EQ_PARTS enum to the object.
+        self.eq_map = OrderedDict(((x, None) for x in EQ_PARTS))
+
         for eq, x in self.__class__.equipment.items():
             obj = x()
             self.equipment.append(obj)
@@ -110,6 +115,7 @@ class Character(BaseObject):
 
         # try each part
         for p in parts:
+
             if p not in object.fits:
                 raise TextyException('It doesn\'t fit there.')
 
@@ -123,6 +129,7 @@ class Character(BaseObject):
 
     def unequip(self, object, parts=None):
         """
+        Take thing off
         """
         if not parts:
             parts = object.fits

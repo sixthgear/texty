@@ -1,5 +1,6 @@
 from texty.builtins.objects import BaseObject
 from texty.util.objectlist import ObjectList
+from texty.util.enums import DIRECTIONS as DIR
 
 
 class Edge:
@@ -74,3 +75,39 @@ class Room(BaseObject):
     @property
     def contents(self):
         return self.characters + self.objects
+
+    @property
+    def nearby(self):
+        desc = self.exit_description()
+        if desc:
+            return "You see {desc}.".format(desc=desc)
+        else:
+            return ""
+
+    def exit_description(self):
+
+        directions = {
+            DIR.WEST:   'to the west',
+            DIR.NORTH:  'to the north',
+            DIR.EAST:   'to the east',
+            DIR.SOUTH:  'to the south',
+            DIR.DOWN:   'below you',
+            DIR.UP:     'above you',
+        }
+
+        exit_desc = []
+        for d, exit in self.exits.items():
+            exit_desc.append("{} {}".format(exit.name, directions[d]))
+
+        if len(exit_desc) == 1:
+            return exit_desc[0]
+        elif len(exit_desc) == 2:
+            return str.join(' and ', exit_desc[-2:])
+        elif len(exit_desc) > 2:
+            head = str.join(', ', exit_desc[:-2])
+            tail = str.join(' and ', exit_desc[-2:])
+            return str.join(', ', (head, tail))
+        else:
+            return None
+
+
