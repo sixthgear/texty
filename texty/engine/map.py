@@ -1,4 +1,4 @@
-from texty.engine.room import Room
+from texty.engine.room import Room, Edge
 from texty.util.enums import DIRECTIONS
 import csv
 import re
@@ -34,7 +34,7 @@ class Map(object):
                 if len(u) <= x: u.append(None)
 
                 # test what kind of cell we are dealing with
-                if re.match(r'[A-Z]\d+', room):
+                if re.match(r'[A-Z]+\d+', room):
                     # this is a room
                     # create it if it doesn't yet exist
                     if not room in self.rooms:

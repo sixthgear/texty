@@ -277,7 +277,7 @@ class PowerMoves(Portable):
     """
     attributes      = 'usable'
     shortname       = 'Power Moves'
-    adjectives      = ''
+    adjectives      = 'copy'
     nouns           = 'power moves book'
     icon            = 'icon-book2'
 
@@ -294,8 +294,8 @@ class ClifBar(Food):
     only Clif Bars&trade;.
     """
     shortname       = 'Clif Bar&trade;'
-    adjectives      = 'clif'
-    nouns           = 'bar'
+    adjectives      = 'original'
+    nouns           = 'clif bar'
     icon            = 'icon-ticket'
 
 class Burrito(Food):

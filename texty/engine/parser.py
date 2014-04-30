@@ -85,7 +85,7 @@ class Parser(object):
         # process each raw symbol in turn
         for t, next_t in lookahead(re.findall('\w+|[.,"]', command.lower())):
 
-            print (t, next_t)
+            # print (t, next_t)
 
             # check for an optional phrasal preposition or particle following a verb
             if mode == M.VERB:
@@ -444,7 +444,7 @@ class Parser(object):
         try:
             command_ast = parse_command()
             command_fn = self.command_table.get(command_ast['verb'])
-            print (tokens, )
+            # print (tokens, )
             return command_fn, command_ast
         except TextyException as e:
             return self.error, {'message': e.message} #[verb]

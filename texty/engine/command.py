@@ -93,7 +93,7 @@ class Command(object):
 
     def parse(self):
         self.fn, self.ast = parser.parse(self.command)
-        pprint(self.ast)
+        # pprint(self.ast)
 
     def run(self):
         """

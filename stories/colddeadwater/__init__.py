@@ -23,9 +23,10 @@ class ColdDeadWater(Story):
     __version__ = '0.0.1'
 
     options = {
-        'map_file':     './stories/colddeadwater/data/map.csv',
-        'room_file':    './stories/colddeadwater/data/rooms.csv',
-        'start_at':     'A8'
+        'map_file':     './stories/colddeadwater/data/map-city.csv',
+        'room_file':    './stories/colddeadwater/data/map-nodes.csv',
+        'start_at':     'B1',
+        'armory_at':    'B2'
     }
 
     def clean(self):
@@ -52,7 +53,7 @@ class ColdDeadWater(Story):
         # create starting area NPCs
         characters.Bertram().move_to(self.starting_room)
         characters.DForsyth().move_to(self.starting_room)
-        characters.Tank().move_to(self.map.rooms['A4'])
+        characters.Tank().move_to(self.map.rooms[self.options['armory_at']])
 
         # distribute starting area equipment
         self.starting_room.objects += [
@@ -65,7 +66,7 @@ class ColdDeadWater(Story):
             Crate(),
         ]
 
-        self.map.rooms['A4'].objects += [
+        self.map.rooms[self.options['armory_at']].objects += [
             Frag(),
             Frag(),
         ]
@@ -93,14 +94,15 @@ class ColdDeadWater(Story):
         d += [VibramFivefinger] * 2
         d += [Crate] * 5
 
-        for i in range(120):
+        # distribute items
+        for i in range(int(len(self.map.rooms) * 0.85)):
             room = random.choice(list(self.map.rooms.values()))
             room.objects.append(random.choice(d)())
 
         # distribute zombies
-        for i in range(100):
+        for i in range(int(len(self.map.rooms) * 1.35)):
             room = random.choice(list(self.map.rooms.values()))
-            if not room.id.startswith('A'):
+            if not room.id.startswith('B'):
                 z = enemies.Zombie()
                 z.move_to(room)
 
