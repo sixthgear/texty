@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from texty.util.enums import EQ_PARTS
 from texty.util.english import STR
+from texty.util.parsertools import lookahead
 import re
 """
 Tools for producing JSON serializable dicts for sending to the client.
@@ -41,14 +42,14 @@ def dispatch(data):
     return new
 
 
-def room(room):
+def node(node):
     """
-    Serialize room data into a description.
+    Serialize node data into a description.
     """
     data = {}
     data['type'] = 'description'
-    data['intro'] = room.name
-    data['text'] = room.description or room.nearby
+    data['intro'] = node.name
+    data['text'] = node.description or node.nearby
     return data
 
 def char(char, template=STR.INFO.here):
@@ -99,11 +100,29 @@ def vislist(nearby, template=STR.INFO.here_dist, exclude=None):
     data = {'type': 'object'}
     data['items'] = []
 
-    for x, dist, dir in nearby:
+    combined = []
+
+    for obj, next_obj in lookahead(nearby):
+
+        x, dist, dir = obj
 
         if exclude and x in exclude: continue
 
-        if dist == 0 and x.is_a('character'):
+        if next_obj:
+            next_x, next_dist, next_dir = next_obj
+            if x.is_a('monster') and dist > 0 and dist == next_dist and dir == next_dir and x.__class__ == next_x.__class__:
+                combined += [obj]
+                continue
+
+        if combined:
+            dir = dir.name.lower()
+            dist = str(dist*10)+'m'
+            item = {}
+            item['icon'] = x.icon
+            item['text'] = STR.T(STR.INFO.here_many, x, extra={'num': len(combined)+1, 'dist': dist, 'dir': dir})
+            combined = []
+
+        elif dist == 0 and x.is_a('character'):
             item = char(x, STR.INFO.here)
         elif dist == 0:
             item = obj(x, STR.INFO.here)

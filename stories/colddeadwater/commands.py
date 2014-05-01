@@ -8,9 +8,9 @@ def wakeup(command, verb, object, prep, complement):
         return
 
     p = command.source
-    p.move_to(Story.get().starting_room)
+    p.move_to(Story.get().starting_node)
 
-    command.to_room(
+    command.to_node(
         'A:The door opens suddenly and <b>%s</b> the %s is tossed onto a bed in the corner. \
         <span class="sound-2x">&mdash;WHUMP&mdash;</span>' % (p.name, p.occupation))
 
@@ -35,7 +35,7 @@ def combust(command, verb, object, prep, complement):
         return
 
     p = command.source
-    command.to_room(
+    command.to_node(
         'A:Suddenly, %s bursts into flames! \
         <span class="sound-3x">AAAAAAAUUUUGHHH!!</span> \
         In a few moments nothing is left of %s but ashes \

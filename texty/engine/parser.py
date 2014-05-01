@@ -60,9 +60,10 @@ class Parser(object):
         into their respective sets.
         """
         self.attribute_table.update(obj.attributes)
-        self.object_table.append(obj)
         VOCAB.nouns.update(obj.nouns)
         VOCAB.adjectives.update(obj.adjectives)
+
+        self.object_table.append(obj)
 
 
     def lex(self, command):

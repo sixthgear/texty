@@ -8,25 +8,25 @@
 																																				PL15		PL11	.	PL9	.	PL10		PL3						HW24				.																				
 																																				|														|				.																				
 																																				PL17		PL22	.	PL23										|				.																				
-																																				.		.		.										|				.																				
-																		AQ20				AQ30				AQ40				AQ40						PL18	.	PL21		PL24	.	.	.	PL27						|				.																				
-																		|				|				|				.						.		.		.				|						|				.																				
-																		AQ17				AQ20				AQ30				.						PL19	.	PL20	.	PL25				|						|				.																				
-																		.				.				.				.														|						PL32				HW17																				
-																	AQ15	AQ14	AQ16		AQ22	AQ21	AQ23		AQ32	AQ31	AQ33			.														|						.				.																				
-																		.				.				.				.														PL28	.	.	.	.	.	PL31				.																				
-																	AQ12	AQ10	AQ13		AQ25	AQ24	AQ25		AQ35	AQ34	AQ36			AQ41																								.																				
-												CT1																																										.																				
-												.						AQ10																																				.																				
+																		AQ20				AQ30				AQ40				AQ40						.		.		.										|				.																				
+																		|				|				|				.						PL18	.	PL21		PL24	.	.	.	PL27						|				.																				
+																		AQ17				AQ20				AQ30				.						.		.		.				|						|				.																				
+																		.				.				.				.						PL19	.	PL20	.	PL25				|						|				.																				
+																	AQ15	AQ14	AQ16		AQ22	AQ21	AQ23		AQ32	AQ31	AQ33			.														|						PL32				HW17																				
+																		.				.				.				.														|						.				.																				
+																	AQ12	AQ10	AQ13		AQ25	AQ24	AQ25		AQ35	AQ34	AQ36			AQ41														PL28	.	.	.	.	.	PL31				.																				
+																																																						.																				
+												CT1						AQ10																																				.																				
+												.						%																																				.																				
 							CT2	.	CT3	.	.	CT4	.	.	.	.	.	CT5	.	.	.	.	.	.	.	.	.	.	.	CT18																								.																				
 									.									.												.																								.																				
 									.									.												.										OT10	.	.	.	.	.	.	.	OT11						HW13						FO7														
 									CT6	.	.	CT7	.	.	CT8	.	.	CT9	.	.	CT10									CT17										.								.						.						.														
 									.						.			.			.							..	..	.	..	..								.		HQ1	.	HQ2	.	HQ3		OT12	.	OT13				.		FO6	.	.	.	FO4	.	FO8												
 									.						.			.			.							..	..	.	..	..								.		.		.						.				.						.														
-									CT11	.	.	.	.	.	CT12	.	.	CT13	.	.	CT14	.	.	.	.	.	CT15	.	.	.	.	.	CT16	.	.	.	.	.	.	OT8		HQ4	.	HQ5	.	HQ6	.	OT1	.	OT14	.	.	.	HW1	.	FO1	.	.	.	FO3										SH5				
-																		AP1										..	..	..	..	..								.		.		.		.		.						.						.						SH2	SH4			|				SH6
-												CT7																..	..	..	..	..								.		HQ7		HQ8		HQ9		.						.						FO9	.	.	.	.	FO10	SH1	SH3			SH3			SH7	SH5
+									CT11	.	.	.	.	.	CT12	.	.	CT13	.	.	CT14	.	.	.	.	.	CT15	.	.	.	.	.	CT16	.	.	.	.	.	.	OT8		HQ4	.	HQ5	.	HQ6	%	OT1	.	OT14	.	.	.	HW1	.	FO1	.	.	.	FO3										SH5				
+																		%										..	..	..	..	..								.		.		%		.		.						.						.						SH2	SH4			|				SH6
+												CT7						AP1										..	..	..	..	..								.		HQ7		HQ8		HQ9		.						.						FO9	.	.	.	.	FO10	SH1	SH3			SH3			SH7	SH5
 												|																												.								.						.																				
 												|					AP13	AP14	AP15								CT15													OT7	.	OT6	.	.	.	OT3	.	OT2						.																				
 												|					.		.								|															.				.								.																				

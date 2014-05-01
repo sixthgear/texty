@@ -9,6 +9,7 @@ class STR:
         # activity        = "<b>{x.display}</b> {x.occupation} {are} {x.activity} here."
         here            = "<b>{sub.display}</b> {is} here."
         here_dist       = "<b>{sub.display}</b> {is} {dist} to the {dir}."
+        here_many       = "A group of <b>{num} {sub.shortname}s</b> are {dist} to the {dir}."
         inside          = "<b>{sub.display}</b> {is} inside."
         wearing         = "{He} {is} wearing <b>{x.name}</b> on {his} {y}."
         holding         = "{He} {is} holding <b>{x.name}</b> in {his} {y}."
@@ -38,11 +39,11 @@ class STR:
         dead            = "{He} {has} died."
 
     class MOVE:
-        leave           = "{Name} head{s} to {room.name} {direction}."
-        arrive          = "{Name} arrive{s} from {room.name} {direction}."
-        enter           = "{Name} enter{s} {room.name}."
-        exit            = "{Name} leave{s} {room.name}."
-        flee            = "{Name} retreat{s} {direction} to {room.name}"
+        leave           = "{Name} head{s} toward {node.name} {direction}."
+        arrive          = "{Name} arrive{s} from {node.name} {direction}."
+        enter           = "{Name} enter{s} {node.name}."
+        exit            = "{Name} leave{s} {node.name}."
+        flee            = "{Name} retreat{s} {direction} to {node.name}"
 
     class FIGHT:
         ammo            = "{You} {have} {amount} {rounds} remaining in {your} {weapon}."

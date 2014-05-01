@@ -8,7 +8,7 @@ class Monster(Character):
     Base Enemy class
     """
     nouns = 'enemy'
-    attributes = 'character'
+    attributes = 'monster'
     hitpoints = 100
     icon = 'icon-skeletor'
 

@@ -3,7 +3,7 @@ from texty.builtins.characters import body
 from texty.engine.command import Command
 from texty.engine.obj import BaseObject
 from texty.util import objectlist, english
-from texty.util.enums import EQ_PARTS, CHAR_STATUS, CHAR_FLAG
+from texty.util.enums import EQ_PARTS, CHAR_STATE, CHAR_FLAG
 from texty.util.exceptions import TextyException
 
 class Character(BaseObject):
@@ -28,15 +28,16 @@ class Character(BaseObject):
     equipment       = {}
 
 
-    def __init__(self, name=None, room=None):
+    def __init__(self, name=None, node=None):
 
         # copy data from class on init. This lets us reset the character to
         # initial values if required by calling __init__ again.
         self.name = name or self.__class__.name
         self.description = english.STR.T(self.__class__.description, subject=self)
         self.hp = self.__class__.hp
-        self.room = room
-        self.status = CHAR_STATUS.NORMAL
+        self.node = node
+
+        self.state = CHAR_STATE.STANDING
 
         # instantiate classes from inventory list upon init.
         self.inventory = objectlist((x() for x in self.__class__.inventory))
@@ -143,20 +144,23 @@ class Character(BaseObject):
         raise TextyException('Couldn\'t Unequip {}.'.format(object.name))
 
 
-    def move_to(self, room):
+    def move_to(self, node):
         """
-        Move this character to a different room. This can be called by command functions or as
+        Move this character to a different node. This can be called by command functions or as
         an internal call. The calling function is reponsible to send notifications.
         Use None to remove the player from all rooms.
         """
         # first remove this player from the rooms characters list
-        if self.room and self in self.room.characters:
-            self.room.characters.remove(self)
-        # next change the players room reference, and then add to the new room's character list
-        if room:
-            self.room = room
+        if self.node and self in self.node.characters:
+            self.node.exit(self)
+            # self.node.characters.remove(self)
+        # next change the players node reference, and then add to the new node's character list
+        if node:
+            self.node = node
             if self.is_a('player'):
-                self.room.characters.insert(0, self)
+                # self.node.characters.insert(0, self)
+                self.node.enter(self)
             else:
-                self.room.characters.append(self)
+                self.node.enter(self)
+                # self.node.characters.append(self)
 

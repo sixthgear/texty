@@ -15,7 +15,7 @@ def say(command, verb, object, prep, complement, string):
         return command.response('Say what?')
     string = string.replace('"', '').strip()
     command.to_source('C: <b>You say</b> "%s"' % string)
-    command.to_room('C:<b>%s<b> says "%s"' % (command.source.name, string))
+    command.to_node('C:<b>%s<b> says "%s"' % (command.source.name, string))
     return
 
 

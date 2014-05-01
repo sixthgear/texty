@@ -16,12 +16,12 @@ class Story(object):
         self.map = Map()
 
         map_file    = self.options.get('map_file')
-        room_file   = self.options.get('room_file')
+        node_file   = self.options.get('node_file')
 
         # if excel file defined use it to write out the csv files.
         try:
             excel_file  = self.options['excel_file']
-            self.map.load_excel(excel_file, map_file, room_file)
+            self.map.load_excel(excel_file, map_file, node_file)
         except KeyError:
             logging.info('No excel file specified, loading from CSV.')
         except ImportError:
@@ -29,9 +29,9 @@ class Story(object):
         except FileNotFoundError:
             logging.info('Excel file not found, loading from CSV.')
         finally:
-            self.map.load_csv(map_file, room_file)
+            self.map.load_csv(map_file, node_file)
 
-        self.starting_room = self.map.rooms[self.options.get('start_at')]
+        self.starting_node = self.map.nodes[self.options.get('start_at')]
         # call initialize
         self.initialize()
 

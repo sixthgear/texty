@@ -3,7 +3,7 @@ Combat commands.
 """
 from texty.engine.command import SCOPE, command, syntax
 from texty.util.exceptions import TextyException
-from texty.util.enums import EQ_PARTS, CHAR_STATUS
+from texty.util.enums import EQ_PARTS, CHAR_STATE
 from texty.util import serialize
 from texty.util.english import STR
 
@@ -91,7 +91,7 @@ def load(cmd, verb, object, prep, complement):
     weapon.load(ammo)
     cmd.source.inventory.remove(ammo)
     cmd.source.send(serialize.full_character(cmd.source))
-    cmd.to_room('A:{} loads <b>{y}</b> into <b>{x}</b>. <span class=\"sound-3x\">CHHK-CHHK!!</span>'.format(cmd.source.name, x=str(weapon.name), y=str(ammo.name)))
+    cmd.to_node('A:{} loads <b>{y}</b> into <b>{x}</b>. <span class=\"sound-3x\">CHHK-CHHK!!</span>'.format(cmd.source.name, x=str(weapon.name), y=str(ammo.name)))
     return cmd.response("You load <b>{y}</b> into <b>{x}</b>. <span class=\"sound-3x\">CHHK-CHHK!!</span>".format(x=str(weapon.name), y=str(ammo.name)))
 
 
@@ -141,7 +141,7 @@ def unload(cmd, verb, object, prep, complement):
     ammo = weapon.unload()
     cmd.source.inventory.append(ammo)
     cmd.source.send(serialize.full_character(cmd.source))
-    cmd.to_room('A:{} unloads <b>{x}</b> from <b>{y}</b>.'.format(cmd.source.name, x=str(ammo.name), y=str(weapon.name)))
+    cmd.to_node('A:{} unloads <b>{x}</b> from <b>{y}</b>.'.format(cmd.source.name, x=str(ammo.name), y=str(weapon.name)))
     return cmd.response("You unload <b>{x}</b> from <b>{y}</b>.".format(x=str(ammo.name), y=str(weapon.name)))
 
 
@@ -155,8 +155,8 @@ def ready(cmd, verb, object, prep, complement):
 
     weapon = str.join('</b> and <b>', weapons)
 
-    cmd.source.status = CHAR_STATUS.READY
-    cmd.to_room('A:' + STR.T(STR.FIGHT.ready, cmd.source, extra={'weapon': weapon}))
+    cmd.source.state = CHAR_STATE.READY
+    cmd.to_node('A:' + STR.T(STR.FIGHT.ready, cmd.source, extra={'weapon': weapon}))
     return cmd.response(STR.T(STR.FIGHT.ready, cmd.source, source=cmd.source, extra={'weapon': weapon}))
 
 # @syntax ("kill")
@@ -182,7 +182,7 @@ def kill(cmd, verb, object, prep, complement):
     else:
         pass
 
-    if cmd.source.status != CHAR_STATUS.READY:
+    if cmd.source.status != CHAR_STATE.READY:
         ready(cmd, verb, object, prep, complement)
 
 

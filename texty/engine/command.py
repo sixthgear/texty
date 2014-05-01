@@ -1,8 +1,9 @@
-from texty.util.exceptions import TextyException
 from texty.engine import obj
+from texty.engine.node import Node
 from texty.engine.parser import parser
-from texty.util.parsertools import VOCAB
 from texty.util.enums import SCOPE
+from texty.util.exceptions import TextyException
+from texty.util.parsertools import VOCAB
 
 from pprint import pprint
 import traceback
@@ -84,10 +85,10 @@ class Command(object):
 
     UNKNOWN = "You aren't sure how to {verb}."
 
-    def __init__(self, source, command, room=None, echo=True):
+    def __init__(self, source, command, node=None, echo=True):
         self.source = source
         self.command = command
-        self.room = room or source.room
+        self.node = node or source.node
         self.should_echo = echo
         self.do_next = []
 
@@ -159,14 +160,14 @@ class Command(object):
         """
         self.source.send(message)
 
-    def to_room(self, message):
+    def to_node(self, message):
         """
-        Shortcut to send a message to the source character's room.
+        Shortcut to send a message to the source character's node.
         """
-        room = self.room or self.source.room
-        if not room:
+        node = self.node or self.source.node
+        if not node:
             return
-        room.send(message, source=self.source)
+        node.send(message, source=self.source)
 
     def rules(self, *rules):
         """
@@ -209,15 +210,15 @@ class Command(object):
         terms = node.get('terms')
 
         if scope in (SCOPE.ANY, SCOPE.ROOM, SCOPE.CHAR) and noun in ('self', 'me', 'myself'):
-            return (self.source, scope, self.room)
+            return (self.source, scope, self.node)
 
         if scope in (SCOPE.ANY, SCOPE.ROOM) and noun in ('floor', 'ground', 'room'):
-            return (self.room, scope, self.room)
+            return (self.node, scope, self.node)
         # search each scope
         for s in (compound_scopes.get(scope) or [scope]):
 
             if s == SCOPE.IN:
-                if target.is_a('room'):
+                if isinstance(target, Node):
                     source = target.objects
                 else:
                     source = target.contents
@@ -228,9 +229,9 @@ class Command(object):
             elif s == SCOPE.BODY:
                 source = target.body
             elif s == SCOPE.OBJ:
-                source = self.room.objects
+                source = self.node.objects
             elif s == SCOPE.CHAR:
-                source = self.room.characters
+                source = self.node.characters
             else:
                 source = None
 

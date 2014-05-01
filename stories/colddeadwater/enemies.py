@@ -5,6 +5,7 @@ class Zombie(Monster):
 
     name = 'a %s zombie'
     nouns = 'zombie'
+    shortname = 'zombie'
     adjectives = 'crumbling decaying disgusting fetid foul grotesque hideous horrible lumbering '
     adjectives += 'mutilated overripe putrid rancid ravenous rotting shambling slobering'
 
@@ -16,5 +17,5 @@ class Zombie(Monster):
     def __init__(self):
         adjs = random.sample(self.adjectives, 1)
         super(Zombie, self).__init__(self.__class__.name % str.join(', ', adjs))
-        self.adjectives = adjs
+        self.adjectives = set(adjs)
 

@@ -1,6 +1,6 @@
 from texty.engine.character import Character
 from texty.builtins.characters import body
-from texty.util.enums import EQ_PARTS, CHAR_STATUS, CHAR_FLAG
+from texty.util.enums import EQ_PARTS, CHAR_STATE, CHAR_FLAG
 from texty.util import objectlist
 from collections import OrderedDict
 
@@ -24,12 +24,12 @@ class Player(Character):
         body.HandRight(),
     ))
 
-    def __init__(self, name, room=None, connection=None):
-        super(Player, self).__init__(name, room)
+    def __init__(self, name, node=None, connection=None):
+        super(Player, self).__init__(name, node)
         # players are associated with a server connection
         self.connection = connection
         self.occupation = 'Former Computer Programmer'
-        self.status = 1
+        self.state = CHAR_STATE.STANDING
 
         # take a copy, since we modify this directly and don't want to change nouns
         # for everyone!

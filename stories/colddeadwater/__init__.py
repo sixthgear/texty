@@ -26,7 +26,7 @@ class ColdDeadWater(Story):
 
         'excel_file':           './stories/colddeadwater/data/map.xlsx',
         'map_file':             './stories/colddeadwater/data/map.csv',
-        'room_file':            './stories/colddeadwater/data/rooms.csv',
+        'node_file':            './stories/colddeadwater/data/nodes.csv',
 
         'safe_prefix':          'HQ',
         'start_at':             'HQ8',
@@ -38,42 +38,22 @@ class ColdDeadWater(Story):
         Reset map and characters
         """
         players = []
-        for id, room in self.map.rooms.items():
-            players += [c for c in room.characters if c.is_a('player')]
-            room.characters = objectlist()
-            room.objects = objectlist()
+        for id, node in self.map.nodes.items():
+            players += [c for c in node.characters if c.is_a('player')]
+            node.characters = objectlist()
+            node.objects = objectlist()
 
         self.initialize()
 
         for p in players:
             p.send('A:Game is resetting.')
-            p.move_to(self.starting_room)
+            p.move_to(self.starting_node)
             p.do('wakeup')
 
     def initialize(self):
         """
         Setup game
         """
-        # create starting area NPCs
-        characters.Bertram().move_to(self.starting_room)
-        characters.DForsyth().move_to(self.starting_room)
-        characters.Tank().move_to(self.map.rooms[self.options['armory_at']])
-
-        # distribute starting area equipment
-        self.starting_room.objects += [
-            Radio(),
-            Model870(),
-            Model70(),
-            MP5(),
-            M1911(),
-            Crowbar(),
-            Crate(),
-        ]
-
-        self.map.rooms[self.options['armory_at']].objects += [
-            Frag(),
-            Frag(),
-        ]
 
         d  = list()
         d += [MP5] * 10
@@ -99,20 +79,20 @@ class ColdDeadWater(Story):
         d += [Crate] * 5
 
         # distribute items
-        for i in range(int(len(self.map.rooms) * 0.85)):
-            room = random.choice(list(self.map.rooms.values()))
-            room.objects.append(random.choice(d)())
+        for i in range(int(len(self.map.nodes) * 0.65)):
+            node = random.choice(list(self.map.nodes.values()))
+            node.objects.append(random.choice(d)())
 
         # distribute zombies
-        for i in range(int(len(self.map.rooms) * 1.35)):
-            room = random.choice(list(self.map.rooms.values()))
-            if not room.id.startswith(self.options.get('safe_prefix')):
+        for i in range(int(len(self.map.nodes) * 0.66)):
+            node = random.choice(list(self.map.nodes.values()))
+            if not node.id.startswith(self.options.get('safe_prefix')):
                 z = enemies.Zombie()
-                z.move_to(room)
+                z.move_to(node)
 
         # make room items nice
-        for room in self.map.rooms.values():
-            room.sort()
+        for node in self.map.nodes.values():
+            node.sort()
 
 
 

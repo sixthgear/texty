@@ -80,13 +80,13 @@ def warp(cmd, verb, object, prep, complement, string=None):
         raise TextyException("Warp where?")
 
     m = Story.get().map
-    room = m.rooms.get(string.upper())
-    if not room:
-        raise TextyException("Room ID {} not found.".format(string))
+    node = m.nodes.get(string.upper())
+    if not node:
+        raise TextyException("Node ID {} not found.".format(string))
 
-    cmd.source.move_to(room)
+    cmd.source.move_to(node)
     cmd.enqueue('look')
-    return cmd.response('You warp to {}.'.format(room))
+    return cmd.response('You warp to {}.'.format(node))
     # room = cmd.
 
 @command ("create", "make", "mk")

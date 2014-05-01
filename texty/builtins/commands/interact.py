@@ -1,10 +1,11 @@
 """
 Interaction commands.
 """
-from texty.engine.command import SCOPE, command, syntax
 from texty.builtins.commands.combat import load
-from texty.util.exceptions import TextyException
+from texty.engine.command import SCOPE, command, syntax
+from texty.engine.node import Node
 from texty.util import serialize
+from texty.util.exceptions import TextyException
 
 @command ("get", "pick up", "grab", "take")
 def get(cmd, verb, object, prep, complement):
@@ -15,7 +16,7 @@ def get(cmd, verb, object, prep, complement):
     if verb and object and complement and prep in ('from', 'in', 'inside'):
         valid, msg, x, y = cmd.rules(
             (lambda _,y: y.resolve(),                    "You don't see {y} here."),
-            (lambda _,y: y.is_any('container room'),     "{y} is not a container."),
+            (lambda _,y: y.is_any('container node'),     "{y} is not a container."),
             (lambda x,y: x.resolve(SCOPE.IN, y),         "You don't see {x} in {y}."),
             (lambda x,y: x.is_a('portable'),             "You can't remove {x} from {y}."),
             (lambda x,y: x.allows('get'),                "You can't remove {x} from {y}. {R}"),
@@ -24,14 +25,14 @@ def get(cmd, verb, object, prep, complement):
         )
 
         # get an object from within another object
-        if y.is_a('room'):
+        if isinstance(y, Node):
             y.obj.objects.remove(x.obj)
         else:
             y.obj.contents.remove(x.obj)
 
         cmd.source.inventory.append(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} takes {} from {}.'.format(cmd.source.name, str(x), str(y)))
+        cmd.to_node('A:{} takes {} from {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
     # command form C. VERB PREP OBJECT.
@@ -47,10 +48,10 @@ def get(cmd, verb, object, prep, complement):
             (lambda x,_: True,                          "You take {x}."),
         )
         # get an object from the room
-        cmd.room.objects.remove(x.obj)
+        cmd.node.objects.remove(x.obj)
         cmd.source.inventory.append(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} takes {}.'.format(cmd.source.name, str(x)))
+        cmd.to_node('A:{} takes {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 
     # command form A. VERB.
@@ -85,13 +86,13 @@ def drop(cmd, verb, object, prep, complement):
         cmd.source.inventory.remove(x.obj)
 
         if x.obj.is_a('character'):
-            cmd.room.characters.append(x.obj)
+            cmd.node.characters.append(x.obj)
         else:
-            cmd.room.objects.append(x.obj)
-            cmd.room.sort()
+            cmd.node.objects.append(x.obj)
+            cmd.node.sort()
 
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} drops {}.'.format(cmd.source.name, str(x)))
+        cmd.to_node('A:{} drops {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 
     # command form A. VERB.
@@ -128,7 +129,7 @@ def put(cmd, verb, object, prep, complement):
         cmd.source.inventory.remove(x.obj)
         y.obj.contents.append(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} puts {} into {}.'.format(cmd.source.name, str(x), str(y)))
+        cmd.to_node('A:{} puts {} into {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
     # command form C. VERB PREP OBJECT.
@@ -167,7 +168,7 @@ def give(cmd, verb, object, prep, complement):
         if y.obj.is_a('player'):
             y.obj.send(serialize.full_character(y.obj))
 
-        cmd.to_room('A:{} gives {} to {}.'.format(cmd.source.name, str(x), str(y)))
+        cmd.to_node('A:{} gives {} to {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
     # command form C. VERB PREP OBJECT.
@@ -203,7 +204,7 @@ def equip(cmd, verb, object, prep, complement):
         cmd.source.equip(x.obj, parts=[y.obj.typ])
         cmd.source.inventory.remove(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} equips {} on {}.'.format(cmd.source.name, str(x), str(y)))
+        cmd.to_node('A:{} equips {} on {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
     # command form C. VERB PREP OBJECT.
@@ -221,7 +222,7 @@ def equip(cmd, verb, object, prep, complement):
         cmd.source.equip(x.obj)
         cmd.source.inventory.remove(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} equips {}.'.format(cmd.source.name, str(x)))
+        cmd.to_node('A:{} equips {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 
     # command form A. VERB.
@@ -250,7 +251,7 @@ def unequip(cmd, verb, object, prep, complement):
         cmd.source.unequip(x.obj, parts=[y.obj.typ])
         cmd.source.inventory.append(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} removes {} from {}.'.format(cmd.source.name, str(x), str(y)))
+        cmd.to_node('A:{} removes {} from {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)
 
     # command form C. VERB PREP OBJECT.
@@ -267,7 +268,7 @@ def unequip(cmd, verb, object, prep, complement):
         cmd.source.unequip(x.obj)
         cmd.source.inventory.append(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} removes {}.'.format(cmd.source.name, str(x)))
+        cmd.to_node('A:{} removes {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 
     # command form A. VERB.
@@ -367,7 +368,7 @@ def eat(cmd, verb, object, prep, complement):
         x.obj.eat()
         cmd.source.inventory.remove(x.obj)
         cmd.source.send(serialize.full_character(cmd.source))
-        cmd.to_room('A:{} eats {}.'.format(cmd.source.name, str(x)))
+        cmd.to_node('A:{} eats {}.'.format(cmd.source.name, str(x)))
         return cmd.response(msg)
 
     # command form A. VERB.

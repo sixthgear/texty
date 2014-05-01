@@ -2,22 +2,15 @@
 Movement commands.
 """
 from texty.engine.command import command, syntax
+from texty.engine.node import DIR_ENG
 from texty.util.enums import DIRECTIONS
-
-opposites = {
-    DIRECTIONS.NORTH:    'to the south',
-    DIRECTIONS.EAST:     'to the west',
-    DIRECTIONS.SOUTH:    'to the north',
-    DIRECTIONS.WEST:     'to the east',
-    DIRECTIONS.UP:       'below',
-    DIRECTIONS.DOWN:     'above'
-}
+from texty.util.english import STR
 
 @command ("go", "walk")
-def go(command, verb, object, prep, complement):
+def go(cmd, verb, object, prep, complement):
 
     if not object:
-        return command.response('Go where?')
+        return cmd.response('Go where?')
 
     if object.lower().startswith('n'):
         direction = DIRECTIONS.NORTH
@@ -32,23 +25,27 @@ def go(command, verb, object, prep, complement):
     elif object.lower().startswith('d'):
         direction = DIRECTIONS.DOWN
     else:
-        return command.response('What direction is that?!?')
+        return cmd.response('What direction is that?!?')
 
-    if direction not in command.room.exits:
-        return command.response('Can\'t go that way.')
+    if direction not in cmd.node.exits:
+        return cmd.response('Can\'t go that way.')
     else:
-        old_room = command.source.room
-        new_room = command.room.exits[direction]
-        room_to = '<b>%s</b> to <b>%s</b>' % (direction.name.lower(), new_room.name)
-        room_from = '<b>%s</b> <b>%s</b>' % (old_room.name, opposites[direction])
-        command.response('You head %s.' % room_to)
-        command.to_room('M: <b>%s</b> heads %s.' % (command.source.name, room_to))
-        command.source.move_to(new_room)
-        # send message to new room
-        new_room.send(
-            'M: <b>%s</b> arrives from %s.' % (command.source.name, room_from),
-            source=command.source)
-        command.enqueue('look')
+
+        original = cmd.source.node
+        target = cmd.node.exits[direction]
+
+
+        cmd.node.move_dir(cmd.source, direction)
+
+        extra = {
+            'node': target,
+            'direction': DIR_ENG[direction],
+        }
+
+        cmd.response(STR.T(STR.MOVE.leave, cmd.source, source=cmd.source, extra=extra))
+
+        cmd.enqueue('look')
+
         return
 
 

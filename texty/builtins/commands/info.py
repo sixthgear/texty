@@ -61,12 +61,12 @@ def look(cmd, verb, object, prep, complement):
     # command form A. VERB.
     elif verb:
         cmd.response('You examine your surroundings.')
-        cmd.to_source(serialize.room(cmd.room))
-        cmd.to_source('X:Exits: {}'.format(', '.join([x.name for x in cmd.room.exits])))
-
+        cmd.to_source(serialize.node(cmd.node))
+        cmd.to_source('X:Exits: {}'.format(', '.join([x.name for x in cmd.node.exits])))
+        # int=cmd.node.interval[cmd.source]
         # objs = [o[0] for o in ]
-        cmd.to_source(serialize.vislist(cmd.room.visible(5), STR.INFO.here_dist, exclude=[cmd.source]))
-        cmd.to_source(serialize.list(cmd.room.objects, STR.INFO.here, exclude=[cmd.source]))
+        cmd.to_source(serialize.vislist(cmd.node.visible(10, character=cmd.source), STR.INFO.here_dist, exclude=[cmd.source]))
+        cmd.to_source(serialize.list(cmd.node.objects, STR.INFO.here, exclude=[cmd.source]))
 
         return
 

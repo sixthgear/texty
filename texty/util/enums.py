@@ -2,12 +2,13 @@ import itertools
 import enum
 
 iota = itertools.count()
-class CHAR_STATUS(enum.Enum):
+class CHAR_STATE(enum.Enum):
     """
     Character Control State
     """
     LIMBO                       = next(iota)
-    NORMAL                      = next(iota)
+    STANDING                    = next(iota)
+    MOVING                      = next(iota)
     READY                       = next(iota)
     FIGHTING                    = next(iota)
     RESTING                     = next(iota)
