@@ -63,7 +63,11 @@ def look(cmd, verb, object, prep, complement):
         cmd.response('You examine your surroundings.')
         cmd.to_source(serialize.room(cmd.room))
         cmd.to_source('X:Exits: {}'.format(', '.join([x.name for x in cmd.room.exits])))
-        cmd.to_source(serialize.list(cmd.room.contents, STR.INFO.here, exclude=[cmd.source]))
+
+        # objs = [o[0] for o in ]
+        cmd.to_source(serialize.vislist(cmd.room.visible(5), STR.INFO.here_dist, exclude=[cmd.source]))
+        cmd.to_source(serialize.list(cmd.room.objects, STR.INFO.here, exclude=[cmd.source]))
+
         return
 
     raise TextyException("That doesn't make ANY sense.")

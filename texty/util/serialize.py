@@ -91,6 +91,41 @@ def list(container, template=STR.INFO.here, exclude=None):
 
     return data
 
+
+def vislist(nearby, template=STR.INFO.here_dist, exclude=None):
+    """
+    Serialize a visible object list.
+    """
+    data = {'type': 'object'}
+    data['items'] = []
+
+    for x, dist, dir in nearby:
+
+        if exclude and x in exclude: continue
+
+        if dist == 0 and x.is_a('character'):
+            item = char(x, STR.INFO.here)
+        elif dist == 0:
+            item = obj(x, STR.INFO.here)
+        elif x.is_a('character'):
+            dir = dir.name.lower()
+            dist = str(dist*10)+'m'
+            item = {}
+            item['icon'] = x.icon
+            item['text'] = STR.T(template, x, extra={'are': 'is', 'dist': dist, 'dir': dir})
+        else:
+            dir = dir.name.lower()
+            dist = str(dist*10)+'m'
+            item = {}
+            item['icon'] = x.icon
+            item['text'] = template.format(sub=x, **{'is': 'is', 'dist': dist, 'dir': dir})
+
+        data['items'].append(item)
+
+    return data
+
+
+
 def eq(character, source=None, exclude=None):
     """
     Serialize an equipment list

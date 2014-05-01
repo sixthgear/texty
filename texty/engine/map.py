@@ -1,4 +1,5 @@
-from texty.engine.room import Room, Edge
+# from texty.engine.room import Room
+from texty.engine.node import Node
 from texty.util.enums import DIRECTIONS as DIR
 import collections
 import csv
@@ -13,6 +14,7 @@ class Map(object):
 
     def __init__(self):
         self.rooms = {}
+        # self.nodes = {}
 
     def load_excel(self, xlsx_filename, map_filename, rooms_filename):
         """
@@ -27,7 +29,7 @@ class Map(object):
             """
             Generator to yield rows from an excel workbook sheet
             """
-            writer = csv.writer(out)
+            writer = csv.writer(out, delimiter='\t')
             for row in range(sheet.nrows):
                 cols = sheet.row_values(row)
                 writer.writerow(cols)
@@ -46,8 +48,8 @@ class Map(object):
         Read map data from a CSV file.
         """
         with open(map_filename, 'U') as m, open(rooms_filename, 'U') as r:
-            self.load_map(csv.reader(m))
-            self.load_rooms(csv.reader(r))
+            self.load_map(csv.reader(m, delimiter='\t'))
+            self.load_rooms(csv.reader(r, delimiter='\t'))
 
 
     def load_rooms(self, room_iterator):
@@ -72,6 +74,8 @@ class Map(object):
     def load_map(self, map_iterator):
         """
         Load the map data from an iterator.
+        Process the map from top-left to bottom-right, row by row. Create rooms for IDs not yet
+        encountered, and create links on the east, south and down end of sequences.
         """
 
         # store reference arrays to the last north and up cells
@@ -96,24 +100,38 @@ class Map(object):
 
                     # this is a room
                     # create it if it doesn't yet exist
-                    room = self.rooms.get(room_id, Room(room_id))
+                    # room = self.rooms.get(room_id, Room(room_id))
+                    # self.rooms[room_id] = room
+
+                    room = self.rooms.get(room_id, Node(id=room_id))
                     self.rooms[room_id] = room
 
                     # check for exit references
                     # west reference is set, so make exits
+                    # TODO: also make edge objects here
                     if west:
-                        room.exits[DIR.WEST]        = west
-                        west.exits[DIR.EAST]        = room
+                        # room.exits[DIR.WEST]        = west
+                        # west.exits[DIR.EAST]        = room
+                        edge = Node(width=4)
+                        edge.connect({DIR.WEST: west, DIR.EAST: room})
+
+
 
                     # north reference is set, so make exits
+                    # TODO: also make edge objects here
                     if north[x]:
-                        room.exits[DIR.NORTH]       = north[x]
-                        north[x].exits[DIR.SOUTH]   = room
+                        # room.exits[DIR.NORTH]       = north[x]
+                        # north[x].exits[DIR.SOUTH]   = room
+
+                        edge = Node(height=4)
+                        edge.connect({DIR.NORTH: north[x], DIR.SOUTH: room})
 
                     # up reference is set, so make exits
+                    # TODO: also make edge objects here
                     elif up[x]:
-                        room.exits[DIR.UP]          = up[x]
-                        up[x].exits[DIR.DOWN]       = room
+                        # room.exits[DIR.UP]          = up[x]
+                        # up[x].exits[DIR.DOWN]       = room
+                        room.connect({DIR.UP: up[x]})
 
                     # set north, west and up references to this room
                     west        = room

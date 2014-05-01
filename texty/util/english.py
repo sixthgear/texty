@@ -8,6 +8,7 @@ class STR:
     class INFO:
         # activity        = "<b>{x.display}</b> {x.occupation} {are} {x.activity} here."
         here            = "<b>{sub.display}</b> {is} here."
+        here_dist       = "<b>{sub.display}</b> {is} {dist} to the {dir}."
         inside          = "<b>{sub.display}</b> {is} inside."
         wearing         = "{He} {is} wearing <b>{x.name}</b> on {his} {y}."
         holding         = "{He} {is} holding <b>{x.name}</b> in {his} {y}."
