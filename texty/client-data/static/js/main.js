@@ -7,7 +7,7 @@ requirejs.config({
         'underscore': ['http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min', 'lib/underscore-min'],
         'underscore-string': ['http://cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min', 'lib/underscore.string.min'],
         'handlebars': ['http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars', 'lib/handlebars'],
-        'handlebars-truncate': ['lib/handlebars-truncate-helper']
+        'handlebars-truncate': ['lib/handlebars-truncate-helper'],
     },
     shim: {
         'handlebars-truncate' : ['handlebars'],
@@ -161,8 +161,30 @@ function init() {
 // block class
 var Block = function() {}
 Block.prototype.render = function() {
+
     var output = $(".left-column");
-    output.append(this.template(this));
+
+    var element = $(this.template(this));
+    // var str = element.html();
+    // element.html('');
+
+    // var i = 0;
+    // var isTag;
+    // var text;
+
+    // (function type() {
+    //     text = str.slice(0, ++i);
+    //     if (text === str) return;
+    //     element.html(text);
+    //     var char = text.slice(-1);
+    //     if( char === '<' ) isTag = true;
+    //     if( char === '>' ) isTag = false;
+    //     if (isTag) return type();
+    //     setTimeout(type, 0.125);
+    // }());
+
+    output.append(element);
+
 };
 
 // sidebar class

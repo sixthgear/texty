@@ -13,8 +13,9 @@ class Map(object):
     """
 
     def __init__(self):
+
         self.nodes = {}
-        # self.nodes = {}
+        self.anonymous_nodes = []
 
     def load_excel(self, xlsx_filename, map_filename, nodes_filename):
         """
@@ -137,6 +138,7 @@ class Map(object):
                         if w_blocking:
                             edge.vision = SENS.KILL
                         edge.connect({DIR.WEST: west, DIR.EAST: node})
+                        self.anonymous_nodes.append(edge)
 
                     # north reference is set, so make exits
                     # TODO: also make edge objects here
@@ -145,6 +147,7 @@ class Map(object):
                         if n_blocking[x]:
                             edge.vision = SENS.KILL
                         edge.connect({DIR.NORTH: north[x], DIR.SOUTH: node})
+                        self.anonymous_nodes.append(edge)
 
                     # up reference is set, so make exits
                     # TODO: also make edge objects here
@@ -154,6 +157,7 @@ class Map(object):
                         edge = Node(height=0)
                         edge.vision = SENS.KILL
                         edge.connect({DIR.UP: up[x], DIR.DOWN: node})
+                        self.anonymous_nodes.append(edge)
 
                     # set north, west and up references to this node
                     west        = node

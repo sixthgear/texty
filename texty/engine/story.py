@@ -1,7 +1,8 @@
 from texty.engine.map import Map
-import sys
 import importlib
+import itertools
 import logging
+import sys
 
 class Story(object):
     """
@@ -9,7 +10,10 @@ class Story(object):
     """
     __name__ = ''
     __version__ = '0.0.0'
+
     loaded_story = None
+    story_module = None
+    loaded_storyname = ''
 
     def __init__(self):
         # perform map loading
@@ -53,14 +57,31 @@ class Story(object):
         Try to load a story from disk.
         """
         try:
-            story_module = importlib.import_module(story)
-            cls.loaded_story = story_module.storyclass()
+
+            cls.story_module = importlib.import_module(story)
+            cls.loaded_story = cls.story_module.storyclass()
+            cls.loaded_storyname = story
+
             logging.info('Story "%s" %s loaded.' % (cls.loaded_story.__name__, cls.loaded_story.__version__))
             return cls.loaded_story
 
         except ImportError: # , AttributeError
             print('Couldn\'t find story %s' % story, file=sys.stderr)
             sys.exit()
+
+
+    def get_players(self):
+        """
+        Reset map and characters
+        """
+        players = []
+
+        for node in itertools.chain(self.map.nodes.values(), self.map.anonymous_nodes):
+            players += [c for c in node.characters if c.is_a('player')]
+
+        return players
+
+
 
     @classmethod
     def get(cls):

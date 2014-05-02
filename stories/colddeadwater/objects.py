@@ -10,7 +10,7 @@ class Crowbar(MeleeWeapon):
     ---
     This crowbar is red, blunt and heavy. Gordon would be proud.
     """
-    shortname       = 'Crowbar'
+    shortname       = 'Crowbarrr'
     adjectives      = 'large red heavy blunt'
     nouns           = 'crowbar'
     fits            = (EQ_PARTS.L_HAND, EQ_PARTS.R_HAND)

@@ -155,7 +155,7 @@ def ready(cmd, verb, object, prep, complement):
 
     weapon = str.join('</b> and <b>', weapons)
 
-    cmd.source.state = CHAR_STATE.READY
+    # cmd.source.state = CHAR_STATE.READY
     cmd.to_node('A:' + STR.T(STR.FIGHT.ready, cmd.source, extra={'weapon': weapon}))
     return cmd.response(STR.T(STR.FIGHT.ready, cmd.source, source=cmd.source, extra={'weapon': weapon}))
 
@@ -182,8 +182,8 @@ def kill(cmd, verb, object, prep, complement):
     else:
         pass
 
-    if cmd.source.status != CHAR_STATE.READY:
-        ready(cmd, verb, object, prep, complement)
+    # if cmd.source.status != CHAR_STATE.READY:
+    #     ready(cmd, verb, object, prep, complement)
 
 
 
@@ -204,8 +204,9 @@ def stop(cmd, verb, object, prep, complement):
     """
     Use a melee weapon
     """
-    raise TextyException('OK!')
-    pass
+    cmd.source.stop()
+    # raise TextyException('OK!')
+    # pass
 
 
 # @syntax ("flee")

@@ -34,8 +34,8 @@ def go(cmd, verb, object, prep, complement):
         original = cmd.source.node
         target = cmd.node.exits[direction]
 
-
-        cmd.node.move_dir(cmd.source, direction)
+        cmd.source.move_toward(target, direction)
+        # cmd.node.move_dir(cmd.source, direction)
 
         extra = {
             'node': target,
@@ -44,7 +44,7 @@ def go(cmd, verb, object, prep, complement):
 
         cmd.response(STR.T(STR.MOVE.leave, cmd.source, source=cmd.source, extra=extra))
 
-        cmd.enqueue('look')
+        # cmd.enqueue('look')
 
         return
 

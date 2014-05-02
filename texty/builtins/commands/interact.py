@@ -31,6 +31,7 @@ def get(cmd, verb, object, prep, complement):
             y.obj.contents.remove(x.obj)
 
         cmd.source.inventory.append(x.obj)
+
         cmd.source.send(serialize.full_character(cmd.source))
         cmd.to_node('A:{} takes {} from {}.'.format(cmd.source.name, str(x), str(y)))
         return cmd.response(msg)

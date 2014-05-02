@@ -2,7 +2,7 @@ from texty.builtins import characters
 from texty.builtins import commands
 from texty.engine import obj
 from texty.engine import server
-from texty.engine import story
+from texty.engine.story import Story
 from texty.engine.parser import parser
 from texty.util.parsertools import VOCAB
 from texty.util.serialize import dispatch
@@ -20,7 +20,7 @@ class TextyEngine(object):
     """
 
     options = {
-        'tick_length': 1500,    # 1.5 seconds per update tick
+        'tick_length': 750,    # 1.5 seconds per update tick
     }
 
     def __init__(self, storyname=None):
@@ -31,7 +31,7 @@ class TextyEngine(object):
 
         # TODO: find and parse config file
         # load the story
-        self.story = story.Story.load(storyname)
+        Story.load(storyname)
 
         # create the websocket and HTTP server
         self.server = server.MUD()
@@ -95,7 +95,7 @@ class TextyEngine(object):
         player = characters.Player(name='Player-%d' % connection.id, connection=connection)
 
         # and notify the story
-        player = self.story.on_player_connect(player)
+        player = Story.get().on_player_connect(player)
 
         # assign it to the list
         self.players[connection.id] = player
@@ -124,7 +124,7 @@ class TextyEngine(object):
         # notify the player
         player.on_disconnect()
         # notify the story
-        self.story.on_player_disconnect(player)
+        Story.get().on_player_disconnect(player)
 
         # remove players name from the vocab
         VOCAB.characters.subtract(player.nouns)
@@ -176,11 +176,11 @@ class TextyEngine(object):
         self.tick += 1
 
         # tick the story
-        self.story.update(self.tick)
+        Story.get().update(self.tick)
 
         # tick the players
-        # for p in self.players:
-        #     p.update(self.tick)
+        for p in self.players.values():
+            p.update(self.tick)
 
 
     def shutdown(self):

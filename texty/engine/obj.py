@@ -1,5 +1,6 @@
 from texty.util.objectlist import ObjectList
 from texty.engine.parser import parser
+from texty.engine.events import EventDispatcher
 
 class ObjectMeta(type):
     """
@@ -45,7 +46,7 @@ class ObjectMeta(type):
         return new_class
 
 
-class BaseObject(metaclass=ObjectMeta):
+class BaseObject(EventDispatcher, metaclass=ObjectMeta):
     """
     Base object
     """

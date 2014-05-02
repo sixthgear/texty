@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from texty.builtins.characters import body
+from texty.builtins.states.combat import RelaxedState
 from texty.engine.command import Command
 from texty.engine.obj import BaseObject
 from texty.util import objectlist, english
@@ -27,7 +28,6 @@ class Character(BaseObject):
     inventory       = []
     equipment       = {}
 
-
     def __init__(self, name=None, node=None):
 
         # copy data from class on init. This lets us reset the character to
@@ -35,9 +35,13 @@ class Character(BaseObject):
         self.name = name or self.__class__.name
         self.description = english.STR.T(self.__class__.description, subject=self)
         self.hp = self.__class__.hp
-        self.node = node
 
-        self.state = CHAR_STATE.STANDING
+        self.node = node
+        self.move_target = None
+        self.current_dir = None
+
+        # the state stacks!
+        self.state = [RelaxedState(self)]
 
         # instantiate classes from inventory list upon init.
         self.inventory = objectlist((x() for x in self.__class__.inventory))
@@ -56,6 +60,27 @@ class Character(BaseObject):
 
         self.attributes = self.__class__.attributes.copy()
         self.activity = self.__class__.activity
+
+    def pop_state(self):
+        self.state[-1].exit()
+        self.state.pop()
+        if self.state:
+            self.state[-1].enter()
+
+    def push_state(self, state, *args, **kwargs):
+        if self.state:
+            self.state[-1].exit()
+        self.state.append(state(self))
+        self.state[-1].enter(*args, **kwargs)
+
+    def replace_stack(self, state, *args, **kwargs):
+        self.state = [state(self)]
+        self.state[-1].enter(*args, **kwargs)
+
+    def update(self, tick):
+        if self.state:
+            self.state[-1].update()
+
 
     @property
     def icon(self):
@@ -98,6 +123,42 @@ class Character(BaseObject):
         """
         pass
 
+    def get(self, object, container):
+        self.trigger('get', object=object, container=container)
+
+    def drop(self, object, node):
+        self.trigger('drop', object=object, node=node)
+
+    def put(self, object, container):
+        self.trigger('put', object=object, container=container)
+
+    def give(self, object, character):
+        self.trigger('put', object=object, character=character)
+
+    def use(self, object):
+        self.trigger('put', object=object)
+
+    def eat(self, object):
+        self.trigger('eat', object=object)
+
+    def load(self, weapon=None, ammo=None):
+        self.trigger('load', weapon=weapon, ammo=ammo)
+
+    def unload(self, weapon=None):
+        self.trigger('unload', weapon=weapon)
+
+    def ready(self):
+        self.trigger('ready')
+
+    def target(self, character):
+        self.trigger('target', character=character)
+
+    def stop(self):
+        self.trigger('stop')
+
+    def flee(self):
+        self.trigger('flee')
+
     def equip(self, object, parts=None):
         """
         Take reference to object and assign it to characters equipment slots.
@@ -115,14 +176,15 @@ class Character(BaseObject):
             parts = object.fits
 
         # try each part
-        for p in parts:
+        for part in parts:
 
-            if p not in object.fits:
+            if part not in object.fits:
                 raise TextyException('It doesn\'t fit there.')
 
-            if not self.eq_map.get(p):
-                self.eq_map[p] = object
+            if not self.eq_map.get(part):
+                self.eq_map[part] = object
                 self.equipment.append(object)
+                self.trigger('equip', object=object, part=part)
                 return True
 
         # tried to equip object in all supplied positions, didn't work.
@@ -139,10 +201,29 @@ class Character(BaseObject):
             if eq == object:
                 self.eq_map[part] = None
                 self.equipment.remove(object)
+                self.trigger('unequip', object=object, part=part)
                 return True
 
         raise TextyException('Couldn\'t Unequip {}.'.format(object.name))
 
+
+    def move_continue(self):
+
+        if self.current_dir:
+            self.node.move_dir(self, self.current_dir)
+            # self.send('A: travelling...')
+        else:
+            self.stop()
+
+    def stop(self):
+        self.move_target = None
+        self.current_dir = None
+        self.state[-1].on_stop()
+
+    def move_toward(self, target, direction):
+        self.move_target = target
+        self.current_dir = direction
+        self.state[-1].on_move()
 
     def move_to(self, node):
         """

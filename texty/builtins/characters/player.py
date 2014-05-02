@@ -5,6 +5,7 @@ from texty.util import objectlist
 from collections import OrderedDict
 
 
+
 class Player(Character):
 
     attributes = 'player'
@@ -25,11 +26,15 @@ class Player(Character):
     ))
 
     def __init__(self, name, node=None, connection=None):
-        super(Player, self).__init__(name, node)
+
+        super(self.__class__, self).__init__(name, node)
         # players are associated with a server connection
         self.connection = connection
         self.occupation = 'Former Computer Programmer'
-        self.state = CHAR_STATE.STANDING
+
+        # the state stacks!
+        # self.movement_stack = []
+        # self.combat_stack   = []
 
         # take a copy, since we modify this directly and don't want to change nouns
         # for everyone!

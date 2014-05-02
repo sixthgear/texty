@@ -1,7 +1,8 @@
+from texty.builtins.characters.player import Player
 from texty.engine.command import command, admin, syntax, parser, Command
-from texty.util.exceptions import TextyException
 from texty.engine.story import Story
 from texty.util import serialize
+from texty.util.exceptions import TextyException
 
 import importlib
 import imp
@@ -29,39 +30,21 @@ def unadmin(cmd, verb, object, prep, complement, string=None):
 
 @command ("reset")
 @admin
-def reset(cmd, verb, object, prep, complement):
-    """
-    """
-    if not cmd.source.is_a('admin'):
-        return
-    Story.get().clean()
-
-
-@command ("reload")
-@admin
 def reload(cmd, verb, object, prep, complement):
     """
     """
-    done = set()
-    def rr(module):
-        if module in done or not module.__name__.startswith('texty.builtins'):
-            return
-        for attribute_name in dir(module):
-            attribute = getattr(module, attribute_name)
-            if type(attribute) is types.ModuleType:
-                rr(attribute)
-        imp.reload(module)
-        done.add(module)
-        cmd.response(module.__name__)
-
-    # command.response('commands: %d' % len(parser.command_table))
-
     cmd.response('Reloading texty...')
-    rr(importlib.import_module('texty.builtins'))
+    cmd.response('Resetting story...')
 
-    cmd.response('commands: %d' % len(parser.command_table))
-    cmd.response('objects: %d' % len(parser.object_table))
-    # TODO: recreate existing objects
+    players = Story.get().get_players()
+    storyname = Story.get().loaded_storyname
+    story = Story.load(storyname)
+
+    for p in players:
+        p.send('A:Game is resetting.')
+        p.__init__(p.name, connection=p.connection)
+        story.on_player_connect(p)
+
     return cmd.response('Done.')
 
 

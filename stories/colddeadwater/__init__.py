@@ -11,6 +11,7 @@ from colddeadwater import enemies
 
 import random
 
+
 class ColdDeadWater(Story):
     """
     You suddenly discover that you are conscious. Darkness envelops you. You struggle to
@@ -32,23 +33,6 @@ class ColdDeadWater(Story):
         'start_at':             'HQ8',
         'armory_at':            'HQ4'
     }
-
-    def clean(self):
-        """
-        Reset map and characters
-        """
-        players = []
-        for id, node in self.map.nodes.items():
-            players += [c for c in node.characters if c.is_a('player')]
-            node.characters = objectlist()
-            node.objects = objectlist()
-
-        self.initialize()
-
-        for p in players:
-            p.send('A:Game is resetting.')
-            p.move_to(self.starting_node)
-            p.do('wakeup')
 
     def initialize(self):
         """

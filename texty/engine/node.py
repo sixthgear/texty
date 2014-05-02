@@ -23,9 +23,9 @@ OPP = {
 }
 
 class SENS(enum.Enum):
-    PASS    = 0 # no restriction
-    BLOCK   = 1 # allow to leave, but not enter
-    KILL    = 2 # not allowed to enter or leave
+    PASS    = 0     # no restriction
+    BLOCK   = 1     # allow to leave, but not enter
+    KILL    = 2     # not allowed to enter or leave
 
 class DIM(enum.Enum):
     PORTAL  = 0
@@ -157,6 +157,9 @@ class Node(BaseObject):
         else:
             self.objects.append(object)
 
+        self.trigger('enter', object=object, side=side)
+
+
     def exit(self, object, side=None):
         """
         Remove an object from this node.
@@ -168,12 +171,16 @@ class Node(BaseObject):
         else:
             self.objects.remove(object)
 
+        self.trigger('exit', object=object, side=side)
+
+
     def move_to(self, object, interval):
         """
         Move an object to a specific interval in this node.
         TODO: event notifications
         """
         self.interval[object] = interval
+        self.trigger('movement', object=object, to=interval)
 
     def move_dir(self, object, direction, distance=1):
         """
