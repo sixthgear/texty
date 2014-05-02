@@ -1,9 +1,12 @@
 """
-Various combat states
+Various movement and combat states
 """
 # from texty.builtins.states.movement import MovingState
 
-class CombatState:
+class CharacterState:
+    """
+    Base state that defines transitions that can take place in any stack configuration.
+    """
 
     def __init__(self, character):
         self.character = character
@@ -40,7 +43,7 @@ class CombatState:
 
 
 
-class RelaxedState(CombatState):
+class RelaxedState(CharacterState):
     """
     Doing things which don't expect a fight. If the player is attacked when relaxed, they will
     be surprised.
@@ -62,23 +65,55 @@ class RelaxedState(CombatState):
         self.character.push_state(StunnedState, timer=2)
 
 
-class MovingState(CombatState):
+class MovingState(CharacterState):
+    """
+    Travelling from one node to the next. If attacked while moving, check to see if theres a
+    ready or fighting state below.
+    """
 
     def enter(self):
         pass
 
+    # already moving so do nothing
+    def on_move(self):
+        pass
+        # self.character.push_state(MovingState)
+
+    def on_attacked(self, character):
+
+        if len(self.character.state) > 1:
+
+            # stop moving and attack aggressor after stunned penalty
+            if isinstance(self.character.state[-2], (RelaxedState,)):
+                self.character.pop_state()
+                self.character.push_state(ReadyState)
+                self.character.push_state(FightingState, target=character)
+                self.character.push_state(StunnedState, timer=2)
+
+            # stop moving and attack aggressor
+            elif isinstance(self.character.state[-2], (ReadyState,)):
+                self.character.pop_state()
+                self.character.push_state(FightingState, target=character)
+
+            # keep moving
+            elif isinstance(self.character.state[-2], (Fighting,)):
+                pass
+
     def on_stop(self):
         self.character.pop_state()
 
+    # every tick continue movement
     def update(self):
+
         self.character.move_continue()
+
         if self.character.move_target == self.character.node:
             self.character.stop()
             self.character.do('look')
 
 
 
-class ReadyState(CombatState):
+class ReadyState(CharacterState):
     """
     Ready for a fight! Target is optional, but player can't be surprised by an attack.
     Auto-engage in-range hostiles.
@@ -104,7 +139,7 @@ class ReadyState(CombatState):
             return self.character.pop_state()
 
 
-class FightingState(CombatState):
+class FightingState(CharacterState):
     """
     Engaged in mortal combat.
     """
@@ -123,7 +158,7 @@ class FightingState(CombatState):
         self.character.combat()
 
 
-class GrapplingState(CombatState):
+class GrapplingState(CharacterState):
     """
     Fighting hand-to-hand. Movement is restricted.
     """
@@ -131,11 +166,12 @@ class GrapplingState(CombatState):
     def on_released(self):
         self.character.pop_state()
 
+    # may not move while grappling
     def on_move(self):
         pass # nope.
 
 
-class StunnedState(CombatState):
+class StunnedState(CharacterState):
     """
     When the character gets hit by a heavy blow they may become stunned. This state prevents
     movement, combat and interaction until the timer has expired.
@@ -145,7 +181,8 @@ class StunnedState(CombatState):
     def enter(self):
         self.timer = max_timer
 
-    def on_move(self): # nope.
+    # may not move while stunned
+    def on_move(self):
         pass
 
     def update(self):
@@ -154,7 +191,7 @@ class StunnedState(CombatState):
             self.character.pop_state()
 
 
-class OutState(CombatState):
+class OutState(CharacterState):
     """
     Knocked out.
     """
@@ -163,6 +200,7 @@ class OutState(CombatState):
     def enter(self):
         self.timer = max_timer
 
+    # may not move while knocked out
     def on_move(self): # nope.
         pass
 
@@ -185,11 +223,13 @@ class OutState(CombatState):
             return self.character.pop_state()
 
 
-class DeadState(CombatState):
+class DeadState(CharacterState):
     """
     RIP
     """
     def on_hurt(self, damage):
         pass
 
-
+    # may not move while dead
+    def on_move(self): # nope.
+        pass

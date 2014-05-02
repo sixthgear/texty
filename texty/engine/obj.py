@@ -78,3 +78,23 @@ class BaseObject(EventDispatcher, metaclass=ObjectMeta):
     def allows(self, verbs):
         return True
 
+    # state management methods
+    def pop_state(self):
+        self.state[-1].exit()
+        self.state.pop()
+        if self.state:
+            self.state[-1].enter()
+
+    def push_state(self, state, *args, **kwargs):
+        if self.state:
+            self.state[-1].exit()
+        self.state.append(state(self))
+        self.state[-1].enter(*args, **kwargs)
+
+    def replace_stack(self, state, *args, **kwargs):
+        self.state = [state(self)]
+        self.state[-1].enter(*args, **kwargs)
+
+    def update(self, tick):
+        if self.state:
+            self.state[-1].update()

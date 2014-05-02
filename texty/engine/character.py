@@ -61,25 +61,6 @@ class Character(BaseObject):
         self.attributes = self.__class__.attributes.copy()
         self.activity = self.__class__.activity
 
-    def pop_state(self):
-        self.state[-1].exit()
-        self.state.pop()
-        if self.state:
-            self.state[-1].enter()
-
-    def push_state(self, state, *args, **kwargs):
-        if self.state:
-            self.state[-1].exit()
-        self.state.append(state(self))
-        self.state[-1].enter(*args, **kwargs)
-
-    def replace_stack(self, state, *args, **kwargs):
-        self.state = [state(self)]
-        self.state[-1].enter(*args, **kwargs)
-
-    def update(self, tick):
-        if self.state:
-            self.state[-1].update()
 
 
     @property
@@ -208,19 +189,14 @@ class Character(BaseObject):
 
 
     def move_continue(self):
-
         if self.current_dir:
             self.node.move_dir(self, self.current_dir)
             # self.send('A: travelling...')
         else:
             self.stop()
 
-    def stop(self):
-        self.move_target = None
-        self.current_dir = None
-        self.state[-1].on_stop()
-
     def move_toward(self, target, direction):
+
         self.move_target = target
         self.current_dir = direction
         self.state[-1].on_move()
@@ -245,3 +221,11 @@ class Character(BaseObject):
                 self.node.enter(self)
                 # self.node.characters.append(self)
 
+
+    def stop(self):
+        """
+        Stops motion and combat.
+        """
+        self.move_target = None
+        self.current_dir = None
+        self.state[-1].on_stop()
