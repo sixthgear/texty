@@ -1,7 +1,7 @@
 """
 Various combat states
 """
-from texty.builtins.states.movement import MovingState
+# from texty.builtins.states.movement import MovingState
 
 class CombatState:
 
