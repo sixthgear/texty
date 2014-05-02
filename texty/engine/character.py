@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from texty.builtins.characters import body
-from texty.builtins.states.combat import RelaxedState
+from texty.builtins.states.player import RelaxedState
 from texty.engine.command import Command
 from texty.engine.obj import BaseObject
 from texty.util import objectlist, english
@@ -37,8 +37,6 @@ class Character(BaseObject):
         self.hp = self.__class__.hp
 
         self.node = node
-        self.move_target = None
-        self.current_dir = None
 
         # the state stacks!
         self.state = [RelaxedState(self)]
@@ -188,18 +186,15 @@ class Character(BaseObject):
         raise TextyException('Couldn\'t Unequip {}.'.format(object.name))
 
 
-    def move_continue(self):
-        if self.current_dir:
-            self.node.move_dir(self, self.current_dir)
-            # self.send('A: travelling...')
-        else:
-            self.stop()
+    # def move_continue(self):
+    #     if self.current_dir:
+    #         self.node.move_dir(self, self.current_dir)
+    #         # self.send('A: travelling...')
+    #     else:
+    #         self.stop()
 
     def move_toward(self, target, direction):
-
-        self.move_target = target
-        self.current_dir = direction
-        self.state[-1].on_move()
+        self.state[-1].on_move(target, direction)
 
     def move_to(self, node):
         """
@@ -226,6 +221,4 @@ class Character(BaseObject):
         """
         Stops motion and combat.
         """
-        self.move_target = None
-        self.current_dir = None
         self.state[-1].on_stop()

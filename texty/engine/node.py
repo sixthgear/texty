@@ -373,7 +373,7 @@ class Node(BaseObject):
         """
         exit_desc = []
         for d, exit in self.exits.items():
-            exit_desc.append("the <b>{}</b> {}".format(exit.name.lower() or 'something', DIR_ENG[d]))
+            exit_desc.append("<b>{}</b> {}".format(exit.name.lower() or 'something', DIR_ENG[d]))
 
         if len(exit_desc) == 1:
             return exit_desc[0]

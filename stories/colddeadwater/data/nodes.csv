@@ -1,35 +1,35 @@
-HQ1	Survivors Camp West	You are surrounded by tents.		
-HQ2	Survivors Camp	You are surrounded by tents. Mothers and children huddled around fires stare at you with lifeless eyes. There are more tents to the east and west, and headquarters is to the south.		
-HQ3	Survivors Camp East	You are surrounded by tents.		
-HQ4	Munitions Depot	You are in the center of a cluster of three buildings. The arms locker is here, guarded by an extremely large man with almost no neck. The mechanical shop is also here, littered with old tires and scrap metal. Finally, and most importantly, the food store is  here. A massive steel door with a combination lock guards this building. To the north is the survivors camp, to the east is headquarters, and to the south is the training ground.	tank	frag frag
-HQ5	Headquarters	You are at HQ, which is a nice way of saying the middle of the junkyard. Large sheet metal walls surround the encampment on all sides. A desk made of old tires and plywood is set up nearby. Up the path to the <em>east</em> is a lookout tower. To the <em>west</em> lies a group of ramshackle buildings used to store food and munitions. To the <em>south</em> is a large green medical tent. Finally, to the <em>north</em> is a group of tents housing survivors, those too weak to pick up a gun and fight.		
-HQ6	Gate	The encampment gate is here, with a lookout tower.		
-HQ7	Training Ground			
-HQ8	Medical Tent	You are in the medical tent. Filthy beds line the walls, most are occupied. It smells like death. You can see the tent door to the <em>north</em>, which is the only exit.	bertram davide	radio m870 m70 mp5 m1911 crowbar crate
-HQ9	Junk Pile		fenton	
+HQ1	the west end of the survivors camp	You are surrounded by tents.		
+HQ2	the survivors camp	You are surrounded by tents. Mothers and children huddled around fires stare at you with lifeless eyes. There are more tents to the east and west, and headquarters is to the south.		
+HQ3	the east end of the survivors camp	You are surrounded by tents.		
+HQ4	the munitions depot	You are in the center of a cluster of three buildings. The arms locker is here, guarded by an extremely large man with almost no neck. The mechanical shop is also here, littered with old tires and scrap metal. Finally, and most importantly, the food store is  here. A massive steel door with a combination lock guards this building. To the north is the survivors camp, to the east is headquarters, and to the south is the training ground.	tank	frag frag
+HQ5	the headquarters	You are at HQ, which is a nice way of saying the middle of the junkyard. Large sheet metal walls surround the encampment on all sides. A desk made of old tires and plywood is set up nearby. Up the path to the <em>east</em> is a lookout tower. To the <em>west</em> lies a group of ramshackle buildings used to store food and munitions. To the <em>south</em> is a large green medical tent. Finally, to the <em>north</em> is a group of tents housing survivors, those too weak to pick up a gun and fight.		
+HQ6	the gate	The encampment gate is here, with a lookout tower.		
+HQ7	the training ground			
+HQ8	the medical tent	You are in the medical tent. Filthy beds line the walls, most are occupied. It smells like death. You can see the tent door to the <em>north</em>, which is the only exit.	bertram davide	radio m870 m70 mp5 m1911 crowbar crate
+HQ9	the junk pile		fenton	
 				
-BK1	Underground Hideout			
-BK2	Underground Bunker			
-BK3	Underground Bunker			
-BK4	Underground Bunker			
-BK5	Underground Bunker			
-BK6	Underground Bunker			
+BK1	an underground hideout			
+BK2	a dusty tunnel			
+BK3	a dusty tunnel			
+BK4	a dusty tunnel			
+BK5	a dusty tunnel			
+BK6	a dusty tunnel			
 				
 				
-OT1	Outside The Gate			
-OT2	Outside The East Wall			
-OT3	Outside The South Wall			
-OT4	Duck Pond	There's some cute ducks swimming happily here. You will never reach them or know happiness ever again. You wonder why you came to this place.		
-OT5	Duck Pond	There's some cute ducks swimming happily here. You will never reach them or know happiness ever again. You wonder why you came to this place.		
-OT6	Outside The South Wall			
-OT7	Outside The West Wall			
-OT8	Outside The West Wall			
-OT9	Rocky Path			
-OT10	Outside The West Wall			
-OT11	Rocky Path			
-OT12	Rocky Path			
-OT13	Rocky Path			
-OT14	Rocky Path			
+OT1	outside the gate			
+OT2	the eastern camp wall			
+OT3	the southern camp wall			
+OT4	a duck pond	There's some cute ducks swimming happily here. You will never reach them or know happiness ever again. You wonder why you came to this place.		
+OT5	a duck pond	There's some cute ducks swimming happily here. You will never reach them or know happiness ever again. You wonder why you came to this place.		
+OT6	the southern camp wall			
+OT7	the western camp wall			
+OT8	the western camp wall			
+OT9	a rocky path			
+OT10	the western camp wall			
+OT11	a rocky path			
+OT12	a rocky path			
+OT13	a rocky path			
+OT14	a rocky path			
 CT1	8th Avenue Roadblock	You feel hemmed in by the lonely skyscrapers surrounding you. There's a military roadblock here to the north cutting you off from the rest of the city.
 CT2	Sussex Drive Roadblock	You feel hemmed in by the lonely skyscrapers surrounding you. There's a military roadblock here to the north cutting you off from the rest of the city.
 CT3	Intersection of Sussex Drive and 7th Avenue	You feel hemmed in by the lonely skyscrapers surrounding you. Sussex drive continues to the east and west while 7th avenue begins to the south.

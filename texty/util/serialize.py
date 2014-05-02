@@ -48,7 +48,7 @@ def node(node):
     """
     data = {}
     data['type'] = 'description'
-    data['intro'] = node.name
+    data['intro'] = node.name.title() + '.'
     data['text'] = node.description or node.nearby
     return data
 
