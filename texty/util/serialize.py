@@ -37,7 +37,7 @@ def dispatch(data):
 
     else:
         new['type'] = 'action'
-        new['items'] = [{'icon': '', 'text': data[2:]}]
+        new['items'] = [{'icon': '', 'text': data}]
 
     return new
 

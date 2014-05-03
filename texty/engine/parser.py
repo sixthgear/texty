@@ -1,4 +1,4 @@
-from texty.util.exceptions import TextyException
+from texty.util.exceptions import ParserError
 from texty.util.parsertools import Token, VOCAB, lookahead
 from texty.util.enums import TOK
 from texty.util.objectlist import ObjectList
@@ -42,7 +42,7 @@ class Parser(object):
             VOCAB.verbs.add(words[0])
             VOCAB.phrasals.add(words[1])
         else:
-            raise TextyException('Commands must be one or two words.')
+            raise ParserError('Commands must be one or two words.')
         self.command_table[name.lower()] = fn
 
     def register_syntax(self, syntax):
@@ -207,7 +207,7 @@ class Parser(object):
 
         def expect(*rules):
             """
-            Helper function to do the same thing as accept, but raise a TextyException if the
+            Helper function to do the same thing as accept, but raise a ParserError if the
             match does not succeed.
             """
             nonlocal token
@@ -217,9 +217,9 @@ class Parser(object):
 
             for rule in rules:
                 if callable(rule):
-                    raise TextyException('Expected %s, got %s.' % (rule.__name__.upper(), token))
+                    raise ParserError('Expected %s, got %s.' % (rule.__name__.upper(), token))
                 else:
-                    raise TextyException('Expected %s, got %s.' % (rule.name, token))
+                    raise ParserError('Expected %s, got %s.' % (rule.name, token))
 
         def parse_command():
             """
@@ -442,19 +442,9 @@ class Parser(object):
             return False, None
 
 
-        try:
-            command_ast = parse_command()
-            command_fn = self.command_table.get(command_ast['verb'])
-            # print (tokens, )
-            return command_fn, command_ast
-        except TextyException as e:
-            return self.error, {'message': e.message} #[verb]
-        except Exception as e:
-            logging.error(tokens)
-            logging.error('------------------------------')
-            logging.error(e)
-            logging.error(traceback.format_exc())
-            return self.error, {'message': 'You broke something, jerk.'}
+        command_ast = parse_command()
+        return command_ast
+
 
     def error(self, command, message):
         """

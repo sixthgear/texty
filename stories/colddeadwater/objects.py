@@ -1,6 +1,8 @@
 from texty.builtins.objects import *
+from texty.builtins.objects.weapons import *
 from texty.util.enums import EQ_PARTS
 from texty.util.exceptions import TextyException
+import random
 
 # --- MELEE WEAPONS --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -37,15 +39,26 @@ class Frag(Grenade):
 class Rifle(RangedWeapon):
     nouns = 'rifle'
 
+    def sound(self, rounds):
+        return 'KAPOW!! '* rounds
+
 class SubMachineGun(RangedWeapon):
     adjectives = 'submachine sub machine'
     nouns = 'smg machinegun'
 
+    def sound(self, rounds):
+        return str.join('-', ['RAT'] + ['TAT' for tat in range(rounds-1)]) + '!!!'
+
 class Shotgun(RangedWeapon):
     nouns = 'shotgun'
 
+    def sound(self, rounds):
+        return 'BOOM!! ' * rounds
+
 class Pistol(RangedWeapon):
     nouns = 'pistol'
+    def sound(self, rounds):
+        return 'BLAT!! ' * rounds
 
 class Model70(Rifle):
     """
@@ -62,6 +75,7 @@ class Model70(Rifle):
     capacity        = 5     # rounds
     rate            = 1     # per second
     range           = 60    # meters
+    accuracy        = lambda: random.random() > 0.75
 
 class Model870(Shotgun):
     """
@@ -79,6 +93,7 @@ class Model870(Shotgun):
     capacity        = 5     # rounds
     rate            = 1     # per second
     range           = 20    # meters
+    accuracy        = lambda: random.random() > 0.75
 
 class MP5(SubMachineGun):
     """
@@ -95,6 +110,7 @@ class MP5(SubMachineGun):
     capacity        = 30    # rounds
     rate            = 13    # per second
     range           = 30    # meters
+    accuracy        = lambda: random.random() > 0.55
 
 class M1911(Pistol):
     """
@@ -111,6 +127,7 @@ class M1911(Pistol):
     capacity        = 7     # rounds
     rate            = 1     # per second
     range           = 20    # meters
+    accuracy        = lambda: random.random() > 0.60
 
 # --- AMMO --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -128,6 +145,7 @@ class BoxRifleCartridges(Ammo):
     fits            = (Model70,)
     capacity        = 20
     item            = 'short magnum shell'
+    damage          = lambda d, r: sum((random.randint(1,8) for d in range(3))) + 20
 
 class Box12Gauge(Ammo):
     """
@@ -142,6 +160,7 @@ class Box12Gauge(Ammo):
     fits            = (Model870,)
     capacity        = 25
     item            = '12-gauge shell'
+    damage          = lambda d, r: sum((random.randint(1,8) for d in range(3))) + 20
 
 class Magazine9mm(Ammo):
     """
@@ -156,6 +175,7 @@ class Magazine9mm(Ammo):
     fits            = (MP5,)
     capacity        = 30
     item            = '9mm round'
+    damage          = lambda d, r: sum((random.randint(1,8) for d in range(3))) + 20
 
 class Magazine45ACP(Ammo):
     """
@@ -170,6 +190,7 @@ class Magazine45ACP(Ammo):
     fits            = (M1911,)
     capacity        = 7
     item            = 'ACP round'
+    damage          = lambda d, r: sum((random.randint(1,8) for d in range(3))) + 20
 
 # --- CLOTHING --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 

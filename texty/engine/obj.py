@@ -79,20 +79,25 @@ class BaseObject(EventDispatcher, metaclass=ObjectMeta):
         return True
 
     # state management methods
-    def pop_state(self):
+    def pop_state(self, *args, **kwargs):
         self.state[-1].exit()
-        self.state.pop()
+        state = self.state.pop()
+        print("POPPED STATE", self.name, state.__class__.__name__)
         if self.state:
-            self.state[-1].enter()
+            self.state[-1].enter(*args, **kwargs)
+
 
     def push_state(self, state, *args, **kwargs):
         if self.state:
             self.state[-1].exit()
         self.state.append(state(self))
+        print("PUSHED STATE", self.name, state)
         self.state[-1].enter(*args, **kwargs)
+
 
     def replace_stack(self, state, *args, **kwargs):
         self.state = [state(self)]
+        print("REPLACED STACK", self.name, state)
         self.state[-1].enter(*args, **kwargs)
 
     def update(self, tick):

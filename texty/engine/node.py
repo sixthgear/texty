@@ -248,7 +248,7 @@ class Node(BaseObject):
 
     def visible(self, distance=10, direction=None, character=None):
         """
-        Find all CHARACTERS visible from this node with an option character to use position.
+        Find all CHARACTERS visible from this node with an optional character to use position.
         """
 
         if self.vision == SENS.KILL:

@@ -93,6 +93,9 @@ class ColdDeadWater(Story):
 
         player.do('wakeup')
 
+        player.equip(MP5())
+        player.inventory += [Magazine9mm(), Magazine9mm(), Magazine9mm()]
+
         player.send(serialize.full_character(player))
 
         return player

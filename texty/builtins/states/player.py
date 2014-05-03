@@ -11,13 +11,19 @@ class CharacterState:
     def __init__(self, character):
         self.character = character
 
+    def pop(self, *args, **kwargs):
+        return self.character.pop_state()
+
+    def push(self, state, *args, **kwargs):
+        return self.character.push_state(state, *args, **kwargs)
+
+    def replace(self, state, *args, **kwargs):
+        return self.character.replace_stack(state, *args, **kwargs)
+
     def enter(self):
         pass
 
     def exit(self):
-        pass
-
-    def input(self, command):
         pass
 
     def update(self):
@@ -27,19 +33,19 @@ class CharacterState:
         pass
 
     def on_move(self, target, direction):
-        self.character.push_state(MovingState, target=target, direction=direction)
+        self.push(MovingState, target=target, direction=direction)
 
-    def on_hurt(self, damage, kind):
+    def on_hurt(self, damage):
 
-        if character.hitpoints <= -10:
-            self.character.replace_stack(DeadState)
+        if self.character.hp <= -10:
+            self.replace(DeadState)
 
-        elif character.hitpoints <= 0:
-            self.character.replace_stack(OutState)
+        elif self.character.hp <= 0:
+            self.replace(OutState)
 
         # large hits can knock out
         elif damage > 50:
-            self.character.replace_stack(OutState)
+            self.replace(OutState)
 
 
 
@@ -50,19 +56,19 @@ class RelaxedState(CharacterState):
     """
 
     def on_spooked(self):
-        self.character.push_state(ReadyState)
+        self.push(ReadyState)
 
     def on_ready(self):
-        self.character.push_state(ReadyState)
+        self.push(ReadyState)
 
-    def on_attack(self, character):
-        self.character.push_state(ReadyState)
-        self.character.push_state(FightingState, target=character)
+    def on_target(self, target):
+        self.push(ReadyState)
+        self.push(FightingState, target=target)
 
-    def on_attacked(self, character):
-        self.character.push_state(ReadyState)
-        self.character.push_state(FightingState, target=character)
-        self.character.push_state(StunnedState, timer=2)
+    def on_attacked(self, target):
+        self.push(ReadyState)
+        self.push(FightingState, target=target)
+        self.push(StunnedState, timer=2)
 
 
 class MovingState(CharacterState):
@@ -81,29 +87,32 @@ class MovingState(CharacterState):
             self.target = target
             self.direction = direction
 
+    def on_target(self, target):
+        pass
 
-    def on_attacked(self, character):
 
+    def on_attacked(self, target):
+        # do different things depending on
         if len(self.character.state) > 1:
 
             # stop moving and attack aggressor after stunned penalty
             if isinstance(self.character.state[-2], (RelaxedState,)):
-                self.character.pop_state()
-                self.character.push_state(ReadyState)
-                self.character.push_state(FightingState, target=character)
-                self.character.push_state(StunnedState, timer=2)
+                self.pop()
+                self.push(ReadyState)
+                self.push(FightingState, target=target)
+                self.push(StunnedState, timer=2)
 
             # stop moving and attack aggressor
             elif isinstance(self.character.state[-2], (ReadyState,)):
-                self.character.pop_state()
-                self.character.push_state(FightingState, target=character)
+                self.pop()
+                self.push(FightingState, target=target)
 
             # keep moving
             elif isinstance(self.character.state[-2], (Fighting,)):
                 pass
 
     def on_stop(self):
-        self.character.pop_state()
+        self.pop()
 
     # every tick continue movement
     def update(self):
@@ -124,26 +133,26 @@ class ReadyState(CharacterState):
     max_timer = 30
 
     # reset idle timer whenever we reenter this state
-    def enter(self):
-        self.idle_timer = max_timer
+    def enter(self, target=None):
+        self.idle_timer = self.max_timer
+        self.target = target
 
-
-    def on_attack(self, character):
-        self.character.push_state(FightingState, target=character)
+    def on_target(self, target):
+        self.push(FightingState, target=target)
 
     # respond instantly if attacked in ready state
-    def on_attacked(self, character):
-        self.character.push_state(FightingState, target=character)
+    def on_attacked(self, target):
+        self.push(FightingState, target=target)
 
     # hit by a stunning blow
-    def on_stunned(self, character):
-        self.character.push_state(FightingState, target=character)
-        self.character.push_state(StunnedState, timer=2)
+    def on_stunned(self, target):
+        self.push(FightingState, target=target)
+        self.push(StunnedState, timer=2)
 
     def update(self):
         self.idle_timer -= 1
         if self.idle_timer <= 0:
-            return self.character.pop_state()
+            return self.pop()
 
 
 class FightingState(CharacterState):
@@ -152,17 +161,46 @@ class FightingState(CharacterState):
     """
 
     def enter(self, target):
+
+        # invalid state if no weapon available
+        if not self.character.weapon or not self.character.weapon.loaded:
+            return self.pop()
+
+        self.target = target
+        self.cooldown_timer = self.character.weapon.cooldown
+        target.register('death', self.on_target_death)
+
+    def exit(self):
         pass
 
+    def on_target_death(self, target):
+        self.pop()
+
+    def on_stop(self):
+        self.pop()
+
+    def on_target(self, target):
+        self.target = target
+
+    def on_untarget(self):
+        self.pop()
+
     def on_stunned(self):
-        self.character.push_state(StunnedState, timer=2)
+        self.push(StunnedState, timer=2)
 
     def on_grappled(self, character):
-        self.character.push_state(GrapplingState)
+        self.push(GrapplingState)
+
+    def on_weapon_empty(self, weapon):
+        self.pop(self.target)
 
     def update(self):
+
+        self.cooldown_timer -= 1
         # perform combat tick
-        self.character.combat()
+        if self.cooldown_timer <= 0:
+            self.cooldown_timer = self.character.weapon.cooldown
+            self.character.attack(self.target)
 
 
 class GrapplingState(CharacterState):
@@ -171,7 +209,7 @@ class GrapplingState(CharacterState):
     """
 
     def on_released(self):
-        self.character.pop_state()
+        self.pop()
 
     # may not move while grappling
     def on_move(self, target, direction):
@@ -185,8 +223,8 @@ class StunnedState(CharacterState):
     """
     max_timer = 2
 
-    def enter(self):
-        self.timer = max_timer
+    def enter(self, timer=None):
+        self.timer = timer or self.max_timer
 
     # may not move while stunned
     def on_move(self, target, direction):
@@ -195,7 +233,7 @@ class StunnedState(CharacterState):
     def update(self):
         self.timer -= 1
         if self.timer <= 0:
-            self.character.pop_state()
+            self.pop()
 
 
 class OutState(CharacterState):
@@ -205,35 +243,40 @@ class OutState(CharacterState):
     max_timer = 30
 
     def enter(self):
-        self.timer = max_timer
+        self.character.fall()
+        self.timer = self.max_timer
 
     # may not move while knocked out
     def on_move(self, target, direction):
         pass
 
     def on_hurt(self, damage):
-        if character.hitpoints <= -10:
-            self.character.replace_stack(DeadState)
+
+        if self.character.hp <= -10:
+            self.replace(DeadState)
 
     def on_heal(self, hp):
-        self.character.replace_stack(RelaxedState)
+        self.replace(RelaxedState)
 
     def on_revive(self, character):
-        self.character.replace_stack(RelaxedState)
+        self.replace(RelaxedState)
 
     def on_stunned(self, character):
-        self.character.replace_stack(RelaxedState)
+        self.replace(RelaxedState)
 
     def update(self):
         self.timer -= 1
         if self.timer <= 0:
-            return self.character.pop_state()
+            return self.pop()
 
 
 class DeadState(CharacterState):
     """
     RIP
     """
+    def enter(self):
+        self.character.die()
+
     def on_hurt(self, damage):
         pass
 

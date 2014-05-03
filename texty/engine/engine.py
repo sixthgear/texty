@@ -3,6 +3,7 @@ from texty.builtins import commands
 from texty.engine import obj
 from texty.engine import server
 from texty.engine.story import Story
+from texty.engine.command import Command
 from texty.engine.parser import parser
 from texty.util.parsertools import VOCAB
 from texty.util.serialize import dispatch
@@ -138,13 +139,12 @@ class TextyEngine(object):
 
     def on_read(self, connection, data):
         """
-        Read data from a player connection.
+        Read data from a player connection. Parse and execute a text command for this player.
         """
         # dispatch command to player
         player = self.players[connection.id]
         logging.info('%s: %s' % (player.name, data))
-
-        player.do(data, echo=True)
+        Command(source=player, command=data, echo=True).run()
 
 
     def on_write(self, data):

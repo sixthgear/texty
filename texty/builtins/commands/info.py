@@ -7,7 +7,8 @@ from texty.util.english import STR
 
 @command('info')
 def info(cmd, verb, object, prep, complement):
-    cmd.to_source(str(cmd.source.nouns))
+    for s in cmd.source.state:
+        cmd.to_source('I:' + s.__class__.__name__)
     return
 
 

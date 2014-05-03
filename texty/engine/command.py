@@ -2,8 +2,10 @@ from texty.engine import obj
 from texty.engine.node import Node
 from texty.engine.parser import parser
 from texty.util.enums import SCOPE
-from texty.util.exceptions import TextyException
+from texty.util.exceptions import TextyException, ParserError
+from texty.util.english import STR
 from texty.util.parsertools import VOCAB
+from texty.util.objectlist import ObjectList
 
 from pprint import pprint
 import traceback
@@ -83,8 +85,6 @@ class Command(object):
     TODO: this should give a reference to the Map object somehow.
     """
 
-    UNKNOWN = "You aren't sure how to {verb}."
-
     def __init__(self, source, command, node=None, echo=True):
         self.source = source
         self.command = command
@@ -92,38 +92,40 @@ class Command(object):
         self.should_echo = echo
         self.do_next = []
 
-    def parse(self):
-        self.fn, self.ast = parser.parse(self.command)
-        # pprint(self.ast)
-
     def run(self):
         """
         Execute the command.
+        TODO: perform noun preresolution from syntax table
         """
-        # parse command
-        # save reference to ast to use in helper funcions
-        if not self.fn and self.ast:
-            self.parse()
-
-        # echo command to terminal
-        self.echo()
-
-        # no callable returned by parser
-        if not self.fn:
-            if self.ast:
-                self.response(self.UNKNOWN.format(**self.ast))
-            return
-
-        # TODO: perform noun preresolution from syntax table
-        # execute the callable
+        # parse and execute command
         try:
-            response = self.fn(self, **self.ast) or None
+            # save reference to ast to use in helper funcions
+            self.ast = parser.parse(self.command)
+            # echo command to terminal
+            self.echo()
+            # resolve the verb
+            command_fn = parser.command_table.get(self.ast['verb'])
+            # no callable found
+            if not command_fn:
+                return self.response(STR.ERROR.unknown.format(**self.ast))
+            # execute the callable
+            response = command_fn(self, **self.ast) or None
+
+        # parser errors
+        except ParserError as e:
+            return self.response(e.message)
+
+        # regular errors
         except TextyException as e:
             return self.response(e.message)
+
+        # serious errors
         except Exception as e:
+            # logging.error(tokens)
+            logging.error('------------------------------')
             logging.error(e)
             logging.error(traceback.format_exc())
-            return self.response('You broke something, jerk.')
+            return self.response(STR.ERROR.unexpected)
 
         # flush the do_next queue and execute commands
         for command in self.do_next:
@@ -139,12 +141,11 @@ class Command(object):
 
     def response(self, message):
         """
-        Send the response to the echo
+        Send the response to the command
         """
-
-        logging.info('%s: %s' % (self.source.name, message))
-        logging.info('---')
         if self.should_echo:
+            logging.info('%s: %s' % (self.source.name, message))
+            logging.info('---')
             self.source.send({'type': 'command', 'response': message})
 
     def enqueue(self, command):
@@ -231,7 +232,9 @@ class Command(object):
             elif s == SCOPE.OBJ:
                 source = self.node.objects
             elif s == SCOPE.CHAR:
-                source = self.node.characters
+                source = ObjectList([item[0] for item in target.node.visible(character=target)])
+            elif s == SCOPE.VISIBLE:
+                source = ObjectList([item[0] for item in target.node.visible(character=target)])
             else:
                 source = None
 
@@ -272,18 +275,10 @@ def admin(fn):
     """
     A decorator for supplying admin command definitions and aliases
     """
-    # nonlocal x = 0
-
     def decorator(cmd, *args, **kwargs):
-
-
-        # print('calling', cmd, kwargs)
-
         if not cmd.source.is_a('admin'):
-            raise TextyException(Command.UNKNOWN.format(**kwargs))
-
+            raise TextyException(STR.ERROR.unknown.format(**kwargs))
         return fn(cmd, *args, **kwargs)
-
     return decorator
 
 

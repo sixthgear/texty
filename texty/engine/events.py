@@ -8,8 +8,17 @@ class EventDispatcher:
             self.events = {}
 
         ev = self.events.get(event, set())
+
         for listener in ev:
             listener(self, *args, **kwargs)
+
+        # notify the top of the state stack automatically
+        if hasattr(self, 'state') and self.state:
+            callback = getattr(self.state[-1], 'on_' + event, None)
+            if callback:
+                callback(*args, **kwargs)
+
+
 
     def register(self, event, listener):
         """
@@ -19,7 +28,7 @@ class EventDispatcher:
         if not hasattr(self, 'events'):
             self.events = {}
 
-        ev = self.events.get('event')
+        ev = self.events.get(event)
         if ev:
             ev.add(listener)
         else:
@@ -33,6 +42,6 @@ class EventDispatcher:
         if not hasattr(self, 'events'):
             self.events = {}
 
-        ev = self.events.get('event')
+        ev = self.events.get(event)
         if ev:
             ev.remove(listener)

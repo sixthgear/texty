@@ -57,6 +57,7 @@ class SCOPE(enum.Enum):
     HAS                         = next(iota)
     ANY                         = next(iota)
     ROOM                        = next(iota)
+    VISIBLE                     = next(iota)
 
 
 iota = itertools.count()

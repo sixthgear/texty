@@ -6,6 +6,8 @@ from texty.engine.obj import BaseObject
 from texty.util import objectlist, english
 from texty.util.enums import EQ_PARTS, CHAR_STATE, CHAR_FLAG
 from texty.util.exceptions import TextyException
+from texty.util.english import STR
+from texty.util import serialize
 
 class Character(BaseObject):
     """
@@ -72,7 +74,9 @@ class Character(BaseObject):
 
     @property
     def display(self):
-        if self.occupation:
+        if self.is_a('dead'):
+            return 'the corpse of {x.name}'.format(x=self)
+        elif self.occupation:
             return '{x.first} the {x.occupation}'.format(x=self)
         else:
             return '{x.name}'.format(x=self)
@@ -92,9 +96,7 @@ class Character(BaseObject):
         """
         Parse and execute a text command for this player.
         """
-        c = Command(source=self, command=command, echo=echo)
-        c.parse()
-        c.run()
+        Command(source=self, command=command, echo=echo).run()
 
     def send(self, message):
         """
@@ -112,31 +114,173 @@ class Character(BaseObject):
         self.trigger('put', object=object, container=container)
 
     def give(self, object, character):
-        self.trigger('put', object=object, character=character)
+        self.trigger('give', object=object, character=character)
 
     def use(self, object):
-        self.trigger('put', object=object)
+        self.trigger('use', object=object)
 
     def eat(self, object):
         self.trigger('eat', object=object)
 
     def load(self, weapon=None, ammo=None):
+
+        if not weapon and not ammo:
+            # no weapon or ammo, so grab one from the eq
+            weapon = self.equipment.first(None, attribute='loadable')
+            if not weapon:
+                raise TextyException("What would you like to load?")
+
+        if weapon and not ammo:
+            # look for the first ammo in inventory that fits weapon
+            condition = lambda y: weapon.__class__ in y.fits
+            ammo = self.inventory.first(None, attribute='ammo', condition=condition)
+            if not ammo:
+                raise TextyException("You don't have any ammunition for {}.".format(weapon.name))
+
+        elif ammo and not weapon:
+            # look for the first weapon in equipment that fits ammo
+            condition = lambda y: y.__class__ in ammo.fits
+            weapon = self.equipment.first(None, attribute='loadable', condition=condition)
+            if not weapon:
+                raise TextyException("You aren't using a weapon that takes {}.".format(str(x)))
+
+        weapon.load(ammo)
+        self.inventory.remove(ammo)
+        self.send(serialize.full_character(self))
+
+        extra = {
+            'weapon': weapon.name,
+            'ammo': ammo.name
+        }
+        self.node.send(STR.T(STR.FIGHT.load, self, extra=extra), source=self)
+        self.send(STR.T(STR.FIGHT.load, self, source=self, extra=extra))
+
         self.trigger('load', weapon=weapon, ammo=ammo)
 
-    def unload(self, weapon=None):
+    def unload(self, weapon=None, ammo=None):
+
+        if not weapon:
+            weapon = self.equipment.first(None, attribute='loadable')
+            if not weapon:
+                raise TextyException("You aren't holding an unloadable weapon.")
+
+        ammo = weapon.unload()
+
+        self.inventory.append(ammo)
+        self.send(serialize.full_character(self))
+        extra = {
+            'weapon': weapon.name,
+            'ammo': ammo.name
+        }
+        self.node.send(STR.T(STR.FIGHT.unload, self, extra=extra), source=self)
+        self.send(STR.T(STR.FIGHT.unload, self, source=self, extra=extra))
         self.trigger('unload', weapon=weapon)
 
     def ready(self):
+        """
+        Make oneself ready to fight.
+        """
+        if not self.weapon:
+            raise TextyException("You aren't holding a weapon to ready.")
+
+        extra = {
+            'weapon': self.weapon.name
+        }
+
+        self.node.send(STR.T(STR.FIGHT.ready, self, extra=extra), source=self)
+        self.send(STR.T(STR.FIGHT.ready, self, source=self, extra=extra))
+
         self.trigger('ready')
 
-    def target(self, character):
-        self.trigger('target', character=character)
+
+    def hurt(self, damage):
+        self.send('A: OUCH!')
+        self.hp -= damage
+        self.trigger('hurt', damage)
+
+    def target(self, target):
+        """
+        Set a monster or character to be the target.
+        """
+        if not self.weapon:
+            raise TextyException('You aren\'t holding a weapon!')
+
+        if target.is_a('player'):
+            raise TextyException('Don\'t kill other players just yet, it doesn\'t work well.')
+
+        if not self.weapon.ammo:
+            raise TextyException('Your {weapon.shortname} isn\'t loaded!'.format(weapon=self.weapon))
+
+        self.trigger('target', target=target)
+        target.trigger('targetted', target=self)
+        return True
+
+    def untarget(self):
+        self.trigger('untarget')
+
+    def attack(self, target):
+        """
+        Perform an attack. This method is scheduled by the state machine.
+        """
+        if self.weapon.is_a('gun'):
+            self.weapon.fire(self, target)
+
+        elif self.weapon.is_a('melee'):
+            self.weapon.swing()
+
+        self.trigger('attack', target=target)
+        target.trigger('attacked', target=self)
+
+    def fall(self):
+        self.node.send('A:' + STR.T(STR.FIGHT.fall, self))
+        self.trigger('fall')
+
+    def die(self):
+        self.node.send('A:' + STR.T(STR.FIGHT.death, self))
+        self.trigger('death')
+        self.attributes.add('dead')
+        self.events = {}
+
+
+    def on_fire(self, weapon, ammo, rounds, source, target):
+        """
+        Weapon has fired.
+        """
+        extra = {
+            'amount': rounds,
+            'weapon': self.weapon,
+            'target': target.display
+        }
+
+        msg_A = STR.T(STR.FIGHT.fire_A, self, source=self, extra=extra)
+        msg_B = '<span class="sound-2x">{sound}</span'.format(sound=weapon.sound(rounds))
+
+        self.send('A:' + msg_A + msg_B)
+
+    def on_empty(self, weapon):
+        self.send('A: <span class=\"sound-3x\">&mdash;CLICK&mdash;</span>')
+        self.trigger('weapon_empty', weapon)
 
     def stop(self):
+        """
+        Stop whatever you were doing.
+        """
         self.trigger('stop')
 
     def flee(self):
         self.trigger('flee')
+
+    @property
+    def weapon(self):
+
+        holding = self.eq_map.get(EQ_PARTS.L_HAND) or self.eq_map.get(EQ_PARTS.R_HAND)
+
+        if holding and holding.is_a('wieldable'):
+            return holding
+        else:
+            return None
+
+
 
     def equip(self, object, parts=None):
         """
@@ -164,7 +308,11 @@ class Character(BaseObject):
                 self.eq_map[part] = object
                 self.equipment.append(object)
                 self.trigger('equip', object=object, part=part)
+                if object.is_a('gun'):
+                    object.register('fire', self.on_fire)
+                    object.register('empty', self.on_empty)
                 return True
+
 
         # tried to equip object in all supplied positions, didn't work.
         raise TextyException('You already have something there.'.format(object.name))
@@ -181,20 +329,15 @@ class Character(BaseObject):
                 self.eq_map[part] = None
                 self.equipment.remove(object)
                 self.trigger('unequip', object=object, part=part)
+                if object.is_a('gun'):
+                    object.unregister('fire', self.on_fire)
+                    object.unregister('empty', self.on_empty)
                 return True
 
         raise TextyException('Couldn\'t Unequip {}.'.format(object.name))
 
-
-    # def move_continue(self):
-    #     if self.current_dir:
-    #         self.node.move_dir(self, self.current_dir)
-    #         # self.send('A: travelling...')
-    #     else:
-    #         self.stop()
-
     def move_toward(self, target, direction):
-        self.state[-1].on_move(target, direction)
+        self.trigger('move', target, direction)
 
     def move_to(self, node):
         """
@@ -215,10 +358,3 @@ class Character(BaseObject):
             else:
                 self.node.enter(self)
                 # self.node.characters.append(self)
-
-
-    def stop(self):
-        """
-        Stops motion and combat.
-        """
-        self.state[-1].on_stop()

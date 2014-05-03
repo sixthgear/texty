@@ -5,6 +5,10 @@ import enum
 
 class STR:
 
+    class ERROR:
+        unknown         = "You aren't sure how to {verb}."
+        unexpected      = "You broke something, jerk."
+
     class INFO:
         # activity        = "<b>{x.display}</b> {x.occupation} {are} {x.activity} here."
         here            = "<b>{sub.display}</b> {is} here."
@@ -53,8 +57,9 @@ class STR:
         pull_C          = "{Name} activate{s} the timer on {weapon}."
         ready           = "{Name} read{ies} {his} <b>{weapon}</b> and prepare{s} for a fight."
         relax           = "{Name} relax{es} {his} {weapon}."
-        aim             = "{Name} point{s} {his} {weapon} at {you} to {direction}."
-        fire_A          = "{Name} fire{s} {amount} {rounds} from {his} {weapon}."
+        aim             = "{Name} point{s} {his} {weapon.shortname} at {target.name}."
+        aim_dir         = "{Name} point{s} {his} {weapon.shortname} at {target.name} to {dir}."
+        fire_A          = "{Name} fire{s} {amount} rounds from {his} {weapon.shortname} at {target}."
         fire_B          = "{Name} take{s} aim and fire{s} {amount} {rounds} from {his} {weapon} at {you}."
         fire_C          = "{Name} unleash{es} a hail of automatic gunfire!"
         swing_A         = "{Name} swing{s} {his} {weapon} mercilessly at {you}."
@@ -68,8 +73,10 @@ class STR:
         crit_C          = "{Name} {is} cut to ribbons by {your} accurate firing! {Its} remaining body parts spill across the {ground}."
         crit_D          = "{Names} slice neatly severs {your} head from {your} shoulders!"
         stun            = "{Name} {is} stunned for a moment, but continues to {approach} {you}!"
+        fall            = "{Name} fall{s} to the ground unconscious."
         death           = "{Name} crumple{s} to the ground gurgling and convulsing."
-
+        load            = "{Name} load{s} <b>{ammo}</b> into <b>{weapon}</b>. <span class=\"sound-3x\">CHHK-CHHK!!</span>"
+        unload          = "{Name} unload{s} <b>{ammo}</b> from <b>{weapon}</b>."
 
     @classmethod
     def T(cls, string, subject, object=None, source=None, extra=None):
