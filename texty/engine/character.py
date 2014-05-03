@@ -194,7 +194,7 @@ class Character(BaseObject):
 
 
     def hurt(self, damage):
-        self.send('A: OUCH!')
+        self.send('<span class="sound-3x">OUCH!</span>')
         self.hp -= damage
         self.trigger('hurt', damage)
 
@@ -238,7 +238,10 @@ class Character(BaseObject):
     def die(self):
         self.node.send('A:' + STR.T(STR.FIGHT.death, self))
         self.trigger('death')
+        self.attributes.remove('character')
         self.attributes.add('dead')
+        self.node.characters.remove(self)
+        self.node.objects.append(self)
         self.events = {}
 
 

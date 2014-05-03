@@ -119,8 +119,6 @@ def ready(cmd, verb, object, prep, complement):
     cmd.source.ready()
 
 
-
-
 @command  ("kill", "attack", "shoot", "fire at", "focus on", "target")
 def kill(cmd, verb, object, prep, complement):
     """
