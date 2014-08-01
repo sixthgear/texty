@@ -9,7 +9,9 @@ from collections import OrderedDict
 class Player(Character):
 
     attributes = 'player'
+
     # hacky object list to allow noun resolution for body parts
+    # this gives players an objectlist to target.
     body = objectlist((
         body.Body(),
         body.Legs(),
@@ -32,12 +34,8 @@ class Player(Character):
         self.connection = connection
         self.occupation = 'Former Computer Programmer'
 
-        # the state stacks!
-        # self.movement_stack = []
-        # self.combat_stack   = []
-
         # take a copy, since we modify this directly and don't want to change nouns
-        # for everyone!
+        # for everyone of class Player!
         self.nouns = self.__class__.nouns.copy()
 
     def on_connect(self):

@@ -63,6 +63,14 @@ class Node(BaseObject):
 
     attributes = 'node'
 
+    side_coords = {
+        DIR.NORTH: lambda n: (0, n.min_y),
+        DIR.SOUTH: lambda n: (0, n.max_y),
+        DIR.WEST:  lambda n: (n.min_x, 0),
+        DIR.EAST:  lambda n: (n.max_x, 0),
+        DIR.UP:    lambda n: (0, n.min_y),
+        DIR.DOWN:  lambda n: (0, n.max_y),
+    }
 
     def __init__(self, name='', width=1, height=1, id=None):
         """
@@ -82,10 +90,13 @@ class Node(BaseObject):
 
         self.targetable = id != None
 
-        self.min_x = -width//2 + 1
-        self.max_x = width//2
-        self.min_y = -height//2 + 1
-        self.max_y = height//2
+        if width > 0 and height > 0:
+            self.min_x = -width//2 + 1
+            self.max_x = width//2
+            self.min_y = -height//2 + 1
+            self.max_y = height//2
+        else:
+            self.min_x = self.max_x = self.min_y = self.max_y = 0
 
         # allow vision to pass through this node by default
         # it might be useful to cause PORTAL type nodes to block vision, such as doors
@@ -131,22 +142,7 @@ class Node(BaseObject):
         elif self.type == DIM.PORTAL:
             return
 
-        # set correct interval
-        elif side == DIR.NORTH:
-            self.interval[object] = (0, self.min_y)
-        elif side == DIR.SOUTH:
-            self.interval[object] = (0, self.max_y)
-        elif side == DIR.WEST:
-            self.interval[object] = (self.min_x, 0)
-        elif side == DIR.EAST:
-            self.interval[object] = (self.max_x, 0)
-        elif side == DIR.UP:
-            self.interval[object] = (0, self.min_y)
-        elif side == DIR.DOWN:
-            self.interval[object] = (0, self.max_y)
-        else:
-            # place in center
-            self.interval[object] = (0, 0)
+        self.interval[object] = self.side_coords.get(side, lambda n: (0, 0))(self)
 
         # set object reference to this node
         object.node = self

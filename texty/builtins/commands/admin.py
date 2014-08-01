@@ -18,6 +18,12 @@ def _admin(cmd, verb, object, prep, complement, string=None):
     else:
         return cmd.response(Command.UNKNOWN.format(verb=verb))
 
+@command ("break")
+def _break(cmd, verb, object, prep, complement, string=None):
+    """
+    """
+    cmd.response('Breaking...')
+    import pdb; pdb.set_trace()
 
 @command ("unadmin")
 @admin

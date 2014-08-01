@@ -12,7 +12,7 @@ class CharacterState:
         self.character = character
 
     def pop(self, *args, **kwargs):
-        return self.character.pop_state()
+        return self.character.pop_state(*args, **kwargs)
 
     def push(self, state, *args, **kwargs):
         return self.character.push_state(state, *args, **kwargs)
@@ -53,6 +53,8 @@ class RelaxedState(CharacterState):
     """
     Doing things which don't expect a fight. If the player is attacked when relaxed, they will
     be surprised.
+
+    Relaxed -> when attacked -> Fighting
     """
 
     def on_spooked(self):
@@ -133,9 +135,15 @@ class ReadyState(CharacterState):
     max_timer = 30
 
     # reset idle timer whenever we reenter this state
+    # reaccuire combat target if it exists
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.target = None
+
     def enter(self, target=None):
         self.idle_timer = self.max_timer
-        self.target = target
+        self.target = target or self.target
 
     def on_target(self, target):
         self.push(FightingState, target=target)
@@ -149,6 +157,11 @@ class ReadyState(CharacterState):
         self.push(FightingState, target=target)
         self.push(StunnedState, timer=2)
 
+    # loading while ready and targetting resumes combat
+    def on_load(self, weapon, ammo):
+        if self.target:
+            self.push(FightingState, target=self.target)
+
     def update(self):
         self.idle_timer -= 1
         if self.idle_timer <= 0:
@@ -160,18 +173,25 @@ class FightingState(CharacterState):
     Engaged in mortal combat.
     """
 
-    def enter(self, target):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.target = None
+
+    def enter(self, target=None):
+
+        self.target = target or self.target
+        if not self.target:
+            self.pop()
 
         # invalid state if no weapon available
         if not self.character.weapon or not self.character.weapon.loaded:
             return self.pop()
 
-        self.target = target
         self.cooldown_timer = self.character.weapon.cooldown
-        target.register('death', self.on_target_death)
+        self.target.register('death', self.on_target_death)
 
     def exit(self):
-        pass
+        self.target.unregister('death', self.on_target_death)
 
     def on_target_death(self, target):
         self.pop()
@@ -180,7 +200,8 @@ class FightingState(CharacterState):
         self.pop()
 
     def on_target(self, target):
-        self.target = target
+        self.pop()
+        self.push(FightingState, target=target)
 
     def on_untarget(self):
         self.pop()
@@ -192,10 +213,10 @@ class FightingState(CharacterState):
         self.push(GrapplingState)
 
     def on_weapon_empty(self, weapon):
-        self.pop(self.target)
+        self.pop(target=self.target)
 
     def update(self):
-
+        # check to see if target still alive and visible
         self.cooldown_timer -= 1
         # perform combat tick
         if self.cooldown_timer <= 0:

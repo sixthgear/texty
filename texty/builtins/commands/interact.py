@@ -7,6 +7,7 @@ from texty.engine.node import Node
 from texty.util import serialize
 from texty.util.exceptions import TextyException
 
+
 @command ("get", "pick up", "grab", "take")
 def get(cmd, verb, object, prep, complement):
     """

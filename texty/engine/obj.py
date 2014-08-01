@@ -84,8 +84,8 @@ class BaseObject(EventDispatcher, metaclass=ObjectMeta):
         state = self.state.pop()
         print("POPPED STATE", self.name, state.__class__.__name__)
         if self.state:
+            # print (kwargs)
             self.state[-1].enter(*args, **kwargs)
-
 
     def push_state(self, state, *args, **kwargs):
         if self.state:

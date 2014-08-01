@@ -9,7 +9,7 @@ class EventDispatcher:
 
         ev = self.events.get(event, set())
 
-        for listener in ev:
+        for listener in ev.copy():
             listener(self, *args, **kwargs)
 
         # notify the top of the state stack automatically

@@ -211,6 +211,8 @@ class Character(BaseObject):
         if not self.weapon.ammo:
             raise TextyException('Your {weapon.shortname} isn\'t loaded!'.format(weapon=self.weapon))
 
+        # perhaps the player should keep track of this state
+
         self.trigger('target', target=target)
         target.trigger('targetted', target=self)
         return True

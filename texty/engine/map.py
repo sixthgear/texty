@@ -140,6 +140,7 @@ class Map(object):
                         edge.connect({DIR.WEST: west, DIR.EAST: node})
                         self.anonymous_nodes.append(edge)
 
+
                     # north reference is set, so make exits
                     # TODO: also make edge objects here
                     if north[x]:
@@ -148,6 +149,7 @@ class Map(object):
                             edge.vision = SENS.KILL
                         edge.connect({DIR.NORTH: north[x], DIR.SOUTH: node})
                         self.anonymous_nodes.append(edge)
+
 
                     # up reference is set, so make exits
                     # TODO: also make edge objects here
