@@ -117,7 +117,7 @@ class RangedWeapon(Weapon):
 
 class Ammo(Portable):
     """
-    This object can be put it weapons.
+    This object can be put into weapons.
     """
     nouns       = 'ammo ammunition'
     attributes  = 'ammo'

@@ -187,7 +187,6 @@ class Parser(object):
             """
             nonlocal token
 
-
             for rule in rules:
 
                 if isinstance(rule, collections.Callable):

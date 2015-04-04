@@ -3,6 +3,7 @@ from texty.engine.command import command, admin, syntax, parser, Command
 from texty.engine.story import Story
 from texty.util import serialize
 from texty.util.exceptions import TextyException
+from texty.util.english import STR
 
 import importlib
 import imp
@@ -16,7 +17,7 @@ def _admin(cmd, verb, object, prep, complement, string=None):
         cmd.source.attributes.add('admin')
         return cmd.response('Done.')
     else:
-        return cmd.response(Command.UNKNOWN.format(verb=verb))
+        return cmd.response(STR.ERROR.unknown.format(verb=verb))
 
 @command ("break")
 def _break(cmd, verb, object, prep, complement, string=None):

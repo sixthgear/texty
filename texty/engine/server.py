@@ -41,9 +41,8 @@ class Connection(websocket.WebSocketHandler):
         data = self.on_write(data)
         return self.write_message(data)
 
-    def write(self, data):
-        logging.warning('Connection.write(data) is depracated. Use Conenction.send(data)')
-        return self.write(data)
+    def check_origin(self, origin):
+        return True
 
 
 class MUD(object):

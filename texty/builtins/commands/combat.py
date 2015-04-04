@@ -12,7 +12,7 @@ from texty.util.english import STR
 # @syntax ("load MY.WEAPON")
 # @syntax ("load I.AMMO [in] MY.WEAPON", "use, put")
 # @syntax ("load MY.WEAPON [with] I.AMMO", "use")
-@command ("load", "reload", "r")
+@command ("load", "reload", "r", "l")
 def load(cmd, verb, object, prep, complement):
     """
     Load a weapon with ammunition.
@@ -20,7 +20,6 @@ def load(cmd, verb, object, prep, complement):
     "You don't have one of those."
     "What do you want to load?"
     "What do you want to load it in?"
-
     "You need to load {} into a <b>{x}</b>."
     "{y} doesn't seem to fit in {x}."
     """
@@ -153,8 +152,6 @@ def kill(cmd, verb, object, prep, complement):
 
     # if cmd.source.status != CHAR_STATE.READY:
     #     ready(cmd, verb, object, prep, complement)
-
-
 
 
 # @syntax ("hit R.OBJECT")

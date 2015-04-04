@@ -12,7 +12,7 @@ def info(cmd, verb, object, prep, complement):
     return
 
 
-@command('look', 'look at', 'examine')
+@command('look', 'look at', 'examine', "l")
 def look(cmd, verb, object, prep, complement):
     """
     Look at things like a boss.
