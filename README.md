@@ -2,6 +2,7 @@ Texty Mud
 =========
 
 ![Texty](http://i.imgur.com/Q7GZv89.png)
+![Texty](http://i.imgur.com/u1yHMa9.png)
 
 The Texty MUD Engine. An extensible, websocket-based MUD server written in python.
 Try it out: http://texty.sixthgear.ca/
